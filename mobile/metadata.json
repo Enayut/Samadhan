@@ -1,0 +1,10 @@
+{
+  "name": "SAMAADHAN",
+  "description": "Mine Official mobile interface for coal mining operations, action queues, evidence capture, and observation intake.",
+  "requestFramePermissions": [
+    "camera"
+  ],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}

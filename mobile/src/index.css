@@ -1,0 +1,28 @@
+@import "tailwindcss";
+
+@layer base {
+  body {
+    font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+    -webkit-tap-highlight-color: transparent;
+  }
+}
+
+/* Custom scrollbar hiding for clean mobile horizontal chip scrolls */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+/* Shimmer animation for camera scanner line */
+@keyframes scan-line {
+  0% { transform: translateY(0%); opacity: 0.8; }
+  50% { transform: translateY(100%); opacity: 0.4; }
+  100% { transform: translateY(0%); opacity: 0.8; }
+}
+
+.animate-scan {
+  animation: scan-line 3s ease-in-out infinite;
+}

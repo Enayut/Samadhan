@@ -1,0 +1,75 @@
+@import "tailwindcss";
+
+@theme {
+  --color-anthracite-950: #12161A;
+  --color-anthracite-800: #1D2329;
+  --color-paper-100: #F1EEE6;
+  --color-paper-50: #FAF8F3;
+  --color-safety-amber: #F2A93B;
+  --color-signal-rust: #C1502E;
+  --color-verdant: #4C7A66;
+  --color-steel: #4A7C9B;
+  --color-text-primary: #0E1114;
+  --color-text-secondary: #586069;
+  --color-text-tertiary: #8A9098;
+  
+  --font-display: "Poppins", sans-serif;
+  --font-sans: "Poppins", sans-serif;
+}
+
+@layer base {
+  body {
+    background-color: var(--color-paper-100);
+    color: var(--color-text-primary);
+    font-family: var(--font-sans);
+  }
+  
+  h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font-display);
+    font-weight: 600;
+  }
+}
+
+@media print {
+  @page {
+    size: landscape;
+    margin: 1cm;
+  }
+  
+  body {
+    background-color: var(--color-paper-50) !important;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+  
+  /* Ensure Recharts charts expand fully on print and kill animations */
+  .recharts-responsive-container {
+    width: 100% !important;
+    min-height: 250px;
+  }
+  
+  * {
+    transition: none !important;
+    animation: none !important;
+  }
+  
+  /* Avoid page breaks inside cards */
+  .grid > div, 
+  .space-y-6 > div {
+    page-break-inside: avoid;
+    break-inside: avoid;
+  }
+}
+
+/* Reset Leaflet Tooltip */
+.leaflet-tooltip.custom-leaflet-tooltip {
+  background-color: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  padding: 0 !important;
+  opacity: 1 !important;
+}
+
+.leaflet-tooltip-top.custom-leaflet-tooltip::before {
+  display: none !important;
+}

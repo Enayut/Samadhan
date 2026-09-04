@@ -1,0 +1,8 @@
+{
+  "name": "Samadhan",
+  "description": "Centralized AI-enabled smart governance and compliance monitoring platform for India's coal mining sector.",
+  "requestFramePermissions": [],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}
