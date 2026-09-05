@@ -1,7 +1,8 @@
 import React, { useMemo, useState } from 'react';
 import { motion } from 'motion/react';
 import { useAppContext } from '../store/AppContext';
-import { AlertCircle, CheckCircle2, Clock, FileCheck, ShieldAlert, FileText, ArrowRight, Activity, CalendarClock } from 'lucide-react';
+import { Link } from 'react-router-dom';
+import { AlertCircle, CheckCircle2, Clock, FileCheck, ShieldAlert, FileText, ArrowRight, Activity, CalendarClock, Sparkles, BrainCircuit } from 'lucide-react';
 import { format, isPast, differenceInDays } from 'date-fns';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip as RechartsTooltip, ResponsiveContainer, Legend, PieChart, Pie, Cell } from 'recharts';
 import { GovernanceObjectModal } from '../components/GovernanceObjectModal';
@@ -15,6 +16,8 @@ export function Dashboard() {
   return (
     <div className="space-y-6 animate-in fade-in duration-500">
       <GovernanceObjectModal objectId={selectedObjId} onClose={() => setSelectedObjId(null)} />
+      
+      <AlertBanner />
       
       <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-4 mb-8">
         <div>
@@ -46,9 +49,81 @@ const STATUS_COLORS: Record<GovStatus, string> = {
   'Closed': '#4C7A66',       // Green
   'Submitted': '#4A7C9B',    // Blue
   'In Progress': '#F2A93B',  // Amber
+  'Rejected': '#A93226',     // Dark red — returned to owner
   'Overdue': '#C1502E',      // Red
   'Escalated': '#C1502E'     // Red
 };
+
+function AlertBanner() {
+  const { state } = useAppContext();
+  // The banner tracks the DGMS safety alert hero (first in the inbox).
+  const heroEntry =
+    state.pipeline.alerts.find((p) => p.alert.kind === 'dgms-alert') ?? state.pipeline.alerts[0];
+  const alert = heroEntry?.alert ?? null;
+  const fanout = (heroEntry?.fanout as { governanceObjects?: number } | null) ?? null;
+  const processed = !!heroEntry?.extraction;
+  const receivedCount = state.pipeline.alerts.filter((p) => p.alert.status === 'received').length;
+
+  if (state.loading) {
+    return (
+      <div className="bg-white rounded-xl border border-paper-100 shadow-sm p-6 flex items-center justify-center gap-3 text-anthracite-800/60">
+        <BrainCircuit size={18} className="animate-pulse text-steel" />
+        <span className="text-sm font-medium">Loading demo state…</span>
+      </div>
+    );
+  }
+
+  const confirmed = !!fanout;
+  const alertTitle = alert?.title || 'DGMS Safety Alert 23/2026';
+
+  let bannerTitle: string;
+  let bannerAction: string;
+  if (confirmed) {
+    bannerTitle = `${alertTitle} — ${fanout?.governanceObjects ?? 183} governance obligations created across 61 mines`;
+    bannerAction = 'Open Alert Intelligence';
+  } else if (processed) {
+    bannerTitle = `${alertTitle} — AI extraction complete, awaiting confirmation`;
+    bannerAction = 'Review Extraction';
+  } else {
+    bannerTitle = `${alertTitle} is awaiting AI processing`;
+    bannerAction = 'Process with AI';
+  }
+
+  return (
+    <div
+      className={`rounded-xl border shadow-sm p-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 ${
+        confirmed ? 'bg-verdant/5 border-verdant/25' : 'bg-safety-amber/5 border-safety-amber/30'
+      }`}
+    >
+      <div className="flex items-start gap-3">
+        <div
+          className={`p-2 rounded-lg shrink-0 ${
+            confirmed ? 'bg-verdant/10 text-verdant' : 'bg-safety-amber/10 text-safety-amber'
+          }`}
+        >
+          {confirmed ? <CheckCircle2 size={20} /> : <Sparkles size={20} />}
+        </div>
+        <div>
+          <div className="text-xs font-bold uppercase tracking-wider text-anthracite-800/60">
+            Active DGMS Alert · {alert?.ref || 'DGMS/2026/SA-041'}
+            {receivedCount > 0 && ` · ${receivedCount} alert${receivedCount === 1 ? '' : 's'} awaiting AI`}
+          </div>
+          <p className="text-sm font-medium text-anthracite-950 mt-0.5">{bannerTitle}</p>
+        </div>
+      </div>
+      <Link
+        to="/intake"
+        className={`shrink-0 inline-flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-bold shadow-sm transition-colors ${
+          confirmed
+            ? 'bg-verdant hover:bg-verdant/90 text-white'
+            : 'bg-anthracite-950 hover:bg-anthracite-800 text-paper-50'
+        }`}
+      >
+        {bannerAction} <ArrowRight size={15} />
+      </Link>
+    </div>
+  );
+}
 
 function DashboardContent({ onOpenModal }: { onOpenModal: (id: string) => void }) {
   const { state } = useAppContext();
@@ -57,7 +132,8 @@ function DashboardContent({ onOpenModal }: { onOpenModal: (id: string) => void }
   const summaryData = useMemo(() => {
     const closed = govObjects.filter(o => o.status === 'Closed').length;
     const submitted = govObjects.filter(o => o.status === 'Submitted').length;
-    const inProgress = govObjects.filter(o => o.status === 'In Progress').length;
+    // Rejected items are reopened and awaiting owner correction — they belong in the open bucket.
+    const inProgress = govObjects.filter(o => o.status === 'In Progress' || o.status === 'Rejected').length;
     const escalatedOrOverdue = govObjects.filter(o => o.status === 'Escalated' || o.status === 'Overdue').length;
 
     return [
@@ -76,7 +152,7 @@ function DashboardContent({ onOpenModal }: { onOpenModal: (id: string) => void }
         domain,
         Closed: objects.filter(o => o.status === 'Closed').length,
         Submitted: objects.filter(o => o.status === 'Submitted').length,
-        'In Progress': objects.filter(o => o.status === 'In Progress').length,
+        'In Progress': objects.filter(o => o.status === 'In Progress' || o.status === 'Rejected').length,
         'Overdue/Escalated': objects.filter(o => o.status === 'Escalated' || o.status === 'Overdue').length,
       };
     }).filter(d => d.Closed > 0 || d.Submitted > 0 || d['In Progress'] > 0 || d['Overdue/Escalated'] > 0);

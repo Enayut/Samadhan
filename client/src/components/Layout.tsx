@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { NavLink, Outlet } from 'react-router-dom';
-import { useAppContext } from '../store/AppContext';
+import { useAppContext, ROLE_USER_NAMES } from '../store/AppContext';
 import { UserRole } from '../types';
 import { 
   Activity, 
@@ -17,13 +17,15 @@ import {
   Check,
   FileCheck,
   Search,
-  Map
+  Map,
+  CalendarDays,
+  RotateCcw
 } from 'lucide-react';
 import { format } from 'date-fns';
 import { motion, AnimatePresence } from 'motion/react';
 
 export function Layout() {
-  const { state, setRole } = useAppContext();
+  const { state, setRole, resetDemo } = useAppContext();
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [roleMenuOpen, setRoleMenuOpen] = useState(false);
   const roleMenuRef = useRef<HTMLDivElement>(null);
@@ -40,6 +42,8 @@ export function Layout() {
 
   const defaultNav = [
     { to: '/', icon: Activity, label: 'Dashboard' },
+    { to: '/intake', icon: BrainCircuit, label: 'Alert Intake' },
+    { to: '/calendar', icon: CalendarDays, label: 'Calendar' },
     { to: '/gis', icon: Map, label: 'GIS View' },
     { to: '/compliance', icon: ShieldCheck, label: 'Governance Register' }
   ];
@@ -154,6 +158,19 @@ export function Layout() {
             </div>
           </div>
 
+          {/* Reset demo state */}
+          <button
+            onClick={() => {
+              if (window.confirm('Reset the demo to a fresh state? All progress on the shared demo state will be cleared.')) {
+                resetDemo();
+              }
+            }}
+            title="Reset demo state to fresh"
+            className="p-2 rounded-lg bg-anthracite-800 hover:bg-anthracite-700 border border-anthracite-700 text-paper-100/70 hover:text-paper-50 transition-colors shrink-0"
+          >
+            <RotateCcw size={16} />
+          </button>
+
           {/* Role Switcher */}
           <div className="flex items-center gap-3 relative shrink-0" ref={roleMenuRef}>
             <button 
@@ -186,11 +203,7 @@ export function Layout() {
                     {(['Mine Manager', 'Mine Safety Officer', 'Mine Engineer', 'Area Safety Officer', 'Corporate Management', 'Regulatory Authority'] as UserRole[]).map((r) => {
                       const Icon = roleIcons[r as keyof typeof roleIcons] || HardHat;
                       const isActive = state.role === r;
-                      const userName = r === 'Mine Manager' ? 'S. Singh' :
-                                       r === 'Mine Safety Officer' ? 'A. Kumar' :
-                                       r === 'Mine Engineer' ? 'P. Verma' :
-                                       r === 'Area Safety Officer' ? 'R. Sharma' :
-                                       r === 'Corporate Management' ? 'L. Gupta' : 'M. Inspector';
+                      const userName = ROLE_USER_NAMES[r];
                       return (
                         <button
                           key={r}

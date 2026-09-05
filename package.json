@@ -1,0 +1,11 @@
+{
+  "name": "samaadhan-sih-demo",
+  "private": true,
+  "version": "1.0.0",
+  "description": "SAMAADHAN SIH demo — one demo server hosts the desktop app, the mobile app (at /mobile) and the shared in-memory demo state.",
+  "scripts": {
+    "build:mobile": "cd mobile && npm run build",
+    "demo": "npm run build:mobile && cd client && npm run dev",
+    "typecheck": "cd client && npx tsc --noEmit && cd ../mobile && npx tsc --noEmit"
+  }
+}

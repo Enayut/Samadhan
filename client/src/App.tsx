@@ -5,6 +5,8 @@ import { Dashboard } from './pages/Dashboard';
 import { ComplianceTracker } from './pages/ComplianceTracker';
 import { GisMapping } from './pages/GisMapping';
 import { Site3DView } from './pages/Site3DView';
+import { AlertIntake } from './pages/AlertIntake';
+import { CalendarPage } from './pages/Calendar';
 
 export default function App() {
   return (
@@ -13,6 +15,8 @@ export default function App() {
         <Routes>
           <Route path="/" element={<Layout />}>
             <Route index element={<Dashboard />} />
+            <Route path="intake" element={<AlertIntake />} />
+            <Route path="calendar" element={<CalendarPage />} />
             <Route path="compliance" element={<ComplianceTracker />} />
             <Route path="gis" element={<GisMapping />} />
             <Route path="site/:id" element={<Site3DView />} />

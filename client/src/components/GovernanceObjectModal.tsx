@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { X, ShieldAlert, FileText, CheckCircle2, AlertTriangle, Clock, MapPin, Search, ChevronRight, Check } from 'lucide-react';
-import { format, differenceInDays, isPast } from 'date-fns';
+import { X, ShieldAlert, FileText, CheckCircle2, AlertTriangle, Clock, MapPin, Search, ChevronRight, Check, Loader2 } from 'lucide-react';
+import { format, differenceInDays, isPast, isValid } from 'date-fns';
 import { GovernanceObject, EvidenceItem } from '../types';
 import { useAppContext } from '../store/AppContext';
 
@@ -10,10 +10,11 @@ interface Props {
   onClose: () => void;
 }
 
-const statusColors = {
+const statusColors: Record<string, string> = {
   'Closed': 'bg-verdant/10 text-verdant border-verdant/20',     // 🟢 Green
   'Submitted': 'bg-steel/10 text-steel border-steel/20',         // 🔵 Blue
   'In Progress': 'bg-safety-amber/10 text-safety-amber border-safety-amber/20', // 🟠 Amber
+  'Rejected': 'bg-[#A93226]/10 text-[#A93226] border-[#A93226]/25', // Returned to owner
   'Overdue': 'bg-[#C1502E]/10 text-[#C1502E] border-[#C1502E]/20', // 🔴 Red
   'Escalated': 'bg-[#C1502E]/10 text-[#C1502E] border-[#C1502E]/20', // 🔴 Red
 };
@@ -28,6 +29,23 @@ export function GovernanceObjectModal({ objectId, onClose }: Props) {
   const { state, rejectEvidence, approveObject, resubmitObject } = useAppContext();
   const [rejectingItem, setRejectingItem] = useState<string | null>(null);
   const [rejectionReason, setRejectionReason] = useState('');
+  const [validating, setValidating] = useState(false);
+  const [toast, setToast] = useState<string | null>(null);
+
+  const showToast = (message: string) => {
+    setToast(message);
+    setTimeout(() => setToast(null), 3200);
+  };
+
+  const handleApprove = () => {
+    if (validating) return;
+    setValidating(true);
+    setTimeout(() => {
+      approveObject(obj.id);
+      setValidating(false);
+      showToast('Evidence validated — closure record generated');
+    }, 900);
+  };
 
   if (!objectId) return null;
 
@@ -42,13 +60,37 @@ export function GovernanceObjectModal({ objectId, onClose }: Props) {
     rejectEvidence(obj.id, evidenceId, rejectionReason);
     setRejectingItem(null);
     setRejectionReason('');
+    showToast('Evidence rejected — task returned to owner for correction');
   };
 
-  const daysUntilDeadline = differenceInDays(new Date(obj.deadline), new Date());
-  const isOverdue = isPast(new Date(obj.deadline)) && obj.status !== 'Closed';
+  // Never let an unparseable date crash the whole modal (blank screen) —
+  // unknown/unset dates render as '—' instead.
+  const deadlineDate = new Date(obj.deadline);
+  const hasValidDeadline = isValid(deadlineDate);
+  const daysUntilDeadline = hasValidDeadline ? differenceInDays(deadlineDate, new Date()) : 0;
+  const isOverdue = hasValidDeadline && isPast(deadlineDate) && obj.status !== 'Closed';
+
+  const safeFormat = (value: string | undefined, pattern: string): string => {
+    if (!value) return '—';
+    const date = new Date(value);
+    return isValid(date) ? format(date, pattern) : '—';
+  };
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-anthracite-950/80 backdrop-blur-sm p-4">
+      {/* Action feedback toast */}
+      <AnimatePresence>
+        {toast && (
+          <motion.div
+            initial={{ opacity: 0, y: 16 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: 16 }}
+            className="fixed bottom-6 left-1/2 -translate-x-1/2 z-[60] bg-anthracite-950 text-paper-50 text-sm font-medium px-4 py-2.5 rounded-lg shadow-2xl border border-anthracite-800 flex items-center gap-2"
+          >
+            <CheckCircle2 size={15} className="text-verdant" /> {toast}
+          </motion.div>
+        )}
+      </AnimatePresence>
       <motion.div 
         initial={{ opacity: 0, scale: 0.95 }}
         animate={{ opacity: 1, scale: 1 }}
@@ -92,7 +134,7 @@ export function GovernanceObjectModal({ objectId, onClose }: Props) {
                 <Clock size={12} /> Deadline
               </p>
               <p className={`text-sm font-medium ${isOverdue ? 'text-[#C1502E]' : 'text-anthracite-950'}`}>
-                {format(new Date(obj.deadline), 'MMM dd, yyyy')}
+                {safeFormat(obj.deadline, 'MMM dd, yyyy')}
               </p>
               {obj.status !== 'Closed' && (
                 <p className={`text-xs ${isOverdue ? 'text-[#C1502E]' : 'text-anthracite-800'}`}>
@@ -117,7 +159,7 @@ export function GovernanceObjectModal({ objectId, onClose }: Props) {
                         <p className="text-sm font-medium text-anthracite-950">{ev.title}</p>
                         <div className="flex items-center gap-3 mt-1">
                           <span className={`text-xs font-bold ${evidenceStatusColors[ev.status]}`}>{ev.status.toUpperCase()}</span>
-                          {ev.timestamp && <span className="text-xs text-anthracite-800 flex items-center gap-1"><Clock size={10} /> {format(new Date(ev.timestamp), 'MMM dd, HH:mm')}</span>}
+                          {ev.timestamp && <span className="text-xs text-anthracite-800 flex items-center gap-1"><Clock size={10} /> {safeFormat(ev.timestamp, 'MMM dd, HH:mm')}</span>}
                           {ev.geoTag && <span className="text-xs text-anthracite-800 flex items-center gap-1"><MapPin size={10} /> {ev.geoTag}</span>}
                         </div>
                         {ev.rejectionReason && (
@@ -189,11 +231,26 @@ export function GovernanceObjectModal({ objectId, onClose }: Props) {
                 </div>
                 {obj.status === 'Submitted' && isVerifier && (
                   <button 
-                    onClick={() => approveObject(obj.id)}
-                    className="bg-verdant hover:bg-verdant/90 text-white px-4 py-2 rounded-lg text-sm font-bold shadow-sm transition-colors flex items-center gap-2"
+                    onClick={handleApprove}
+                    disabled={validating}
+                    className="bg-verdant hover:bg-verdant/90 text-white px-4 py-2 rounded-lg text-sm font-bold shadow-sm transition-colors flex items-center gap-2 disabled:opacity-60"
                   >
-                    <Check size={16} /> Approve & Close
+                    {validating ? (
+                      <>
+                        <Loader2 size={16} className="animate-spin" /> Validating evidence…
+                      </>
+                    ) : (
+                      <>
+                        <Check size={16} /> Approve & Close
+                      </>
+                    )}
                   </button>
+                )}
+                {validating && (
+                  <div className="mt-3 text-xs text-anthracite-800/70 flex items-center gap-2 bg-paper-50 border border-paper-100 rounded-lg px-3 py-2">
+                    <Loader2 size={12} className="animate-spin text-steel" />
+                    Checking evidence hashes, geo-tags and owner ≠ verifier constraint…
+                  </div>
                 )}
               </div>
               
@@ -221,7 +278,7 @@ export function GovernanceObjectModal({ objectId, onClose }: Props) {
                       <span className="font-bold text-[#C1502E] mr-2">{esc.level}</span>
                       <span className="text-anthracite-950">Notified: {esc.notified}</span>
                     </div>
-                    <span className="text-xs text-anthracite-800">{format(new Date(esc.timestamp), 'MMM dd, HH:mm')}</span>
+                    <span className="text-xs text-anthracite-800">{safeFormat(esc.timestamp, 'MMM dd, HH:mm')}</span>
                   </div>
                 ))}
               </div>
@@ -234,11 +291,30 @@ export function GovernanceObjectModal({ objectId, onClose }: Props) {
               <h3 className="text-sm font-bold text-anthracite-950 uppercase tracking-wider flex items-center gap-2">
                 <CheckCircle2 size={16} className="text-verdant" /> Closure Certificate
               </h3>
-              <div className="bg-verdant/5 border border-verdant/20 p-4 rounded-xl font-mono text-xs text-anthracite-800">
-                <p><strong>Hash:</strong> {obj.closure_certificate.hash}</p>
-                <p><strong>Closed At:</strong> {format(new Date(obj.closure_certificate.closedAt), 'MMM dd, yyyy HH:mm:ss')}</p>
-                <p><strong>Owner:</strong> {obj.closure_certificate.ownerName}</p>
-                <p><strong>Verifier:</strong> {obj.closure_certificate.verifierName}</p>
+              <div className="bg-verdant/5 border border-verdant/30 rounded-xl overflow-hidden">
+                <div className="border-b border-verdant/20 bg-verdant/10 px-4 py-3 flex items-center justify-between">
+                  <div className="text-xs font-bold text-verdant uppercase tracking-wider">
+                    SAMAADHAN · Verified Closure
+                  </div>
+                  <div className="text-xs font-mono text-anthracite-800/70">
+                    {obj.closure_certificate.taskId}
+                  </div>
+                </div>
+                <div className="p-4 grid grid-cols-2 gap-x-6 gap-y-2.5 font-mono text-xs text-anthracite-800">
+                  <div><span className="text-anthracite-800/50">Source</span><br /><strong className="text-anthracite-950">{obj.closure_certificate.source}</strong></div>
+                  <div><span className="text-anthracite-800/50">Task ID</span><br /><strong className="text-anthracite-950">{obj.closure_certificate.taskId}</strong></div>
+                  <div><span className="text-anthracite-800/50">Owner</span><br /><strong className="text-anthracite-950">{obj.closure_certificate.ownerName} · {obj.closure_certificate.ownerRole}</strong></div>
+                  <div><span className="text-anthracite-800/50">Verifier</span><br /><strong className="text-anthracite-950">{obj.closure_certificate.verifierName} · {obj.closure_certificate.verifierRole}</strong></div>
+                  <div><span className="text-anthracite-800/50">Created</span><br /><strong className="text-anthracite-950">{safeFormat(obj.closure_certificate.created, 'MMM dd, yyyy HH:mm')}</strong></div>
+                  <div><span className="text-anthracite-800/50">Submitted</span><br /><strong className="text-anthracite-950">{safeFormat(obj.closure_certificate.submitted, 'MMM dd, yyyy HH:mm')}</strong></div>
+                  <div><span className="text-anthracite-800/50">Verified</span><br /><strong className="text-anthracite-950">{safeFormat(obj.closure_certificate.verified, 'MMM dd, yyyy HH:mm')}</strong></div>
+                  <div><span className="text-anthracite-800/50">Evidence</span><br /><strong className="text-anthracite-950">{obj.closure_certificate.evidenceCount} items · {obj.closure_certificate.evidenceHashes.length} hashes</strong></div>
+                  <div className="col-span-2"><span className="text-anthracite-800/50">Evidence hashes (SHA-256)</span><br />{obj.closure_certificate.evidenceHashes.map((h, i) => (<div key={i} className="truncate">{h}</div>))}</div>
+                  <div className="col-span-2"><span className="text-anthracite-800/50">Closure hash</span><br /><strong className="text-anthracite-950">{obj.closure_certificate.hash}</strong></div>
+                  {obj.closure_certificate.auditHash && (
+                    <div className="col-span-2"><span className="text-anthracite-800/50">Audit chain hash</span><br /><strong className="text-anthracite-950">{obj.closure_certificate.auditHash}</strong></div>
+                  )}
+                </div>
               </div>
             </div>
           )}

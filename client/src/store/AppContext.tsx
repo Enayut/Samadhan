@@ -1,7 +1,17 @@
-import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+import React, { createContext, useContext, useState, useEffect, useCallback, ReactNode } from 'react';
 import { UserRole, MineSite, GovernanceObject, Alert } from '../types';
-import { MOCK_SITES, MOCK_GOVERNANCE_OBJECTS, INITIAL_ALERTS } from '../data/mockData';
-import { formatISO } from 'date-fns';
+import { demoApi, mapTaskToGovObject, DemoPipeline } from '../services/demoApi';
+
+// Role → user mapping mirrors shared/data/users.json so the desktop role
+// switcher acts as the same people the mobile app shows.
+const ROLE_USER_NAMES: Record<UserRole, string> = {
+  'Mine Manager': 'S. Singh',
+  'Mine Safety Officer': 'Ram Singh',
+  'Mine Engineer': 'P. Verma',
+  'Area Safety Officer': 'R. Sharma',
+  'Corporate Management': 'L. Gupta',
+  'Regulatory Authority': 'M. Inspector',
+};
 
 interface AppState {
   role: UserRole;
@@ -9,7 +19,9 @@ interface AppState {
   sites: MineSite[];
   govObjects: GovernanceObject[];
   alerts: Alert[];
+  pipeline: DemoPipeline;
   lastSync: Date;
+  loading: boolean;
 }
 
 interface AppContextType {
@@ -20,108 +32,114 @@ interface AppContextType {
   approveObject: (objectId: string) => void;
   resubmitObject: (objectId: string) => void;
   addAlert: (alert: Alert) => void;
+  resetDemo: () => Promise<void>;
+  refresh: () => Promise<void>;
 }
 
 const AppContext = createContext<AppContextType | undefined>(undefined);
 
+function mapStateResponse(data: Awaited<ReturnType<typeof demoApi.getState>>) {
+  return {
+    sites: (data.sites as unknown) as MineSite[],
+    govObjects: data.tasks.map(mapTaskToGovObject),
+    alerts: data.alerts,
+    pipeline: data.pipeline,
+  };
+}
+
 export function AppProvider({ children }: { children: ReactNode }) {
   const [state, setState] = useState<AppState>({
-    role: 'Mine Manager', // default to allow viewing
-    userName: 'S. Singh',
-    sites: MOCK_SITES,
-    govObjects: MOCK_GOVERNANCE_OBJECTS,
-    alerts: INITIAL_ALERTS,
-    lastSync: new Date()
+    role: 'Area Safety Officer', // demo presenter acts as the independent verifier
+    userName: ROLE_USER_NAMES['Area Safety Officer'],
+    sites: [],
+    govObjects: [],
+    alerts: [],
+    pipeline: { alerts: [] },
+    lastSync: new Date(),
+    loading: true,
   });
 
+  const applyDemoState = useCallback((data: Awaited<ReturnType<typeof demoApi.getState>>) => {
+    const mapped = mapStateResponse(data);
+    setState((prev) => ({
+      ...prev,
+      ...mapped,
+      lastSync: new Date(),
+      loading: false,
+    }));
+  }, []);
+
+  const refresh = useCallback(async () => {
+    try {
+      const data = await demoApi.getState();
+      applyDemoState(data);
+    } catch {
+      // demo server not reachable — keep last known state
+    }
+  }, [applyDemoState]);
+
+  useEffect(() => {
+    refresh();
+    const timer = setInterval(refresh, 3000);
+    const onFocus = () => refresh();
+    window.addEventListener('focus', onFocus);
+    return () => {
+      clearInterval(timer);
+      window.removeEventListener('focus', onFocus);
+    };
+  }, [refresh]);
+
   const setRole = (role: UserRole, userName: string) => {
-    setState(prev => ({ ...prev, role, userName }));
+    setState((prev) => ({ ...prev, role, userName }));
   };
 
   const updateGovObjectStatus = (id: string, newStatus: GovernanceObject['status']) => {
-    setState(prev => ({
+    setState((prev) => ({
       ...prev,
-      govObjects: prev.govObjects.map(obj => obj.id === id ? { ...obj, status: newStatus } : obj)
+      govObjects: prev.govObjects.map((obj) =>
+        obj.id === id ? { ...obj, status: newStatus } : obj,
+      ),
     }));
   };
 
   const rejectEvidence = (objectId: string, evidenceId: string, reason: string) => {
-    setState(prev => ({
-      ...prev,
-      govObjects: prev.govObjects.map(obj => {
-        if (obj.id === objectId) {
-          return {
-            ...obj,
-            status: 'In Progress', // Reopens the task
-            evidence_checklist: obj.evidence_checklist.map(ev => 
-              ev.id === evidenceId ? { ...ev, status: 'Flagged', rejectionReason: reason } : ev
-            )
-          };
-        }
-        return obj;
-      })
-    }));
-  };
-
-  const resubmitObject = (objectId: string) => {
-    setState(prev => ({
-      ...prev,
-      govObjects: prev.govObjects.map(obj => {
-        if (obj.id === objectId) {
-          return {
-            ...obj,
-            status: 'Submitted',
-            evidence_checklist: obj.evidence_checklist.map(ev => 
-              ev.status === 'Flagged' || ev.status === 'Missing' ? { ...ev, status: 'Present', timestamp: formatISO(new Date()), rejectionReason: undefined } : ev
-            )
-          };
-        }
-        return obj;
-      })
-    }));
+    demoApi.rejectEvidence(objectId, evidenceId, reason).then(applyDemoState).catch(() => undefined);
   };
 
   const approveObject = (objectId: string) => {
-    setState(prev => ({
-      ...prev,
-      govObjects: prev.govObjects.map(obj => {
-        if (obj.id === objectId) {
-          return {
-            ...obj,
-            status: 'Closed',
-            closed_at: formatISO(new Date()),
-            closure_certificate: {
-              closedAt: formatISO(new Date()),
-              hash: `0x${Math.random().toString(16).substr(2, 8)}...${Math.random().toString(16).substr(2, 4)}`,
-              ownerName: obj.owner.name,
-              verifierName: state.userName
-            }
-          };
-        }
-        return obj;
-      })
-    }));
+    demoApi.approve(objectId).then(applyDemoState).catch(() => undefined);
+  };
+
+  const resubmitObject = (objectId: string) => {
+    demoApi.resubmit(objectId).then(applyDemoState).catch(() => undefined);
   };
 
   const addAlert = (alert: Alert) => {
-    setState(prev => ({
+    setState((prev) => ({
       ...prev,
-      alerts: [alert, ...prev.alerts].slice(0, 50)
+      alerts: [alert, ...prev.alerts].slice(0, 50),
     }));
   };
 
-  useEffect(() => {
-    const timer = setInterval(() => {
-      setState(prev => ({
-        ...prev,
-        lastSync: new Date()
-      }));
-    }, 10000);
-    return () => clearInterval(timer);
-  }, []);
+  const resetDemo = async () => {
+    const data = await demoApi.reset();
+    applyDemoState(data);
+  };
 
   return (
-    <AppContext.Provider value={{ state, setRole, updateGovObjectStatus, rejectEvidence, approveObject, resubmitObject, addAlert }}>
+    <AppContext.Provider
+      value={{
+        state,
+        setRole,
+        updateGovObjectStatus,
+        rejectEvidence,
+        approveObject,
+        resubmitObject,
+        addAlert,
+        resetDemo,
+        refresh,
+      }}
+    >
       {children}
     </AppContext.Provider>
   );
@@ -134,3 +152,5 @@ export function useAppContext() {
   }
   return context;
 }
+
+export { ROLE_USER_NAMES };

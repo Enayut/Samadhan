@@ -13,7 +13,7 @@ export interface MineSite {
 export type Domain = 'Safety' | 'Environment' | 'Production' | 'Labour' | 'Contractor' | 'Grievance';
 export type Severity = 'Low' | 'Medium' | 'High' | 'Critical';
 
-export type GovStatus = 'Closed' | 'Submitted' | 'In Progress' | 'Overdue' | 'Escalated';
+export type GovStatus = 'Closed' | 'Submitted' | 'In Progress' | 'Rejected' | 'Overdue' | 'Escalated';
 
 export interface UserRef {
   name: string;
@@ -36,10 +36,20 @@ export interface EscalationEvent {
 }
 
 export interface ClosureCertificate {
-  closedAt: string;
-  hash: string;
+  taskId: string;
+  source: string;
   ownerName: string;
+  ownerRole: string;
   verifierName: string;
+  verifierRole: string;
+  created: string;
+  submitted: string;
+  verified: string;
+  evidenceCount: number;
+  evidenceHashes: string[];
+  hash: string;
+  auditHash?: string;
+  closedAt: string;
 }
 
 export interface GovernanceObject {
@@ -63,8 +73,24 @@ export interface GovernanceObject {
 
 export interface Alert {
   id: string;
-  timestamp: string;
+  timestamp?: string;
   message: string;
   type: 'info' | 'warning' | 'critical';
   siteId?: string;
+  kind?: string;
+  ref?: string;
+  alertNo?: string;
+  title?: string;
+  issued?: string;
+  severity?: string;
+  status?: string;
+  source?: string;
+  domain?: string;
+  ackDeadline?: string;
+  ackDeadlineDate?: string;
+  summary?: string;
+  paragraphs?: string[];
+  pdfUrl?: string;
+  pdfSource?: string;
+  pdfReplicaSvg?: string;
 }

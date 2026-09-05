@@ -1,7 +1,8 @@
 import React, { useState, useMemo } from 'react';
 import { useAppContext } from '../store/AppContext';
+import { useSearchParams } from 'react-router-dom';
 import { 
-  Filter, Search, ScanLine, ArrowRight
+  Filter, Search, ScanLine, ArrowRight, X
 } from 'lucide-react';
 import { format } from 'date-fns';
 import { DocumentScannerModal } from '../components/DocumentScannerModal';
@@ -12,25 +13,33 @@ const STATUS_COLORS: Record<GovStatus, string> = {
   'Closed': '#4C7A66',
   'Submitted': '#4A7C9B',
   'In Progress': '#F2A93B',
+  'Rejected': '#A93226',
   'Overdue': '#C1502E',
   'Escalated': '#C1502E'
 };
 
 export function ComplianceTracker() {
   const { state } = useAppContext();
+  const [searchParams, setSearchParams] = useSearchParams();
   const [searchTerm, setSearchTerm] = useState('');
   const [domainFilter, setDomainFilter] = useState<string>('all');
   const [scannerOpen, setScannerOpen] = useState(false);
   const [selectedObjId, setSelectedObjId] = useState<string | null>(null);
+
+  const mineFilter = searchParams.get('mine');
+  const mineName = mineFilter
+    ? state.sites.find((s) => s.id === mineFilter)?.name
+    : undefined;
 
   const filteredObjects = useMemo(() => {
     return state.govObjects.filter(obj => {
       const matchesSearch = obj.title.toLowerCase().includes(searchTerm.toLowerCase()) || 
                             obj.source.toLowerCase().includes(searchTerm.toLowerCase());
       const matchesDomain = domainFilter === 'all' || obj.domain === domainFilter;
-      return matchesSearch && matchesDomain;
+      const matchesMine = !mineFilter || obj.mineId === mineFilter;
+      return matchesSearch && matchesDomain && matchesMine;
     });
-  }, [state.govObjects, searchTerm, domainFilter]);
+  }, [state.govObjects, searchTerm, domainFilter, mineFilter]);
 
   const domains = ['Safety', 'Environment', 'Production', 'Labour', 'Contractor', 'Grievance'];
 
@@ -43,6 +52,20 @@ export function ComplianceTracker() {
         <div>
           <h1 className="text-3xl font-display font-bold text-anthracite-950">Governance & Compliance Register</h1>
           <p className="text-anthracite-800/80 mt-1">Universal register of all statutory obligations and governance items.</p>
+          {mineFilter && (
+            <div className="mt-3 inline-flex items-center gap-2 bg-anthracite-950 text-paper-50 rounded-lg px-3 py-1.5 text-xs font-bold">
+              <span className="uppercase tracking-wider">Mine filter:</span>
+              <span className="font-mono text-safety-amber">{mineFilter}</span>
+              <span className="text-paper-100/70">· {mineName || '—'}</span>
+              <button
+                onClick={() => setSearchParams({})}
+                className="ml-1 p-0.5 rounded hover:bg-anthracite-800 text-paper-100/70 hover:text-paper-50"
+                title="Clear mine filter"
+              >
+                <X size={13} />
+              </button>
+            </div>
+          )}
         </div>
         <div className="flex gap-3">
           <button 

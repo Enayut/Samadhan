@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { Task, ScreenId, SyncStatusType, QueueFilter, DomainType } from './types';
 import { INITIAL_TASKS } from './data/mockData';
+import { demoApi, mapTaskToMobile } from './services/demoApi';
 import { TopHeader } from './components/TopHeader';
 import { BottomNav } from './components/BottomNav';
 import { M0Home } from './components/M0Home';
@@ -18,6 +19,40 @@ export default function App() {
   const [queueDomainFilter, setQueueDomainFilter] = useState<DomainType | null>(null);
   const [syncStatus, setSyncStatus] = useState<SyncStatusType>('synced');
   const [isM3Open, setIsM3Open] = useState(false);
+
+  // Tasks that exist only on this device (e.g. field observations created in
+  // M3) must survive server polls, so we keep them separately and merge.
+  const [localOnlyTasks, setLocalOnlyTasks] = useState<Task[]>([]);
+
+  // ---------------------------------------------------------------------------
+  // Shared demo state sync.
+  // The demo server (client/server.ts) is the single source of truth. Polling +
+  // focus refetch keep this app in lockstep with the desktop app, so e.g. a
+  // desktop rejection appears here within a few seconds, and vice versa.
+  // ---------------------------------------------------------------------------
+  const loadFromServer = useCallback(async () => {
+    try {
+      const data = await demoApi.getState();
+      const serverTasks = data.tasks.map(mapTaskToMobile);
+      const localOnly = localOnlyTasks.filter(
+        (t) => !serverTasks.some((st) => st.id === t.id),
+      );
+      setTasks([...serverTasks, ...localOnly]);
+    } catch {
+      // Demo server unreachable — keep the local fallback seed.
+    }
+  }, [localOnlyTasks]);
+
+  useEffect(() => {
+    loadFromServer();
+    const timer = setInterval(loadFromServer, 3000);
+    const onFocus = () => loadFromServer();
+    window.addEventListener('focus', onFocus);
+    return () => {
+      clearInterval(timer);
+      window.removeEventListener('focus', onFocus);
+    };
+  }, [loadFromServer]);
 
   // Selected task object for M2
   const selectedTask = tasks.find((t) => t.id === selectedTaskId) || tasks[0];
@@ -45,14 +80,42 @@ export default function App() {
   };
 
   // Update Task State (from M2 Evidence Capture or updates)
+  // Applies the change locally (optimistic) and pushes it to the shared demo
+  // state. A status change to AWAITING_VERIFICATION is a formal submit; any
+  // other update is a draft (evidence attachments / notes) and does not move
+  // the workflow forward.
   const handleUpdateTask = (updatedTask: Task) => {
+    const previous = tasks.find((t) => t.id === updatedTask.id);
+    const isSubmit =
+      updatedTask.status === 'AWAITING_VERIFICATION' &&
+      previous &&
+      previous.status !== 'AWAITING_VERIFICATION';
+
     setTasks((prevTasks) =>
-      prevTasks.map((t) => (t.id === updatedTask.id ? updatedTask : t))
+      prevTasks.map((t) => (t.id === updatedTask.id ? updatedTask : t)),
     );
+
+    const payload = {
+      evidenceItems: updatedTask.evidenceItems,
+      remediationNotes: updatedTask.remediationNotes,
+    };
+
+    if (isSubmit) {
+      demoApi
+        .submitEvidence(updatedTask.id, payload.evidenceItems, payload.remediationNotes)
+        .then(() => loadFromServer())
+        .catch(() => undefined);
+    } else {
+      demoApi
+        .saveDraft(updatedTask.id, payload.evidenceItems, payload.remediationNotes)
+        .then(() => loadFromServer())
+        .catch(() => undefined);
+    }
   };
 
-  // Create new task from M3 Observation Intake
+  // Create new task from M3 Observation Intake (local-only, preserved across polls)
   const handleCreateObservationTask = (newTask: Task) => {
+    setLocalOnlyTasks((prev) => [newTask, ...prev]);
     setTasks((prev) => [newTask, ...prev]);
     setSelectedTaskId(newTask.id);
     setCurrentScreen('M1');
