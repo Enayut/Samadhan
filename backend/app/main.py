@@ -23,6 +23,12 @@ def create_app(settings: Settings | None = None) -> FastAPI:
 
     db = init_database(settings)
 
+    # Workflow store (mines/tasks/evidence/verification/audit) — the DB-backed
+    # source of truth for the five-mine demo. Mirrors shared/demo/store.ts.
+    from app.services.workflow.store import WorkflowStore
+
+    workflow = WorkflowStore(db)
+
     # Advisory retrieval (RAG) service — one shared instance per app, mounted on
     # app.state so routers and the lifespan can use it (see app/services/rag/README.md).
     from app.services.rag.service import RagService
@@ -40,6 +46,11 @@ def create_app(settings: Settings | None = None) -> FastAPI:
             await rag.ensure_ready()
         except Exception:  # noqa: BLE001 — a down DB must not prevent app boot
             logger.warning("rag: schema init deferred (database unavailable at startup?)", exc_info=True)
+        try:
+            await workflow.ensure_schema()
+            await workflow.seed_if_empty()
+        except Exception:  # noqa: BLE001 — demo must still boot without a DB
+            logger.warning("workflow: schema/seed deferred (database unavailable at startup?)", exc_info=True)
         yield
         await db.dispose()
         logger.info("stopped SAMAADHAN backend")
@@ -52,6 +63,7 @@ def create_app(settings: Settings | None = None) -> FastAPI:
     )
 
     app.state.rag = rag
+    app.state.workflow = workflow
 
     # CORS: wide open in development so the existing Vite desktop + mobile app
     # keeps working without a separate proxy. Tighten before shipping.
@@ -65,12 +77,14 @@ def create_app(settings: Settings | None = None) -> FastAPI:
         expose_headers=["*"],
     )
 
-    # Routes — start with health + rag; expand as the build plan lands each phase.
+    # Routes — health + rag + the five-mine workflow API.
     from app.api.routes.health import health_router_builder
     from app.api.routes.rag import rag_router_builder
+    from app.api.routes.workflow import workflow_router
 
     app.include_router(health_router_builder(db))
     app.include_router(rag_router_builder)
+    app.include_router(workflow_router)
 
     @app.get("/", include_in_schema=False)
     async def root():
@@ -79,6 +93,8 @@ def create_app(settings: Settings | None = None) -> FastAPI:
             "environment": settings.environment,
             "api": "/docs",
             "health": "/api/health",
+            "state": "/api/state",
+            "reset": "POST /api/reset",
             "rag": "/api/rag/status",
         }
 

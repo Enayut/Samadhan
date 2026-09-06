@@ -1,3 +1,5 @@
+> **[PARTIALLY SUPERSEDED]** Sections describing the 61-mine fan-out story are retired; the five-mine model lives in `shared/data/` + `backend/app/services/workflow/`. RAG and reset sections remain valid.
+
 # SAMAADHAN — Backend Implementation Plan
 
 > **Phase:** Design & implementation plan for the *real* backend that replaces the demo seam.

@@ -10,6 +10,7 @@ import {
   ShieldCheck,
   CheckCircle2,
   Clock,
+  AlertTriangle,
 } from 'lucide-react';
 
 interface M0HomeProps {
@@ -27,12 +28,20 @@ export const M0Home: React.FC<M0HomeProps> = ({
 }) => {
   const [detailTask, setDetailTask] = useState<Task | null>(null);
 
-  // Find the critical hero task
-  const heroTask = tasks.find((t) => t.isCriticalDoThisNext && t.status !== 'VERIFIED');
+  // Regulatory rejection → ACTION REQUIRED banner (top of home)
+  const rejectedTasks = tasks.filter(
+    (t) => (t.status === 'REJECTED' || t.evidenceItems.some((ev) => ev.status === 'rejected')) &&
+      t.status !== 'VERIFIED'
+  );
+
+  // Find the critical hero task (rejections take priority — correction first)
+  const heroTask = rejectedTasks[0] ?? tasks.find((t) => t.isCriticalDoThisNext && t.status !== 'VERIFIED');
 
   // Compute key summary metrics (clean, low-density)
   const pendingTasks = tasks.filter(
-    (t) => t.status !== 'VERIFIED' && t.status !== 'AWAITING_VERIFICATION'
+    (t) =>
+      !['VERIFIED', 'AWAITING_VERIFICATION', 'ASSIGNED'].includes(t.status) &&
+      !rejectedTasks.includes(t)
   );
   const overdueCount = tasks.filter(
     (t) => t.urgencyGroup === 'OVERDUE' || t.hoursRemaining < 0
@@ -41,6 +50,35 @@ export const M0Home: React.FC<M0HomeProps> = ({
 
   return (
     <div className="w-full pb-28 px-4 pt-4 select-none space-y-6">
+      {/* 0. ACTION REQUIRED — regulatory rejection banner */}
+      {rejectedTasks.length > 0 && (
+        <section aria-label="Action required">
+          <button
+            type="button"
+            onClick={() => onSelectTask(rejectedTasks[0].id)}
+            className="w-full text-left bg-red-50 rounded-[16px] border border-red-200 p-5 shadow-xs space-y-2 active:scale-[0.99] transition-all"
+          >
+            <div className="flex items-center gap-2">
+              <AlertTriangle className="w-4.5 h-4.5 text-[#E53E3E]" />
+              <span className="text-xs font-extrabold tracking-widest uppercase text-[#E53E3E]">
+                Action Required · Evidence returned
+              </span>
+            </div>
+            <p className="text-sm font-bold text-[#1A202C] leading-snug">
+              {rejectedTasks[0].shortTitle || rejectedTasks[0].title}
+            </p>
+            {rejectedTasks[0].rejectionReason && (
+              <p className="text-xs text-[#E53E3E] font-medium leading-relaxed">
+                Verifier: {rejectedTasks[0].rejectionReason}
+              </p>
+            )}
+            <p className="text-[11px] text-[#718096] flex items-center gap-1">
+              Tap to correct and resubmit <ArrowRight className="w-3 h-3" />
+            </p>
+          </button>
+        </section>
+      )}
+
       {/* 1. DOMINANT HERO CARD ("DO THIS NEXT") */}
       <section aria-label="Hero action">
         {heroTask ? (
@@ -123,7 +161,7 @@ export const M0Home: React.FC<M0HomeProps> = ({
           <div className="grid grid-cols-2 gap-4 py-1 border-y border-[#E2E8F0]">
             <div>
               <div className="text-2xl font-extrabold text-[#1A202C] font-mono tracking-tight">
-                {pendingTasks.length}
+                {pendingTasks.length + rejectedTasks.length}
               </div>
               <div className="text-xs text-[#718096] font-medium mt-0.5">
                 Pending execution
@@ -159,8 +197,8 @@ export const M0Home: React.FC<M0HomeProps> = ({
               <ShieldCheck className="w-4 h-4" />
             </div>
             <div>
-              <div className="font-bold text-[#1A202C]">Shift III Active</div>
-              <div className="text-[11px] text-[#718096]">Pit 4 Bench 2 · Dhanbad Division</div>
+              <div className="font-bold text-[#1A202C]">Shift I Active</div>
+              <div className="text-[11px] text-[#718096]">Bench 3B · Piparwar OCP · Chatra</div>
             </div>
           </div>
           <div className="flex items-center gap-1.5 font-mono text-[11px] text-[#38A169] font-bold">

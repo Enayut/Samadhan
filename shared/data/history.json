@@ -1,50 +1,50 @@
 {
-  "note": "SIMULATED historical similarity corpus. In production this is populated from closed governance objects via vector embeddings (Pinecone / pg_trgm). Here it is hardcoded JSON so the recurrence scene is deterministic.",
-  "total": 120,
+  "note": "Organizational-memory seed records (advisory, demo). Labels mirror the backend RAG DEFAULT_MEMORY set. These are demo records — NOT real compliance events.",
+  "total": 5,
   "items": [
     {
-      "id": "HIST-2019-014",
+      "id": "MEM-ASHOKA-SLOPE-FY2023",
       "mineId": "MINE-002",
-      "year": 2019,
-      "title": "Dumper crossed OB dump-edge berm during dumping",
-      "causeCodes": ["dump-edge", "berm-inadequate", "no-safe-limit"],
-      "closureDays": 21,
-      "closureStatus": "Closed late"
-    },
-    {
-      "id": "HIST-2021-036",
-      "mineId": "MINE-014",
-      "year": 2021,
-      "title": "Dump-edge berm breach — dumper toppled at tipping point",
-      "causeCodes": ["dump-edge", "berm-inadequate", "operator-not-briefed"],
-      "closureDays": 28,
-      "closureStatus": "Closed late"
-    },
-    {
-      "id": "HIST-2023-058",
-      "mineId": "MINE-038",
       "year": 2023,
-      "title": "Inadequate stop-blocks at OB dump edge",
-      "causeCodes": ["berm-inadequate", "dump-edge"],
-      "closureDays": 14,
-      "closureStatus": "Closed on time"
-    },
-    {
-      "id": "HIST-2020-021",
-      "mineId": "MINE-009",
-      "year": 2020,
-      "title": "Berm height below statutory minimum at dump edge",
-      "causeCodes": ["berm-inadequate"],
-      "closureDays": 19,
+      "title": "Weekly slope monitoring (highwall) — Ashoka OCP",
+      "causeCodes": ["SLOPE", "WEEKLY", "HIGHWALL", "EXTENSOMETER", "DISPLACEMENT"],
+      "closureDays": 12,
       "closureStatus": "Closed late"
     },
     {
-      "id": "HIST-2022-047",
-      "mineId": "MINE-027",
-      "year": 2022,
-      "title": "Operator briefing register not maintained",
-      "causeCodes": ["operator-not-briefed"],
-      "closureDays": 12,
+      "id": "MEM-MAGADH-SLOPE-FY2024",
+      "mineId": "MINE-003",
+      "year": 2024,
+      "title": "Weekly slope monitoring (highwall) — Magadh OCP",
+      "causeCodes": ["SLOPE", "WEEKLY", "HIGHWALL", "EXTENSOMETER", "DISPLACEMENT"],
+      "closureDays": 9,
+      "closureStatus": "Closed late"
+    },
+    {
+      "id": "MEM-PIPARWAR-SLOPE-FY2024",
+      "mineId": "MINE-001",
+      "year": 2024,
+      "title": "Weekly slope monitoring — Piparwar Bench 3B",
+      "causeCodes": ["SLOPE", "WEEKLY", "HIGHWALL", "EXTENSOMETER", "DISPLACEMENT"],
+      "closureDays": 0,
+      "closureStatus": "Closed on time (41 weeks)"
+    },
+    {
+      "id": "MEM-AMRAPALI-DUST-FY2024",
+      "mineId": "MINE-005",
+      "year": 2024,
+      "title": "Haul-road dust suppression verification — Amrapali OCP",
+      "causeCodes": ["DUST", "PM10", "SPRINKLER", "HAULROAD", "WEEKLY"],
+      "closureDays": 4,
+      "closureStatus": "Closed late"
+    },
+    {
+      "id": "MEM-RAYBACHRA-CLRA-FY2025",
+      "mineId": "MINE-004",
+      "year": 2025,
+      "title": "CLRA licence renewal documentation — Ray-Bachra UG",
+      "causeCodes": ["CLRA", "RENEWAL", "LABOUR", "CONTRACTOR"],
+      "closureDays": 0,
       "closureStatus": "Closed on time"
     }
   ]

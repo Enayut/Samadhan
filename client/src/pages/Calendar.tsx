@@ -19,36 +19,27 @@ import {
 import { CalendarDays, ChevronLeft, ChevronRight, Clock, AlertTriangle, ArrowRight } from 'lucide-react';
 import { useAppContext } from '../store/AppContext';
 import { GovernanceObjectModal } from '../components/GovernanceObjectModal';
-import { GovernanceObject, GovStatus, Alert } from '../types';
-
-// Status palette matches the rest of the app (Dashboard STATUS_COLORS).
-const STATUS_COLORS: Record<GovStatus, string> = {
-  'Closed': '#4C7A66',
-  'Submitted': '#4A7C9B',
-  'In Progress': '#F2A93B',
-  'Rejected': '#A93226',
-  'Overdue': '#C1502E',
-  'Escalated': '#C1502E',
-};
+import { STATUS_COLOR, STATUS_LABEL, DOMAIN_LABEL } from '../services/demoApi';
+import type { Task, Alert } from '../../../shared/demo/types';
 
 const SOURCE_COLORS: Record<string, string> = {
   DGMS: '#C1502E',
   CSIS: '#4A7C9B',
   SENSOR: '#A93226',
-  CMSMS: '#4C7A66',
   EC: '#F2A93B',
   AUDIT: '#6B7280',
-  GRIEVANCE: '#6B7280',
 };
 
-// Order matters within a day cell: urgent statuses float to the top.
+// Lower = floats to the top of a day cell.
 const STATUS_PRIORITY: Record<string, number> = {
-  'Overdue': 0,
-  'Escalated': 0,
-  'Rejected': 1,
-  'In Progress': 2,
-  'Submitted': 3,
-  'Closed': 4,
+  ESCALATED: 0,
+  OVERDUE: 0,
+  REJECTED: 1,
+  AWAITING_VERIFICATION: 2,
+  IN_PROGRESS: 3,
+  ASSIGNED: 3,
+  PROPOSED: 4,
+  VERIFIED: 5,
 };
 
 interface CalendarItem {
@@ -59,40 +50,38 @@ interface CalendarItem {
   color: string;
   meta: string;
   status?: string;
-  obj?: GovernanceObject;
+  task?: Task;
   alert?: Alert;
 }
 
 const WEEKDAYS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
-
 const MAX_CHIPS_PER_CELL = 3;
 
 export function CalendarPage() {
   const { state } = useAppContext();
   const navigate = useNavigate();
   const [month, setMonth] = useState(() => startOfMonth(new Date()));
-  const [selectedObjId, setSelectedObjId] = useState<string | null>(null);
+  const [selectedTaskId, setSelectedTaskId] = useState<string | null>(null);
 
   const today = startOfDay(new Date());
-  const monthKey = format(month, 'yyyy-MM');
 
   const items = useMemo<CalendarItem[]>(() => {
     const list: CalendarItem[] = [];
-    for (const obj of state.govObjects) {
-      const d = new Date(obj.deadline);
+    for (const t of state.tasks) {
+      const d = new Date(t.deadline);
       if (!isValid(d)) continue;
       list.push({
         kind: 'task',
-        id: obj.id,
-        title: obj.title,
+        id: t.id,
+        title: t.shortTitle || t.title,
         date: startOfDay(d),
-        color: STATUS_COLORS[obj.status] || '#6B7280',
-        meta: obj.mineId,
-        status: obj.status,
-        obj,
+        color: STATUS_COLOR[t.status] || '#6B7280',
+        meta: `${t.mineId} · ${DOMAIN_LABEL[t.domain] || t.domain}`,
+        status: t.status,
+        task: t,
       });
     }
-    for (const entry of state.pipeline.alerts) {
+    for (const entry of state.pipeline.documents) {
       const a = entry.alert;
       if (!a.ackDeadlineDate) continue;
       const d = new Date(a.ackDeadlineDate);
@@ -108,12 +97,12 @@ export function CalendarPage() {
       });
     }
     return list.sort((x, y) => {
-      const px = x.kind === 'task' ? STATUS_PRIORITY[x.status ?? ''] ?? 3 : 3;
-      const py = y.kind === 'task' ? STATUS_PRIORITY[y.status ?? ''] ?? 3 : 3;
+      const px = x.kind === 'task' ? STATUS_PRIORITY[x.status ?? ''] ?? 5 : 6;
+      const py = y.kind === 'task' ? STATUS_PRIORITY[y.status ?? ''] ?? 5 : 6;
       if (px !== py) return px - py;
       return x.title.localeCompare(y.title);
     });
-  }, [state.govObjects, state.pipeline.alerts]);
+  }, [state.tasks, state.pipeline.documents]);
 
   const itemsByDay = useMemo(() => {
     const map = new Map<string, CalendarItem[]>();
@@ -135,36 +124,28 @@ export function CalendarPage() {
     [month],
   );
 
-  // Agenda slices (tasks only; alert acks are listed separately).
-  const overdue = items.filter(
-    (it) => it.kind === 'task' && it.status !== 'Closed' && isBefore(it.date, today),
+  const openTasks = items.filter((it) => it.kind === 'task' && it.status !== 'VERIFIED');
+  const overdue = openTasks.filter((it) => isBefore(it.date, today));
+  const next7 = openTasks.filter(
+    (it) => !isBefore(it.date, today) && isBefore(it.date, addDays(today, 8)),
   );
-  const next7 = items.filter(
-    (it) =>
-      it.kind === 'task' && it.status !== 'Closed' && !isBefore(it.date, today) && isBefore(it.date, addDays(today, 8)),
+  const next30 = openTasks.filter(
+    (it) => !isBefore(it.date, addDays(today, 7)) && isBefore(it.date, addDays(today, 31)),
   );
-  const next30 = items.filter(
-    (it) =>
-      it.kind === 'task' && it.status !== 'Closed' && !isBefore(it.date, addDays(today, 7)) && isBefore(it.date, addDays(today, 31)),
-  );
-  const alertAcks = items
-    .filter((it) => it.kind === 'alert')
-    .sort((a, b) => a.date.getTime() - b.date.getTime());
+  const alertAcks = items.filter((it) => it.kind === 'alert').sort((a, b) => a.date.getTime() - b.date.getTime());
 
   const monthDeadlines = items.filter((it) => isSameMonth(it.date, month)).length;
 
   return (
     <div className="space-y-6 animate-in fade-in duration-500">
-      <GovernanceObjectModal objectId={selectedObjId} onClose={() => setSelectedObjId(null)} />
+      <GovernanceObjectModal objectId={selectedTaskId} onClose={() => setSelectedTaskId(null)} />
 
       {/* Header */}
       <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-4">
         <div>
-          <h1 className="text-3xl font-display font-bold text-anthracite-950">
-            Compliance Calendar
-          </h1>
+          <h1 className="text-3xl font-display font-bold text-anthracite-950">Compliance Calendar</h1>
           <p className="text-anthracite-800/80 mt-1">
-            Every governance obligation deadline and alert acknowledgment, on one timeline.
+            Every obligation deadline and document acknowledgment, on one timeline.
           </p>
         </div>
         <div className="flex items-center gap-3">
@@ -205,8 +186,8 @@ export function CalendarPage() {
               <CalendarDays size={16} className="text-steel" /> {format(month, 'MMMM yyyy')}
             </div>
             <div className="flex items-center gap-4 text-[11px] font-bold text-anthracite-800/70">
-              <span className="flex items-center gap-1"><span className="w-2 h-2 rounded-full bg-steel inline-block" /> {monthDeadlines} deadlines</span>
-              <span className="flex items-center gap-1"><span className="w-2 h-2 rounded-full bg-safety-amber inline-block" /> {alertAcks.length} alert acks</span>
+              <span className="flex items-center gap-1"><span className="w-2 h-2 rounded-full bg-steel inline-block" /> {monthDeadlines} items</span>
+              <span className="flex items-center gap-1"><span className="w-2 h-2 rounded-full bg-safety-amber inline-block" /> {alertAcks.length} doc acks</span>
             </div>
           </div>
 
@@ -249,9 +230,9 @@ export function CalendarPage() {
                       <button
                         key={`${it.kind}-${it.id}`}
                         onClick={() =>
-                          it.kind === 'task' ? setSelectedObjId(it.id) : navigate('/intake')
+                          it.kind === 'task' ? setSelectedTaskId(it.id) : navigate('/intake')
                         }
-                        title={`${it.title} · ${it.meta}${it.kind === 'task' ? ` · ${it.status}` : ''}`}
+                        title={`${it.title} · ${it.meta}${it.kind === 'task' ? ` · ${STATUS_LABEL[it.status ?? '']}` : ''}`}
                         className="w-full flex items-center gap-1.5 text-left px-1.5 py-0.5 rounded text-[10px] font-medium text-anthracite-800 hover:bg-black/5 transition-colors truncate"
                       >
                         <span className="w-1.5 h-1.5 rounded-full shrink-0" style={{ backgroundColor: it.color }} />
@@ -272,35 +253,32 @@ export function CalendarPage() {
           {/* Legend */}
           <div className="px-5 py-3 border-t border-paper-100 bg-paper-50 flex flex-wrap items-center gap-x-4 gap-y-1">
             <span className="text-[10px] font-bold uppercase tracking-wider text-anthracite-800/70">Legend</span>
-            {(Object.keys(STATUS_COLORS) as GovStatus[]).map((s) => (
-              <span key={s} className="flex items-center gap-1.5 text-[11px] text-anthracite-800/80">
-                <span className="w-2 h-2 rounded-full" style={{ backgroundColor: STATUS_COLORS[s] }} /> {s}
+            {Object.entries(STATUS_LABEL).map(([status, label]) => (
+              <span key={status} className="flex items-center gap-1.5 text-[11px] text-anthracite-800/80">
+                <span className="w-2 h-2 rounded-full" style={{ backgroundColor: STATUS_COLOR[status] }} /> {label}
               </span>
             ))}
-            <span className="flex items-center gap-1.5 text-[11px] text-anthracite-800/80">
-              <span className="w-2 h-2 rounded-full bg-safety-amber/80" /> Alert ack deadline
-            </span>
           </div>
         </div>
 
         {/* AGENDA SIDEBAR */}
         <div className="space-y-4">
-          {/* Alert ack deadlines */}
+          {/* Document ack deadlines */}
           <div className="bg-white rounded-xl shadow-sm border border-paper-100 overflow-hidden">
             <div className="flex items-center justify-between px-4 py-3 border-b border-paper-100 bg-paper-50">
               <div className="flex items-center gap-2 text-sm font-bold text-anthracite-950">
-                <AlertTriangle size={14} className="text-safety-amber" /> Alert Ack Deadlines
+                <AlertTriangle size={14} className="text-safety-amber" /> Document Ack Deadlines
               </div>
               <span className="text-[10px] font-bold text-anthracite-800/60">{alertAcks.length}</span>
             </div>
             <div className="divide-y divide-paper-100">
               {alertAcks.length === 0 && (
-                <p className="px-4 py-3 text-xs text-anthracite-800/60">No alerts with deadlines.</p>
+                <p className="px-4 py-3 text-xs text-anthracite-800/60">No documents with ack deadlines.</p>
               )}
               {alertAcks.map((it) => {
                 const a = it.alert!;
                 const daysLeft = Math.ceil((it.date.getTime() - today.getTime()) / 86400000);
-                const overdue = daysLeft < 0;
+                const isOverdue = daysLeft < 0;
                 return (
                   <button
                     key={it.id}
@@ -323,10 +301,10 @@ export function CalendarPage() {
                     </div>
                     <span
                       className={`shrink-0 text-[10px] font-bold ${
-                        overdue ? 'text-[#C1502E]' : 'text-anthracite-800/60'
+                        isOverdue ? 'text-[#C1502E]' : 'text-anthracite-800/60'
                       }`}
                     >
-                      {overdue ? `${Math.abs(daysLeft)}d overdue` : `${daysLeft}d left`}
+                      {isOverdue ? `${Math.abs(daysLeft)}d overdue` : `${daysLeft}d left`}
                     </span>
                   </button>
                 );
@@ -334,9 +312,9 @@ export function CalendarPage() {
             </div>
           </div>
 
-          {/* Governance deadlines */}
+          {/* Obligation deadlines */}
           {[
-            { title: 'Overdue', list: overdue, empty: 'Nothing overdue. 🎉' },
+            { title: 'Overdue', list: overdue, empty: 'Nothing overdue — the area is on cadence.' },
             { title: 'Next 7 Days', list: next7, empty: 'Nothing due in the next week.' },
             { title: 'Next 8–30 Days', list: next30, empty: 'Nothing further due.' },
           ].map((section) => (
@@ -355,7 +333,7 @@ export function CalendarPage() {
                 {section.list.slice(0, 6).map((it) => (
                   <button
                     key={it.id}
-                    onClick={() => setSelectedObjId(it.id)}
+                    onClick={() => setSelectedTaskId(it.id)}
                     className="w-full text-left px-4 py-2.5 hover:bg-paper-50 transition-colors flex items-center gap-3"
                   >
                     <div
@@ -370,7 +348,7 @@ export function CalendarPage() {
                     </div>
                     <div className="min-w-0 flex-1">
                       <p className="text-xs font-medium text-anthracite-950 truncate">{it.title}</p>
-                      <p className="text-[10px] text-anthracite-800/60 truncate">{it.meta} · {it.status}</p>
+                      <p className="text-[10px] text-anthracite-800/60 truncate">{it.meta} · {STATUS_LABEL[it.status ?? '']}</p>
                     </div>
                     <ArrowRight size={13} className="shrink-0 text-anthracite-800/30" />
                   </button>

@@ -1,69 +1,71 @@
 import React, { createContext, useContext, useState, useEffect, useCallback, ReactNode } from 'react';
-import { UserRole, MineSite, GovernanceObject, Alert } from '../types';
-import { demoApi, mapTaskToGovObject, DemoPipeline } from '../services/demoApi';
+import type { Alert, MineSite, ObligationRule, Task } from '../../../shared/demo/types';
+import { demoApi, DemoStateResponse } from '../services/demoApi';
 
-// Role → user mapping mirrors shared/data/users.json so the desktop role
-// switcher acts as the same people the mobile app shows.
-const ROLE_USER_NAMES: Record<UserRole, string> = {
-  'Mine Manager': 'S. Singh',
-  'Mine Safety Officer': 'Ram Singh',
-  'Mine Engineer': 'P. Verma',
-  'Area Safety Officer': 'R. Sharma',
-  'Corporate Management': 'L. Gupta',
-  'Regulatory Authority': 'M. Inspector',
+// The desktop has exactly two working personas + a monitor mode:
+// - Area Manager          → reviews requirements, publishes obligations, monitors all five mines
+// - Regulatory Official   → ingests documents, independently verifies evidence (never the owner)
+export type Persona = 'AREA_MANAGER' | 'REGULATORY_OFFICIAL';
+
+export const PERSONA_LABEL: Record<Persona, string> = {
+  AREA_MANAGER: 'Area Manager — North Karanpura',
+  REGULATORY_OFFICIAL: 'Regulatory Official — Area oversight',
 };
 
 interface AppState {
-  role: UserRole;
-  userName: string;
+  persona: Persona;
   sites: MineSite[];
-  govObjects: GovernanceObject[];
+  tasks: Task[];
   alerts: Alert[];
-  pipeline: DemoPipeline;
+  rules: ObligationRule[];
+  pipeline: DemoStateResponse['pipeline'];
+  audit: DemoStateResponse['audit'];
   lastSync: Date;
   loading: boolean;
 }
 
 interface AppContextType {
   state: AppState;
-  setRole: (role: UserRole, userName: string) => void;
-  updateGovObjectStatus: (id: string, newStatus: GovernanceObject['status']) => void;
-  rejectEvidence: (objectId: string, evidenceId: string, reason: string) => void;
-  approveObject: (objectId: string) => void;
-  resubmitObject: (objectId: string) => void;
-  addAlert: (alert: Alert) => void;
+  persona: Persona;
+  setPersona: (persona: Persona) => void;
+  // document pipeline
+  processDocument: (documentId: string) => Promise<void>;
+  determineApplicability: (documentId: string) => Promise<void>;
+  // manager
+  publishTask: (taskId: string, adjustments?: Record<string, unknown>) => Promise<void>;
+  // verification
+  rejectEvidence: (taskId: string, evidenceId: string, reason: string) => Promise<void>;
+  approveTask: (taskId: string) => Promise<void>;
+  // scheduler (recurring compliance)
+  schedulerTick: () => Promise<void>;
   resetDemo: () => Promise<void>;
   refresh: () => Promise<void>;
 }
 
 const AppContext = createContext<AppContextType | undefined>(undefined);
 
-function mapStateResponse(data: Awaited<ReturnType<typeof demoApi.getState>>) {
-  return {
-    sites: (data.sites as unknown) as MineSite[],
-    govObjects: data.tasks.map(mapTaskToGovObject),
-    alerts: data.alerts,
-    pipeline: data.pipeline,
-  };
-}
-
 export function AppProvider({ children }: { children: ReactNode }) {
   const [state, setState] = useState<AppState>({
-    role: 'Area Safety Officer', // demo presenter acts as the independent verifier
-    userName: ROLE_USER_NAMES['Area Safety Officer'],
+    persona: 'AREA_MANAGER', // demo opens on the area manager's monitor
     sites: [],
-    govObjects: [],
+    tasks: [],
     alerts: [],
-    pipeline: { alerts: [] },
+    rules: [],
+    pipeline: { documents: [] },
+    audit: [],
     lastSync: new Date(),
     loading: true,
   });
 
-  const applyDemoState = useCallback((data: Awaited<ReturnType<typeof demoApi.getState>>) => {
-    const mapped = mapStateResponse(data);
+  const applyDemoState = useCallback((data: DemoStateResponse) => {
     setState((prev) => ({
       ...prev,
-      ...mapped,
+      sites: data.sites ?? [],
+      tasks: data.tasks ?? [],
+      alerts: data.alerts ?? [],
+      rules: data.rules ?? [],
+      pipeline: data.pipeline ?? { documents: [] },
+      audit: data.audit ?? [],
       lastSync: new Date(),
       loading: false,
     }));
@@ -89,53 +91,72 @@ export function AppProvider({ children }: { children: ReactNode }) {
     };
   }, [refresh]);
 
-  const setRole = (role: UserRole, userName: string) => {
-    setState((prev) => ({ ...prev, role, userName }));
-  };
+  const setPersona = (persona: Persona) => setState((prev) => ({ ...prev, persona }));
 
-  const updateGovObjectStatus = (id: string, newStatus: GovernanceObject['status']) => {
-    setState((prev) => ({
-      ...prev,
-      govObjects: prev.govObjects.map((obj) =>
-        obj.id === id ? { ...obj, status: newStatus } : obj,
-      ),
-    }));
-  };
+  const processDocument = useCallback(
+    async (documentId: string) => {
+      const data = await demoApi.processDocument(documentId);
+      applyDemoState(data);
+    },
+    [applyDemoState],
+  );
 
-  const rejectEvidence = (objectId: string, evidenceId: string, reason: string) => {
-    demoApi.rejectEvidence(objectId, evidenceId, reason).then(applyDemoState).catch(() => undefined);
-  };
+  const determineApplicability = useCallback(
+    async (documentId: string) => {
+      const data = await demoApi.determineApplicability(documentId);
+      applyDemoState(data);
+    },
+    [applyDemoState],
+  );
 
-  const approveObject = (objectId: string) => {
-    demoApi.approve(objectId).then(applyDemoState).catch(() => undefined);
-  };
+  const publishTask = useCallback(
+    async (taskId: string, adjustments?: Record<string, unknown>) => {
+      const data = await demoApi.publishTask(taskId, adjustments);
+      applyDemoState(data);
+    },
+    [applyDemoState],
+  );
 
-  const resubmitObject = (objectId: string) => {
-    demoApi.resubmit(objectId).then(applyDemoState).catch(() => undefined);
-  };
+  const rejectEvidence = useCallback(
+    async (taskId: string, evidenceId: string, reason: string) => {
+      const data = await demoApi.rejectEvidence(taskId, evidenceId, reason);
+      applyDemoState(data);
+    },
+    [applyDemoState],
+  );
 
-  const addAlert = (alert: Alert) => {
-    setState((prev) => ({
-      ...prev,
-      alerts: [alert, ...prev.alerts].slice(0, 50),
-    }));
-  };
+  const approveTask = useCallback(
+    async (taskId: string) => {
+      const data = await demoApi.approve(taskId);
+      applyDemoState(data);
+    },
+    [applyDemoState],
+  );
 
-  const resetDemo = async () => {
+  const schedulerTick = useCallback(async () => {
+    const data = await demoApi.schedulerTick();
+    applyDemoState(data.state);
+  }, [applyDemoState]);
+
+  const resetDemo = useCallback(async () => {
     const data = await demoApi.reset();
     applyDemoState(data);
-  };
+  }, [applyDemoState]);
+
+  const persona = state.persona;
 
   return (
     <AppContext.Provider
       value={{
         state,
-        setRole,
-        updateGovObjectStatus,
+        persona,
+        setPersona,
+        processDocument,
+        determineApplicability,
+        publishTask,
         rejectEvidence,
-        approveObject,
-        resubmitObject,
-        addAlert,
+        approveTask,
+        schedulerTick,
         resetDemo,
         refresh,
       }}
@@ -152,5 +173,3 @@ export function useAppContext() {
   }
   return context;
 }
-
-export { ROLE_USER_NAMES };

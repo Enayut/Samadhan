@@ -1,3 +1,5 @@
+> **[DEPRECATED — historical planning document]** This describes the retired 61-mine/183-obligation story. The current spec is `DEMO_FLOW.md` (five mines, North Karanpura). Kept for history only.
+
 # 07 — SAMAADHAN: Final Solution (From-Scratch Redesign)
 
 **PS 26024 — AI-Based Smart Governance and Compliance Monitoring System for Coal Mines**

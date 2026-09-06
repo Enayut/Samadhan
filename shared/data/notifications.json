@@ -1,15 +1,15 @@
 [
   {
     "id": "ntf-1",
-    "template": "task-assigned",
-    "message": "New governance task assigned to {owner} at {mine}: {title}. Deadline {deadline}.",
+    "template": "task-published",
+    "message": "Obligation published to {owner} at {mine}: {title}. Deadline {deadline}.",
     "targetRole": "Mine Safety Officer"
   },
   {
     "id": "ntf-2",
     "template": "evidence-submitted",
     "message": "Evidence submitted by {owner} for {taskId}. Awaiting verification by {verifier}.",
-    "targetRole": "Area Safety Officer"
+    "targetRole": "Regulatory Official"
   },
   {
     "id": "ntf-3",
@@ -20,13 +20,13 @@
   {
     "id": "ntf-4",
     "template": "task-verified",
-    "message": "{taskId} verified and closed by {verifier}. Closure certificate generated.",
+    "message": "{taskId} verified and closed by {verifier}. Closure record generated.",
     "targetRole": "Mine Safety Officer"
   },
   {
     "id": "ntf-5",
     "template": "escalated",
     "message": "{taskId} escalated to {level} — {target} notified. Owner: {owner}.",
-    "targetRole": "Corporate Management"
+    "targetRole": "Area Manager"
   }
 ]

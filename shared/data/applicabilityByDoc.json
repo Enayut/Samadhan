@@ -1,0 +1,67 @@
+{
+  "note": "DETERMINISTIC per-document applicability results (rule registry output, NOT AI). The demo shows these after the manager confirms the AI extraction. deepMineIds lists the mines in this area that match; filteredOut lists mines in this area correctly excluded with reasons.",
+  "DGMS/2026/TC-27": {
+    "ruleId": "OBL-SLOPE-WEEKLY",
+    "applicableMineIds": ["MINE-001", "MINE-002", "MINE-003"],
+    "filteredOut": [
+      { "mineId": "MINE-004", "reason": "Underground mine — no high-wall benches" },
+      { "mineId": "MINE-005", "reason": "Max high-wall 34 m — below 30 m criterion is met; included only where instrumented (config: not in current instrumentation register)" }
+    ],
+    "obligationsCreated": 3,
+    "cadence": "WEEKLY",
+    "summary": "Rule OBL-SLOPE-WEEKLY: 3 of 5 mines apply (OC, high-wall > 30 m). Ray-Bachra UG correctly filtered — no high-wall benches.",
+    "mineTasks": {
+      "MINE-001": ["TASK-SLOPE-WK-2026-W36"],
+      "MINE-002": ["TASK-SLOPE-WK-2026-W36-M002"],
+      "MINE-003": ["TASK-SLOPE-WK-2026-W36-M003"]
+    }
+  },
+  "EC/2023/882": {
+    "ruleId": "OBL-DUST-WEEKLY",
+    "applicableMineIds": ["MINE-001", "MINE-002", "MINE-003", "MINE-005"],
+    "filteredOut": [{ "mineId": "MINE-004", "reason": "Underground mine — no EC haul-road condition" }],
+    "obligationsCreated": 1,
+    "cadence": "WEEKLY",
+    "summary": "Rule OBL-DUST-WEEKLY: 4 OC mines apply; this week's instance seeded at Ashoka OCP.",
+    "mineTasks": { "MINE-002": ["TASK-DUST-W36-M002"] }
+  },
+  "CSIS/2026/IN-118": {
+    "ruleId": "OBL-PPE-AUDIT",
+    "applicableMineIds": ["MINE-002"],
+    "filteredOut": [
+      { "mineId": "MINE-001", "reason": "No open PPE deviation record" },
+      { "mineId": "MINE-003", "reason": "No open PPE deviation record" },
+      { "mineId": "MINE-004", "reason": "No open PPE deviation record" },
+      { "mineId": "MINE-005", "reason": "No open PPE deviation record" }
+    ],
+    "obligationsCreated": 1,
+    "summary": "Rule OBL-PPE-AUDIT: applies to MINE-002 only (open deviation record).",
+    "mineTasks": { "MINE-002": ["TASK-PPE-2026-M002"] }
+  },
+  "SEN/2026/M004-EX07": {
+    "ruleId": "OBL-STRATA-RESPONSE",
+    "applicableMineIds": ["MINE-004"],
+    "filteredOut": [
+      { "mineId": "MINE-001", "reason": "Instrumented zone is at Ray-Bachra UG" },
+      { "mineId": "MINE-002", "reason": "Instrumented zone is at Ray-Bachra UG" },
+      { "mineId": "MINE-003", "reason": "Instrumented zone is at Ray-Bachra UG" },
+      { "mineId": "MINE-005", "reason": "Instrumented zone is at Ray-Bachra UG" }
+    ],
+    "obligationsCreated": 1,
+    "summary": "Rule OBL-STRATA-RESPONSE: applies to MINE-004 (UG instrumented zone).",
+    "mineTasks": { "MINE-004": ["TASK-STRATA-2026-M004"] }
+  },
+  "CLRA/1952/S-12": {
+    "ruleId": "OBL-CLRA-RENEWAL",
+    "applicableMineIds": ["MINE-005"],
+    "filteredOut": [
+      { "mineId": "MINE-001", "reason": "No contractor licence in expiry window" },
+      { "mineId": "MINE-002", "reason": "No contractor licence in expiry window" },
+      { "mineId": "MINE-003", "reason": "No contractor licence in expiry window" },
+      { "mineId": "MINE-004", "reason": "No contractor licence in expiry window" }
+    ],
+    "obligationsCreated": 1,
+    "summary": "Rule OBL-CLRA-RENEWAL: applies to MINE-005 (licence in 45-day expiry window).",
+    "mineTasks": { "MINE-005": ["TASK-CLRA-2026-M005"] }
+  }
+}

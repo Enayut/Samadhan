@@ -21,6 +21,7 @@ export const TaskCard: React.FC<TaskCardProps> = ({
   const getDeadlineText = () => {
     if (task.status === 'VERIFIED') return `Closed ${task.closedDate || ''}`;
     if (task.status === 'AWAITING_VERIFICATION') return 'Submitted · Under Review';
+    if (task.status === 'REJECTED') return 'Correction Required';
     if (isOverdue) {
       const days = Math.max(1, Math.floor(Math.abs(task.hoursRemaining) / 24));
       return `Overdue by ${days}d`;

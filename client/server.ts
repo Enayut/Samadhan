@@ -2,20 +2,26 @@ import express from "express";
 import path from "path";
 import fs from "fs";
 import { createServer as createViteServer } from "vite";
-import { createDemoStore, loadSeed } from "../shared/demo/store";
+import {
+  createDemoStore,
+  loadSeed,
+  HERO_REJECTION_REASON,
+} from "../shared/demo/store";
 
 async function startServer() {
   const app = express();
   const PORT = Number(process.env.PORT) || 3000;
   const cwd = process.cwd();
 
-  app.use(express.json());
+  app.use(express.json({ limit: "10mb" }));
 
   // -------------------------------------------------------------------------
   // DEMO API — deterministic in-memory demo state.
   // Both the desktop app and the mobile app (served at /mobile) consume these
   // endpoints, which is how the two frontends stay synchronized during the
-  // SIH demo. A future FastAPI backend would expose the same routes.
+  // SIH demo. The FastAPI + PostgreSQL backend (backend/app, :8000) exposes
+  // the same routes and is preferred when reachable; this in-memory store is
+  // the always-available fallback so the demo never breaks.
   // -------------------------------------------------------------------------
   const demoStore = createDemoStore(loadSeed());
 
@@ -23,44 +29,122 @@ async function startServer() {
     res.json({ status: "ok" });
   });
 
-  app.get("/api/demo/state", (req, res) => {
+  app.get("/api/state", (req, res) => {
     res.json(demoStore.getState());
   });
 
-  app.post("/api/demo/reset", (req, res) => {
+  // Mobile-scoped state: only the Piparwar official's visible tasks
+  // (PROPOSED never appears — manager must publish first).
+  app.get("/api/mobile/state", (req, res) => {
+    res.json(demoStore.getMobileState());
+  });
+
+  // Deterministic demo reset — the recording always starts from this state.
+  app.post("/api/reset", (req, res) => {
     res.json(demoStore.reset());
   });
 
-  app.post("/api/demo/alert/process", (req, res) => {
-    res.json(demoStore.processAlert(req.body?.alertId));
+  // ---- Compliance document pipeline (ingest → AI extraction → rules) ----
+  app.post("/api/documents/:id/process", (req, res) => {
+    res.json(demoStore.processDocument(req.params.id));
   });
 
-  app.post("/api/demo/alert/confirm", (req, res) => {
-    res.json(demoStore.confirmExtraction(req.body?.alertId));
+  app.post("/api/documents/:id/determine", (req, res) => {
+    res.json(demoStore.determineApplicability(req.params.id));
   });
 
-  app.post("/api/demo/tasks/:id/draft", (req, res) => {
-    const { evidenceItems = [], remediationNotes = "" } = req.body || {};
-    res.json(demoStore.saveDraft(req.params.id, evidenceItems, remediationNotes));
+  // ---- Manager review & publish ----
+  app.post("/api/tasks/:id/publish", (req, res) => {
+    res.json(demoStore.publishTask(req.params.id, req.body || {}));
   });
 
-  app.post("/api/demo/tasks/:id/submit", (req, res) => {
-    const { evidenceItems = [], remediationNotes = "" } = req.body || {};
-    res.json(demoStore.submitTask(req.params.id, evidenceItems, remediationNotes));
+  app.post("/api/tasks", (req, res) => {
+    const { title, mineId, domain, severity, deadlineOffsetDays, ownerId, notes } = req.body || {};
+    res.json(demoStore.createTask({ title, mineId, domain, severity, deadlineOffsetDays, ownerId, notes }));
   });
 
-  app.post("/api/demo/tasks/:id/reject", (req, res) => {
+  // ---- Mobile field execution ----
+  app.post("/api/tasks/:id/start", (req, res) => {
+    res.json(demoStore.startTask(req.params.id));
+  });
+
+  app.post("/api/tasks/:id/draft", (req, res) => {
+    const { evidenceItems = [], remediationNotes = "", formValues } = req.body || {};
+    res.json(demoStore.saveDraft(req.params.id, evidenceItems, remediationNotes, formValues));
+  });
+
+  app.post("/api/tasks/:id/submit", (req, res) => {
+    const { evidenceItems = [], remediationNotes = "", formValues } = req.body || {};
+    res.json(demoStore.submitTask(req.params.id, evidenceItems, remediationNotes, formValues));
+  });
+
+  // ---- Regulatory verification ----
+  app.post("/api/tasks/:id/reject", (req, res) => {
     const { evidenceId, reason } = req.body || {};
-    res.json(demoStore.rejectEvidence(req.params.id, evidenceId, reason));
+    res.json(demoStore.rejectEvidence(req.params.id, evidenceId, reason ?? HERO_REJECTION_REASON));
   });
 
-  app.post("/api/demo/tasks/:id/resubmit", (req, res) => {
-    res.json(demoStore.resubmitTask(req.params.id));
+  app.post("/api/tasks/:id/resubmit", (req, res) => {
+    const { evidenceItems, remediationNotes, formValues } = req.body || {};
+    res.json(demoStore.resubmitTask(req.params.id, evidenceItems, remediationNotes, formValues));
   });
 
-  app.post("/api/demo/tasks/:id/approve", (req, res) => {
+  app.post("/api/tasks/:id/approve", (req, res) => {
     res.json(demoStore.approveTask(req.params.id));
   });
+
+  // ---- Recurring compliance scheduler (idempotent) ----
+  app.post("/api/scheduler/tick", (req, res) => {
+    res.json(demoStore.schedulerTick());
+  });
+
+  // ---- RAG advisory proxy (FastAPI backend on :8000; graceful fallback) ----
+  // The retrieval layer is advisory only — rules and human verification decide
+  // compliance. When the FastAPI backend is unreachable the UI shows a clear
+  // "backend offline" message instead of fake data.
+  const BACKEND = process.env.BACKEND_URL || "http://localhost:8000";
+  const ragProxy = async (req: any, res: any, path: string, init?: RequestInit, timeoutMs = 2500) => {
+    try {
+      const controller = new AbortController();
+      const timeout = setTimeout(() => controller.abort(), timeoutMs);
+      const resp = await fetch(`${BACKEND}${path}`, { ...init, signal: controller.signal });
+      clearTimeout(timeout);
+      const data = await resp.json();
+      res.status(resp.status).json(data);
+    } catch {
+      res.status(503).json({
+        error: "backend_offline",
+        detail:
+          "SAMAADHAN retrieval backend (FastAPI + RAG) is not reachable on " +
+          BACKEND +
+          ". Start it with: cd backend && python backend.py",
+        disclaimer: "Advisory only — retrieval requires the backend service.",
+      });
+    }
+  };
+
+  app.get("/api/rag/status", (req, res) => ragProxy(req, res, "/api/rag/status"));
+  app.get("/api/rag/search", (req, res) => {
+    const q = encodeURIComponent(String(req.query.q ?? ""));
+    const topK = Number(req.query.top_k ?? 6);
+    const mineId = req.query.mine_id ? `&mine_id=${encodeURIComponent(String(req.query.mine_id))}` : "";
+    ragProxy(req, res, `/api/rag/search?q=${q}&top_k=${topK}${mineId}`);
+  });
+  // One-time corpus indexing (real bundled PDFs/text) — long timeout: the
+  // ingestion extracts and embeds the whole corpus.
+  app.post("/api/rag/ingest", (req, res) =>
+    ragProxy(
+      req,
+      res,
+      "/api/rag/ingest",
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(req.body ?? {}),
+      },
+      300000,
+    ),
+  );
 
   // -------------------------------------------------------------------------
   // MOBILE APP — served from the same origin so both apps share demo state.
@@ -86,7 +170,8 @@ async function startServer() {
   }
 
   // -------------------------------------------------------------------------
-  // Vite middleware for the desktop app (development)
+  // Real bundled regulatory PDFs (client/public/pdf) + Vite middleware for the
+  // desktop app (development).
   // -------------------------------------------------------------------------
   if (process.env.NODE_ENV !== "production") {
     const vite = await createViteServer({
@@ -103,10 +188,11 @@ async function startServer() {
   }
 
   app.listen(PORT, "0.0.0.0", () => {
-    console.log(`Server running on http://localhost:${PORT}`);
+    console.log(`SAMAADHAN demo server on http://localhost:${PORT}`);
     console.log(`  Desktop:  http://localhost:${PORT}/`);
     console.log(`  Mobile:   http://localhost:${PORT}/mobile`);
-    console.log(`  Demo API: http://localhost:${PORT}/api/demo/state`);
+    console.log(`  State:    http://localhost:${PORT}/api/state`);
+    console.log(`  Reset:    POST http://localhost:${PORT}/api/reset`);
   });
 }
 

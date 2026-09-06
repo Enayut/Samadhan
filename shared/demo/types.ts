@@ -1,6 +1,6 @@
 // Canonical demo types shared by the demo server (client/server.ts) and, in
-// adapted form, by both frontends. These mirror the shape a future FastAPI
-// backend would return.
+// adapted form, by both frontends. These mirror the shape the FastAPI backend
+// (backend/app) returns.
 
 export type DomainId =
   | 'SAFETY'
@@ -8,12 +8,12 @@ export type DomainId =
   | 'PRODUCTION'
   | 'LABOUR'
   | 'CONTRACTOR'
-  | 'GRIEVANCE'
-  | 'ANOMALY';
+  | 'GRIEVANCE';
 
 export type TaskStatus =
+  | 'PROPOSED' // rule-derived, awaiting manager review/publish — never visible on mobile
+  | 'ASSIGNED' // published to the owning official
   | 'IN_PROGRESS'
-  | 'DUE_SOON'
   | 'AWAITING_VERIFICATION'
   | 'REJECTED'
   | 'VERIFIED'
@@ -22,17 +22,15 @@ export type TaskStatus =
 
 export type UrgencyGroup = 'OVERDUE' | 'DUE_SOON' | 'AWAITING_VERIFICATION' | 'RECENTLY_CLOSED';
 
-// Where an alert originates. Grounded in the real Indian mining ecosystem:
-// - DGMS   → Directorate General of Mines Safety portal (numbered Safety
-//            Alerts + Technical Circulars; legal basis CMR 2017 / MMR 1961)
-// - CSIS   → CIL Safety Information System (centralized safety-parameter feed)
-// - SENSOR → mine telemetry: slope-stability radar, CH4/gas, strata extensometers
-// - CMSMS  → Coal Mine Surveillance & Management System (satellite monitoring)
-// - EC     → Environmental Clearance conditions / State Pollution Control Board
-// - AUDIT  → DGMS audit findings, Safety Committee minutes, JCC grievance logs
-export type AlertSourceKey = 'DGMS' | 'CSIS' | 'SENSOR' | 'CMSMS' | 'EC' | 'AUDIT' | 'GRIEVANCE';
+// Where a compliance document originates.
+// - DGMS   → Directorate General of Mines Safety (technical circulars/alerts)
+// - EC     → Environmental Clearance conditions / SPCB
+// - CSIS   → CIL Safety Information System feed
+// - SENSOR → mine instrumentation telemetry
+// - AUDIT  → audit/registry feeds (e.g. contractor licence expiry window)
+export type AlertSourceKey = 'DGMS' | 'CSIS' | 'SENSOR' | 'EC' | 'AUDIT';
 
-export type AlertStatus = 'received' | 'processed' | 'confirmed';
+export type DocumentStatus = 'received' | 'processed' | 'determined';
 
 export type EvidenceStatus = 'pending' | 'uploaded' | 'verified' | 'rejected' | 'missing';
 export type EvidenceType = 'photo' | 'document' | 'register';
@@ -57,12 +55,32 @@ export interface EvidenceItem {
   metadata?: EvidenceMetadata;
   aiWarning?: string;
   rejectionReason?: string;
+  optional?: boolean;
+  gpsHint?: string;
 }
 
 export interface UserRef {
   id: string;
   name: string;
   role: string;
+}
+
+/** Deterministic digital-form spec rendered on mobile before evidence capture. */
+export interface FormFieldSpec {
+  id: string;
+  label: string;
+  type: 'text' | 'number' | 'select' | 'textarea';
+  value?: string;
+  placeholder?: string;
+  hint?: string;
+  options?: string[];
+  readOnly?: boolean;
+}
+
+export interface FormSpec {
+  formId: string;
+  title: string;
+  fields: FormFieldSpec[];
 }
 
 export interface EscalationEvent {
@@ -94,6 +112,8 @@ export interface Task {
   title: string;
   shortTitle?: string;
   domain: DomainId;
+  obligationRef?: string;
+  sourceRef?: string;
   status: TaskStatus;
   urgencyGroup: UrgencyGroup;
   deadlineDate: string;
@@ -117,27 +137,40 @@ export interface Task {
   isCriticalDoThisNext?: boolean;
   evidenceItems: EvidenceItem[];
   remediationNotes: string;
+  form?: FormSpec;
+  formValues?: Record<string, string>;
   observationCategory?: string;
   createdAt: string;
+  publishedAt?: string;
   deadline: string;
   closedAt?: string;
   submittedAt?: string;
   verifiedAt?: string;
   escalationEvents: EscalationEvent[];
   closureCertificate?: ClosureCertificate;
+  /** Deterministic provenance of the task: rules, not AI. */
+  generatedBy?: 'RULE_DERIVED' | 'MANUAL';
+  recurring?: boolean;
+  cadence?: 'WEEKLY' | 'MONTHLY' | null;
+  periodLabel?: string;
+  submissionCount?: number;
 }
 
 export interface MineSite {
   id: string;
   name: string;
+  fullName?: string;
   subsidiary: string;
   area?: string;
   district: string;
+  state?: string;
   lat: number;
   lng: number;
   type?: string;
   hasHEMM?: boolean;
+  maxHighwallMeters?: number | null;
   workforce?: number;
+  gisAnchor?: boolean;
   riskLevel?: string;
 }
 
@@ -153,10 +186,10 @@ export interface Alert {
   message: string;
   type: 'info' | 'warning' | 'critical';
   siteId?: string;
-  status?: AlertStatus;
+  status?: DocumentStatus;
   source?: AlertSourceKey;
   domain?: DomainId;
-  /** Display string shown in the inbox (e.g. "Ack in 48h"). */
+  /** Display string shown in the inbox (e.g. "Review in 48h"). */
   ackDeadline?: string;
   /** Seed offset in days from `now`; the store derives `ackDeadlineDate` from it. */
   ackDeadlineOffsetDays?: number;
@@ -168,7 +201,9 @@ export interface Alert {
   pdfUrl?: string;
   /** Provenance caption shown with the real PDF (source + date). */
   pdfSource?: string;
-  /** Styled HTML replica — fallback when no real PDF is available. */
+  /** Source classification of the underlying document (REAL OFFICIAL / REAL PUBLIC / SYNTHETIC). */
+  realSourceClass?: string;
+  realSourceTitle?: string;
   pdfReplicaSvg?: string;
 }
 
@@ -180,24 +215,54 @@ export interface AuditEvent {
   detail?: string;
 }
 
-// One actionable incoming alert with its own pipeline progress. Multiple alerts
-// (DGMS, CSIS, sensor, satellite, EC…) can sit in different lifecycle stages
-// at the same time — this is what the Alert Intake inbox renders.
-export interface AlertPipeline {
+// One actionable incoming compliance document with its own pipeline progress.
+export interface DocumentPipeline {
   alert: Alert;
   extraction: unknown | null;
   recurrence: unknown | null;
-  fanout: unknown | null;
+  applicability: unknown | null;
 }
 
 export interface PipelineState {
-  alerts: AlertPipeline[];
+  documents: DocumentPipeline[];
+}
+
+/** Deterministic rule registry entry (shared shape with obligations.json). */
+export interface ObligationRule {
+  id: string;
+  title: string;
+  shortTitle?: string;
+  domain: DomainId;
+  originRef: string;
+  applicability: {
+    mineType?: string;
+    minHighwallMeters?: number;
+    mineIds?: string[];
+    condition?: string;
+    description: string;
+  };
+  ownerRole: string;
+  verifierRole: string;
+  cadence: { kind: 'WEEKLY' | 'MONTHLY'; anchor: string; shift: string } | null;
+  deadlinePolicy: { kind: string; weekday?: string; days?: number; leadDays?: number; shift: string };
+  escalationRule: string;
+  evidenceChecklist: Array<{ id: string; title: string; type: EvidenceType; guidance: string; gps?: string }>;
+  statutoryBasis: string;
+}
+
+/** Mobile-scoped state: only the Piparwar official's visible tasks. */
+export interface MobileState {
+  mine: MineSite | null;
+  user: UserRef | null;
+  tasks: Task[];
+  updatedAt: string;
 }
 
 export interface DemoState {
   sites: MineSite[];
   tasks: Task[];
   alerts: Alert[];
+  rules: ObligationRule[];
   notifications: unknown[];
   pipeline: PipelineState;
   audit: AuditEvent[];

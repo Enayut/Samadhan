@@ -1,21 +1,19 @@
-// Deterministic in-memory demo store + state machine for the SIH demo.
+// Deterministic in-memory demo store + state machine for the SAMAADHAN demo.
 //
-// This module is the seam that a future FastAPI backend would replace: every
-// mutation here is a pure, deterministic state transition on hardcoded JSON
-// seed data. The demo server (client/server.ts) exposes these as /api/demo/*
-// endpoints; both frontends consume them through a thin demoApi client.
+// Five mines, one operational area (North Karanpura, CCL, Jharkhand). Every
+// mutation here is a pure, deterministic state transition over the JSON seed
+// data. The demo server (client/server.ts) exposes these as /api/* endpoints;
+// both frontends consume them through thin API clients. This module is also the
+// reference implementation mirrored by the FastAPI backend (backend/app).
 //
-// IMPORTANT: this file runs in Node (the demo server). It must NOT be
-// imported by browser code. Browser code goes through the demoApi fetch
-// wrapper instead.
+// IMPORTANT: this file runs in Node (the demo server). It must NOT be imported
+// by browser code. Browser code goes through the API fetch wrappers instead.
 //
 // No randomness. No network. The same sequence of calls always produces the
 // same result, so the recorded demo is reproducible from a fresh state.
 
 import { createHash } from 'crypto';
 
-// Minimal local date helpers so this module has zero runtime dependencies
-// (the demo server bundles it, and the browser apps never import it directly).
 function addDays(date: Date, days: number): Date {
   const result = new Date(date);
   result.setDate(result.getDate() + days);
@@ -33,22 +31,27 @@ import tasksData from '../data/tasks.json';
 import evidenceData from '../data/evidence.json';
 import alertsData from '../data/alerts.json';
 import notificationsData from '../data/notifications.json';
-import dashboardData from '../data/dashboard.json';
 import historyData from '../data/history.json';
 import recurrenceData from '../data/recurrence.json';
 import aiExtractionByAlertData from '../data/aiExtractionByAlert.json';
-import fanoutByAlertData from '../data/fanoutByAlert.json';
+import applicabilityByDocData from '../data/applicabilityByDoc.json';
+import obligationsData from '../data/obligations.json';
 
 import type {
   Alert,
   AuditEvent,
   ClosureCertificate,
   DemoState,
+  DocumentStatus,
   DomainId,
   EscalationEvent,
   EvidenceItem,
   EvidenceMetadata,
+  EvidenceStatus,
+  EvidenceType,
   MineSite,
+  MobileState,
+  ObligationRule,
   Task,
   TaskStatus,
   UrgencyGroup,
@@ -63,6 +66,7 @@ interface RawUser {
   id: string;
   name: string;
   role: string;
+  actor?: string;
   employeeId?: string;
   mineId?: string | null;
 }
@@ -80,12 +84,14 @@ interface RawEvidenceArtifact {
 interface RawEvidenceItem {
   id: string;
   title: string;
-  type: 'photo' | 'document' | 'register';
-  status: 'pending' | 'uploaded' | 'verified' | 'rejected' | 'missing';
+  type: EvidenceType;
+  status: EvidenceStatus;
   guidance: string;
   artifactId?: string;
   photoUrl?: string;
   fileName?: string;
+  optional?: boolean;
+  gpsHint?: string;
   aiWarning?: string;
   rejectionReason?: string;
   metadata?: EvidenceMetadata;
@@ -96,14 +102,16 @@ interface RawTask {
   title: string;
   shortTitle?: string;
   domain: DomainId;
+  obligationRef?: string;
+  sourceRef?: string;
   status: TaskStatus;
   urgencyGroup: UrgencyGroup;
-  deadlineDate: string;
+  deadlineDate?: string;
   deadlineDisplay: string;
   shiftInfo: string;
   hoursRemaining: number;
-  sourceCitation: string;
-  source: string;
+  sourceCitation?: string;
+  source?: string;
   severity: string;
   mineId: string;
   owner: UserRef;
@@ -115,32 +123,17 @@ interface RawTask {
   escalationTarget?: string;
   rejectionReason?: string;
   submittedTimestamp?: string;
+  submittedOffsetDays?: number;
   closedDate?: string;
   isCriticalDoThisNext?: boolean;
+  generatedBy?: 'RULE_DERIVED' | 'MANUAL';
+  recurring?: boolean;
+  cadence?: 'WEEKLY' | 'MONTHLY' | null;
+  form?: Task['form'];
   remediationNotes: string;
-  createdOffsetDays: number;
+  createdOffsetDays?: number;
   deadlineOffsetDays: number;
   escalationEvents?: EscalationEvent[];
-  evidenceItems: RawEvidenceItem[];
-}
-
-interface TaskTemplate {
-  id: string;
-  title: string;
-  shortTitle?: string;
-  domain: DomainId;
-  severity: string;
-  status: TaskStatus;
-  ownerId: string;
-  verifierId: string;
-  hoursRemaining: number;
-  deadlineOffsetDays: number;
-  deadlineDisplay?: string;
-  shiftInfo: string;
-  sourceCitation: string;
-  escalationRule?: string;
-  isCriticalDoThisNext?: boolean;
-  remediationNotes: string;
   evidenceItems: RawEvidenceItem[];
 }
 
@@ -152,12 +145,20 @@ interface Seed {
   evidenceArtifacts: RawEvidenceArtifact[];
   alerts: Alert[];
   notifications: unknown[];
-  dashboard: unknown;
   history: unknown;
   recurrence: unknown;
-  aiExtractionByAlert: unknown;
-  fanoutByAlert: unknown;
+  aiExtractionByAlert: Record<string, { recurrence?: unknown } | undefined>;
+  applicabilityByDoc: Record<string, object | undefined>;
+  rules: ObligationRule[];
 }
+
+// The one mobile user: Ram Singh, Mine Safety Officer, MINE-001 Piparwar OCP.
+export const MOBILE_USER_ID = 'u-ram';
+export const MOBILE_MINE_ID = 'MINE-001';
+
+// Fixed hero rejection reason used by the demo script (DEMO_FLOW scene 6).
+export const HERO_REJECTION_REASON =
+  'Crest photo timestamp inconsistent with the recorded visit window and berm markers are not clearly visible — re-capture at the bench crest showing the berm and crack gauge.';
 
 // ---------------------------------------------------------------------------
 // Seed loading
@@ -183,58 +184,21 @@ function buildTask(raw: RawTask, artifacts: RawEvidenceArtifact[], now: Date): T
     ...ev,
     timestamp: toISO(addDays(now, ev.timestampOffsetDays)),
   }));
+  const createdAt = toISO(addDays(now, raw.createdOffsetDays ?? -2));
   return {
     ...raw,
+    sourceCitation: raw.sourceCitation || raw.sourceRef || raw.source || '—',
+    source: raw.source || raw.sourceRef || '—',
+    deadlineDate: raw.deadlineDate || `Due ${toISO(addDays(now, raw.deadlineOffsetDays)).slice(5, 10)}`,
     ownerLabel,
     verifierLabel,
-    createdAt: toISO(addDays(now, raw.createdOffsetDays)),
+    createdAt,
     deadline: toISO(addDays(now, raw.deadlineOffsetDays)),
+    publishedAt: raw.status === 'PROPOSED' ? undefined : createdAt,
+    submittedAt:
+      raw.submittedOffsetDays !== undefined ? toISO(addDays(now, raw.submittedOffsetDays)) : undefined,
     escalationEvents,
     evidenceItems: raw.evidenceItems.map((ev) => buildEvidenceItem(ev, artifacts)),
-  };
-}
-
-function buildTemplateTask(
-  tpl: TaskTemplate,
-  users: RawUser[],
-  artifacts: RawEvidenceArtifact[],
-  now: Date,
-  sourceRef: string,
-  mineId: string,
-): Task {
-  const owner = users.find((u) => u.id === tpl.ownerId) || users[0];
-  const verifier = users.find((u) => u.id === tpl.verifierId) || users[1];
-  const ownerRef: UserRef = { id: owner.id, name: owner.name, role: owner.role };
-  const verifierRef: UserRef = { id: verifier.id, name: verifier.name, role: verifier.role };
-  const urgencyGroup: UrgencyGroup = tpl.status === 'IN_PROGRESS' || tpl.status === 'DUE_SOON' ? 'DUE_SOON' : 'DUE_SOON';
-  const deadlineDate = `Due ${toISO(addDays(now, tpl.deadlineOffsetDays)).slice(5, 10)}`;
-  return {
-    id: tpl.id,
-    title: tpl.title,
-    shortTitle: tpl.shortTitle,
-    domain: tpl.domain,
-    status: tpl.status,
-    urgencyGroup,
-    deadlineDate,
-    deadlineDisplay: tpl.deadlineDisplay || deadlineDate,
-    shiftInfo: tpl.shiftInfo,
-    hoursRemaining: tpl.hoursRemaining,
-    sourceCitation: tpl.sourceCitation,
-    source: sourceRef,
-    severity: tpl.severity,
-    mineId,
-
-    owner: ownerRef,
-    verifier: verifierRef,
-    ownerLabel: `${owner.name} (${owner.role})`,
-    verifierLabel: `${verifier.role} — ≠ owner`,
-    escalationRule: tpl.escalationRule,
-    isCriticalDoThisNext: tpl.isCriticalDoThisNext,
-    remediationNotes: tpl.remediationNotes,
-    createdAt: toISO(now),
-    deadline: toISO(addDays(now, tpl.deadlineOffsetDays)),
-    escalationEvents: [],
-    evidenceItems: tpl.evidenceItems.map((ev) => buildEvidenceItem(ev, artifacts)),
   };
 }
 
@@ -247,11 +211,11 @@ export function loadSeed(): Seed {
     evidenceArtifacts: evidenceData as RawEvidenceArtifact[],
     alerts: alertsData as Alert[],
     notifications: notificationsData as unknown[],
-    dashboard: dashboardData,
     history: historyData,
     recurrence: recurrenceData,
-    aiExtractionByAlert: aiExtractionByAlertData,
-    fanoutByAlert: fanoutByAlertData,
+    aiExtractionByAlert: aiExtractionByAlertData as Record<string, { recurrence?: unknown } | undefined>,
+    applicabilityByDoc: applicabilityByDocData as unknown as Record<string, object | undefined>,
+    rules: (obligationsData as { rules: ObligationRule[] }).rules,
   };
 }
 
@@ -263,48 +227,57 @@ function sha256(input: string): string {
   return createHash('sha256').update(input).digest('hex');
 }
 
-function buildInitial(seed: Seed): DemoState {
-  const now = new Date();
-  // Alerts carry an ack-deadline display string + a seed offset; the store
-  // derives a machine-readable ISO date so the calendar page can plot them.
-  const alerts = seed.alerts.map((a) =>
-    a.ackDeadlineOffsetDays ? { ...a, ackDeadlineDate: toISO(addDays(now, a.ackDeadlineOffsetDays)) } : a,
-  );
-  return {
-    sites: seed.mines.map((m) => ({ ...m })),
-    tasks: seed.tasks.map((t) => buildTask(t, seed.evidenceArtifacts, now)),
-    alerts,
-    notifications: seed.notifications,
-    pipeline: {
-      // Actionable alerts (they carry a ref + title and are not feed noise)
-      // each get their own pipeline slot so several can be in different
-      // lifecycle stages at once. Feed items (kind 'operational') stay in
-      // `alerts` only.
-      alerts: alerts
-        .filter((a) => a.ref && (a.title || a.alertNo) && a.kind !== 'operational')
-        .map((a) => ({ alert: { ...a }, extraction: null, recurrence: null, fanout: null })),
-    },
-    audit: [],
-    updatedAt: toISO(now),
-  };
-}
-
 function clone<T>(value: T): T {
   return JSON.parse(JSON.stringify(value)) as T;
 }
 
 export interface DemoStore {
   getState: () => DemoState;
+  getMobileState: () => MobileState;
   reset: () => DemoState;
-  /** Runs the (simulated) AI pipeline for one alert; defaults to the first unprocessed alert. */
-  processAlert: (alertId?: string) => DemoState;
-  /** Confirms an alert's extraction and fans obligations out; defaults to the processed-but-unconfirmed alert. */
-  confirmExtraction: (alertId?: string) => { state: DemoState; createdTasks: Task[]; fanout: unknown };
-  saveDraft: (taskId: string, evidenceItems: EvidenceItem[], remediationNotes: string) => DemoState;
-  submitTask: (taskId: string, evidenceItems: EvidenceItem[], remediationNotes: string) => DemoState;
+  /** Runs the (simulated) AI extraction for one compliance document. */
+  processDocument: (documentId?: string) => DemoState;
+  /** Deterministic rules engine: applicability per mine for a processed document. */
+  determineApplicability: (documentId?: string) => DemoState;
+  /** Manager publishes a PROPOSED task → ASSIGNED (visible on mobile). */
+  publishTask: (
+    taskId: string,
+    adjustments?: { deadlineOffsetDays?: number; hoursRemaining?: number; deadlineDisplay?: string; title?: string },
+  ) => DemoState;
+  /** Manager creates a manual obligation (provenance = MANUAL). */
+  createTask: (payload: {
+    title: string;
+    mineId: string;
+    domain: DomainId;
+    severity?: string;
+    deadlineOffsetDays?: number;
+    ownerId?: string;
+    notes?: string;
+  }) => { state: DemoState; task: Task | null };
+  /** Mobile: officer opens/starts an ASSIGNED task. */
+  startTask: (taskId: string) => DemoState;
+  saveDraft: (taskId: string, evidenceItems: EvidenceItem[], remediationNotes: string, formValues?: Record<string, string>) => DemoState;
+  submitTask: (taskId: string, evidenceItems: EvidenceItem[], remediationNotes: string, formValues?: Record<string, string>) => DemoState;
+  /** Regulatory official rejects one evidence item with a mandatory reason. */
   rejectEvidence: (taskId: string, evidenceId: string, reason: string) => DemoState;
-  resubmitTask: (taskId: string) => DemoState;
+  resubmitTask: (taskId: string, evidenceItems: EvidenceItem[], remediationNotes: string, formValues?: Record<string, string>) => DemoState;
   approveTask: (taskId: string) => DemoState;
+  /** Idempotent recurring-instance generator (weekly/monthly cadence). */
+  schedulerTick: () => { state: DemoState; created: Task[] };
+}
+
+function statusToUrgency(status: TaskStatus): UrgencyGroup {
+  switch (status) {
+    case 'VERIFIED':
+      return 'RECENTLY_CLOSED';
+    case 'AWAITING_VERIFICATION':
+      return 'AWAITING_VERIFICATION';
+    case 'OVERDUE':
+    case 'ESCALATED':
+      return 'OVERDUE';
+    default:
+      return 'DUE_SOON';
+  }
 }
 
 export function createDemoStore(seed: Seed): DemoStore {
@@ -318,13 +291,13 @@ export function createDemoStore(seed: Seed): DemoStore {
       entity,
       detail,
     };
-    state.audit = [...state.audit.slice(-49), event];
+    state.audit = [...state.audit.slice(-99), event];
   };
 
   // The mobile camera (frozen UI) stamps every capture with the same placeholder
   // SHA-256. The server seals the authoritative artifact hash per task + item so
-  // the closure certificate lists distinct, realistic hashes — without touching
-  // the mobile UI.
+  // the closure record lists distinct, realistic hashes — without touching the
+  // mobile UI.
   const sealEvidence = (item: EvidenceItem, taskId: string): EvidenceItem => {
     if (!item.metadata || (item.status !== 'uploaded' && item.status !== 'verified')) {
       return item;
@@ -334,7 +307,7 @@ export function createDemoStore(seed: Seed): DemoStore {
       ...item,
       metadata: {
         ...item.metadata,
-        sha256: `0x${sealed.slice(0, 24)}…${sealed.slice(-8)}`,
+        sha256: `${sealed.slice(0, 24)}…${sealed.slice(-8)}`,
       },
     };
   };
@@ -375,107 +348,218 @@ export function createDemoStore(seed: Seed): DemoStore {
       verified: toISO(verifiedAt),
       evidenceCount: evidenceHashes.length,
       evidenceHashes,
-      hash: `0x${sha256(payload).slice(0, 16)}…${sha256(payload).slice(-8)}`,
-      auditHash: `0x${sha256(JSON.stringify(state.audit)).slice(0, 16)}…`,
+      hash: `${sha256(payload).slice(0, 16)}…${sha256(payload).slice(-8)}`,
+      auditHash: `${sha256(JSON.stringify(state.audit)).slice(0, 16)}…`,
       closedAt: toISO(verifiedAt),
     };
   };
 
+  function buildInitial(seed: Seed): DemoState {
+    const now = new Date();
+    const alerts = seed.alerts.map((a) =>
+      a.ackDeadlineOffsetDays ? { ...a, ackDeadlineDate: toISO(addDays(now, a.ackDeadlineOffsetDays)) } : a,
+    );
+    return {
+      sites: seed.mines.map((m) => ({ ...m })),
+      tasks: seed.tasks.map((t) => buildTask(t, seed.evidenceArtifacts, now)),
+      alerts,
+      rules: clone(seed.rules),
+      notifications: clone(seed.notifications),
+      pipeline: {
+        // Actionable compliance documents each get their own pipeline slot so
+        // several can be in different lifecycle stages at once. Operational
+        // feed items (kind 'operational') stay in `alerts` only.
+        documents: alerts
+          .filter((a) => a.ref && (a.title || a.alertNo) && a.kind !== 'operational')
+          .map((a) => ({ alert: { ...a }, extraction: null, recurrence: null, applicability: null })),
+      },
+      audit: [],
+      updatedAt: toISO(now),
+    };
+  }
+
+  function audienceFilterForMobile(tasks: Task[], mine: MineSite | null, user: UserRef | null): Task[] {
+    return tasks.filter((t) => {
+      if (t.mineId !== MOBILE_MINE_ID) return false;
+      // PROPOSED is invisible on mobile until the manager publishes it.
+      if (t.status === 'PROPOSED') return false;
+      return t.owner.id === MOBILE_USER_ID;
+    });
+  }
+
   return {
     getState: () => clone(state),
+
+    getMobileState: () => {
+      const mine = state.sites.find((s) => s.id === MOBILE_MINE_ID) ?? null;
+      const user = state.tasks.find((t) => t.owner.id === MOBILE_USER_ID)?.owner ?? null;
+      return {
+        mine,
+        user: user ?? { id: MOBILE_USER_ID, name: 'Ram Singh', role: 'Mine Safety Officer' },
+        tasks: audienceFilterForMobile(state.tasks, mine, user),
+        updatedAt: state.updatedAt,
+      };
+    },
 
     reset: () => {
       state = buildInitial(seed);
       return clone(state);
     },
 
-    processAlert: (alertId?: string) => {
-      const idx = state.pipeline.alerts.findIndex((p) =>
-        alertId ? p.alert.id === alertId || p.alert.ref === alertId : p.alert.status === 'received',
+    processDocument: (documentId?: string) => {
+      const idx = state.pipeline.documents.findIndex((p) =>
+        documentId ? p.alert.id === documentId || p.alert.ref === documentId : p.alert.status === 'received',
       );
       if (idx === -1) return clone(state);
-      const entry = state.pipeline.alerts[idx];
+      const entry = state.pipeline.documents[idx];
       if (!entry.extraction) {
         const ref = entry.alert.ref ?? entry.alert.id;
-        const byAlert = seed.aiExtractionByAlert as Record<string, { recurrence?: unknown } | undefined>;
-        const extraction = byAlert[ref] ?? null;
+        const byDoc = seed.aiExtractionByAlert as Record<string, { recurrence?: unknown } | undefined>;
+        const extraction = byDoc[ref] ?? null;
         const recurrence = extraction?.recurrence ?? seed.recurrence;
         state = {
           ...state,
           pipeline: {
             ...state.pipeline,
-            alerts: state.pipeline.alerts.map((p, i) =>
+            documents: state.pipeline.documents.map((p, i) =>
               i === idx
-                ? { ...p, alert: { ...p.alert, status: 'processed' }, extraction, recurrence }
+                ? { ...p, alert: { ...p.alert, status: 'processed' as DocumentStatus }, extraction, recurrence }
                 : p,
             ),
           },
           updatedAt: toISO(new Date()),
         };
-        log('system-ai', 'ALERT_PROCESSED', ref);
+        log('AI-EXTRACTION', 'DOCUMENT_PROCESSED', ref, 'advisory — rules decide next');
       }
       return clone(state);
     },
 
-    confirmExtraction: (alertId?: string) => {
-      const idx = state.pipeline.alerts.findIndex((p) =>
-        alertId ? p.alert.id === alertId || p.alert.ref === alertId : !!p.extraction && !p.fanout,
+    determineApplicability: (documentId?: string) => {
+      const idx = state.pipeline.documents.findIndex((p) =>
+        documentId ? p.alert.id === documentId || p.alert.ref === documentId : !!p.extraction && !p.applicability,
       );
-      if (idx === -1) {
-        return { state: clone(state), createdTasks: [], fanout: null };
-      }
-      const entry = state.pipeline.alerts[idx];
-      if (entry.fanout) {
-        return { state: clone(state), createdTasks: [], fanout: entry.fanout };
-      }
-      if (!entry.extraction) {
-        return { state: clone(state), createdTasks: [], fanout: null };
-      }
-      const now = new Date();
-      const extraction = entry.extraction as { taskTemplates?: TaskTemplate[]; sourceRef?: string };
+      if (idx === -1) return clone(state);
+      const entry = state.pipeline.documents[idx];
+      if (entry.applicability) return clone(state);
+      if (!entry.extraction) return clone(state);
       const ref = entry.alert.ref ?? entry.alert.id;
-      const sourceRef = extraction.sourceRef ?? ref;
-      const mineId = entry.alert.siteId ?? 'MINE-001';
-      const createdTasks = (extraction.taskTemplates ?? []).map((tpl) =>
-        buildTemplateTask(tpl, seed.users, seed.evidenceArtifacts, now, sourceRef, mineId),
-      );
-      const fanout = {
-        ...((seed.fanoutByAlert as Record<string, object>)[ref] ?? {}),
-        generatedAt: toISO(now),
-      };
+      const applicability =
+        (seed.applicabilityByDoc as unknown as Record<string, object | undefined>)[ref] ?? null;
       state = {
         ...state,
-        tasks: [...state.tasks, ...createdTasks],
         pipeline: {
           ...state.pipeline,
-          alerts: state.pipeline.alerts.map((p, i) =>
-            i === idx ? { ...p, alert: { ...p.alert, status: 'confirmed' }, fanout } : p,
+          documents: state.pipeline.documents.map((p, i) =>
+            i === idx
+              ? { ...p, alert: { ...p.alert, status: 'determined' as DocumentStatus }, applicability }
+              : p,
           ),
         },
-        updatedAt: toISO(now),
+        updatedAt: toISO(new Date()),
       };
-      log(
-        'system-rules',
-        'FANOUT_COMPLETE',
-        ref,
-        `${(fanout as { governanceObjects?: number }).governanceObjects ?? createdTasks.length} governance objects created`,
-      );
-      createdTasks.forEach((t) => log('system-rules', 'TASK_CREATED', t.id, t.ownerLabel));
-      return { state: clone(state), createdTasks: clone(createdTasks), fanout };
-    },
-
-    saveDraft: (taskId, evidenceItems, remediationNotes) => {
-      const sealed = sealEvidenceList(evidenceItems, taskId);
-      patchTask(taskId, (t) => ({
-        ...t,
-        evidenceItems: sealed,
-        remediationNotes,
-      }));
-      log('owner', 'EVIDENCE_DRAFT', taskId, `${evidenceItems.length} item(s)`);
+      log('RULES-ENGINE', 'APPLICABILITY_DETERMINED', ref, 'deterministic — not AI');
       return clone(state);
     },
 
-    submitTask: (taskId, evidenceItems, remediationNotes) => {
+    publishTask: (taskId, adjustments) => {
+      const task = state.tasks.find((t) => t.id === taskId);
+      if (!task || task.status !== 'PROPOSED') return clone(state);
+      const now = new Date();
+      const deadlineOffset = adjustments?.deadlineOffsetDays ?? Math.ceil((new Date(task.deadline).getTime() - now.getTime()) / 86400000);
+      patchTask(taskId, (t) => ({
+        ...t,
+        status: 'ASSIGNED',
+        urgencyGroup: 'DUE_SOON',
+        deadline: toISO(addDays(now, deadlineOffset)),
+        deadlineDate: `Due ${toISO(addDays(now, deadlineOffset)).slice(5, 10)}`,
+        deadlineDisplay: adjustments?.deadlineDisplay ?? t.deadlineDisplay,
+        hoursRemaining: adjustments?.hoursRemaining ?? Math.max(1, Math.round(deadlineOffset * 24)),
+        title: adjustments?.title ?? t.title,
+        publishedAt: toISO(now),
+        createdAt: t.createdAt || toISO(now),
+      }));
+      log('AREA-MANAGER', 'TASK_PUBLISHED', taskId, `→ ASSIGNED · owner ${task.ownerLabel}`);
+      return clone(state);
+    },
+
+    createTask: (payload) => {
+      const now = new Date();
+      const mine = state.sites.find((s) => s.id === payload.mineId);
+      if (!mine) return { state: clone(state), task: null };
+      const owner =
+        state.tasks.find((t) => t.mineId === payload.mineId && t.owner.role === 'Mine Safety Officer')?.owner ??
+        ({ id: 'u-ram', name: 'Ram Singh', role: 'Mine Safety Officer' } as UserRef);
+      const verifier = ({ id: 'u-regulator', name: 'R. Sharma', role: 'Regulatory Official' } as UserRef);
+      const offset = payload.deadlineOffsetDays ?? 7;
+      const id = `TASK-MANUAL-${sha256(payload.title + payload.mineId).slice(0, 6).toUpperCase()}`;
+      const task: Task = {
+        id,
+        title: payload.title,
+        domain: payload.domain,
+        status: 'PROPOSED',
+        urgencyGroup: 'DUE_SOON',
+        deadlineDate: `Due ${toISO(addDays(now, offset)).slice(5, 10)}`,
+        deadlineDisplay: `Due in ${offset}d`,
+        shiftInfo: 'General Shift',
+        hoursRemaining: offset * 24,
+        sourceCitation: payload.notes || 'Manual obligation — Area Manager',
+        source: 'MANUAL',
+        severity: payload.severity || 'Medium',
+        mineId: payload.mineId,
+        owner,
+        verifier,
+        ownerLabel: `${owner.name} (${owner.role})`,
+        verifierLabel: `${verifier.name} (${verifier.role}) — ≠ owner`,
+        escalationRule: 'Auto-escalates at deadline to Area General Manager',
+        isCriticalDoThisNext: false,
+        generatedBy: 'MANUAL',
+        evidenceItems: [
+          {
+            id: 'ev-manual-1',
+            title: 'Completion evidence (photo/document)',
+            type: 'photo',
+            status: 'pending',
+            guidance: 'Geo-tagged photo or document proving the obligation was completed',
+          },
+        ],
+        remediationNotes: payload.notes || '',
+        createdAt: toISO(now),
+        deadline: toISO(addDays(now, offset)),
+        escalationEvents: [],
+      };
+      state = { ...state, tasks: [...state.tasks, task], updatedAt: toISO(now) };
+      log('AREA-MANAGER', 'TASK_CREATED_MANUAL', id, `${payload.title} @ ${mine.id}`);
+      return { state: clone(state), task: clone(task) };
+    },
+
+    startTask: (taskId) => {
+      const task = state.tasks.find((t) => t.id === taskId);
+      if (!task || task.status !== 'ASSIGNED') return clone(state);
+      patchTask(taskId, (t) => ({ ...t, status: 'IN_PROGRESS', urgencyGroup: 'DUE_SOON' }));
+      log('MINE-OFFICIAL', 'TASK_STARTED', taskId, 'field execution started');
+      return clone(state);
+    },
+
+    saveDraft: (taskId, evidenceItems, remediationNotes, formValues) => {
+      patchTask(taskId, (t) => {
+        // Guard: an empty/missing evidence push must never wipe persisted
+        // evidence (e.g. a malformed request or notes-only client update).
+        const incoming =
+          Array.isArray(evidenceItems) && evidenceItems.length > 0
+            ? sealEvidenceList(evidenceItems, taskId)
+            : t.evidenceItems;
+        return {
+          ...t,
+          evidenceItems: incoming,
+          remediationNotes: remediationNotes ?? t.remediationNotes,
+          formValues: formValues ?? t.formValues,
+        };
+      });
+      log('MINE-OFFICIAL', 'EVIDENCE_DRAFT', taskId, `${(evidenceItems ?? []).length} item(s)`);
+      return clone(state);
+    },
+
+    submitTask: (taskId, evidenceItems, remediationNotes, formValues) => {
       let submitted = false;
       const sealed = sealEvidenceList(evidenceItems, taskId);
       patchTask(taskId, (t) => {
@@ -483,14 +567,14 @@ export function createDemoStore(seed: Seed): DemoStore {
           ...t,
           evidenceItems: sealed,
           remediationNotes,
+          formValues: formValues ?? t.formValues,
         };
-        const allComplete = updated.evidenceItems.every(
-          (ev) => ev.status === 'uploaded' || ev.status === 'verified',
-        );
-        const canAdvance = ['IN_PROGRESS', 'DUE_SOON', 'REJECTED', 'OVERDUE', 'ESCALATED'].includes(
-          t.status,
-        );
-        if (canAdvance && allComplete) {
+        const allComplete = updated.evidenceItems
+          .filter((ev) => !ev.optional)
+          .every((ev) => ev.status === 'uploaded' || ev.status === 'verified');
+        const notesOk = (remediationNotes || '').trim().length >= 15;
+        const canAdvance = ['IN_PROGRESS', 'ASSIGNED', 'REJECTED', 'OVERDUE', 'ESCALATED'].includes(t.status);
+        if (canAdvance && allComplete && notesOk) {
           submitted = true;
           return {
             ...updated,
@@ -498,14 +582,15 @@ export function createDemoStore(seed: Seed): DemoStore {
             urgencyGroup: 'AWAITING_VERIFICATION',
             isCriticalDoThisNext: false,
             rejectionReason: undefined,
-            submittedTimestamp: 'Just now (Shift III)',
+            submittedTimestamp: 'Just now (Shift I)',
             submittedAt: toISO(new Date()),
+            submissionCount: (t.submissionCount ?? 0) + 1,
           };
         }
         return updated;
       });
       if (submitted) {
-        log('owner', 'EVIDENCE_SUBMITTED', taskId, '→ AWAITING_VERIFICATION');
+        log('MINE-OFFICIAL', 'EVIDENCE_SUBMITTED', taskId, '→ AWAITING_VERIFICATION');
       }
       return clone(state);
     },
@@ -524,11 +609,47 @@ export function createDemoStore(seed: Seed): DemoStore {
             : ev,
         ),
       }));
-      log('verifier', 'EVIDENCE_REJECTED', taskId, reason);
+      log('REGULATORY-OFFICIAL', 'EVIDENCE_REJECTED', taskId, reason);
       return clone(state);
     },
 
-    resubmitTask: (taskId) => {
+    resubmitTask: (taskId, evidenceItems, remediationNotes, formValues) => {
+      if (evidenceItems && evidenceItems.length > 0) {
+        // Correction: submit the corrected evidence packet through the normal
+        // submit transition (REJECTED is an allowed source state).
+        const sealed = sealEvidenceList(evidenceItems, taskId);
+        let resubmitted = false;
+        patchTask(taskId, (t) => {
+          const updated: Task = {
+            ...t,
+            evidenceItems: sealed,
+            remediationNotes: remediationNotes ?? t.remediationNotes,
+            formValues: formValues ?? t.formValues,
+          };
+          const allComplete = updated.evidenceItems
+            .filter((ev) => !ev.optional)
+            .every((ev) => ev.status === 'uploaded' || ev.status === 'verified');
+          const notesOk = (remediationNotes ?? '').trim().length >= 15;
+          if (t.status === 'REJECTED' && allComplete && notesOk) {
+            resubmitted = true;
+            return {
+              ...updated,
+              status: 'AWAITING_VERIFICATION',
+              urgencyGroup: 'AWAITING_VERIFICATION',
+              isCriticalDoThisNext: false,
+              rejectionReason: undefined,
+              submittedTimestamp: 'Just now (Shift I)',
+              submittedAt: toISO(new Date()),
+              submissionCount: (t.submissionCount ?? 0) + 1,
+            };
+          }
+          return updated;
+        });
+        if (resubmitted) {
+          log('MINE-OFFICIAL', 'EVIDENCE_RESUBMITTED', taskId, '→ AWAITING_VERIFICATION');
+        }
+        return clone(state);
+      }
       patchTask(taskId, (t) => ({
         ...t,
         status: 'AWAITING_VERIFICATION',
@@ -536,8 +657,13 @@ export function createDemoStore(seed: Seed): DemoStore {
         isCriticalDoThisNext: false,
         rejectionReason: undefined,
         submittedAt: toISO(new Date()),
+        submittedTimestamp: 'Just now (Shift I)',
+        evidenceItems: t.evidenceItems.map((ev) =>
+          ev.status === 'rejected' ? { ...ev, status: 'uploaded' as const, rejectionReason: undefined } : ev,
+        ),
+        submissionCount: (t.submissionCount ?? 0) + 1,
       }));
-      log('owner', 'EVIDENCE_RESUBMITTED', taskId, '→ AWAITING_VERIFICATION');
+      log('MINE-OFFICIAL', 'EVIDENCE_RESUBMITTED', taskId, '→ AWAITING_VERIFICATION');
       return clone(state);
     },
 
@@ -545,6 +671,7 @@ export function createDemoStore(seed: Seed): DemoStore {
       const verifiedAt = new Date();
       let approved = false;
       patchTask(taskId, (t) => {
+        if (!['AWAITING_VERIFICATION'].includes(t.status)) return t;
         const certificate = buildClosureCertificate(
           { ...t, submittedAt: t.submittedAt || t.submittedTimestamp },
           verifiedAt,
@@ -567,9 +694,66 @@ export function createDemoStore(seed: Seed): DemoStore {
         };
       });
       if (approved) {
-        log('verifier', 'CLOSURE_VERIFIED', taskId, '→ VERIFIED_CLOSED');
+        log('REGULATORY-OFFICIAL', 'CLOSURE_VERIFIED', taskId, '→ VERIFIED');
       }
       return clone(state);
+    },
+
+    schedulerTick: () => {
+      // Deterministic recurring-instance generation: for WEEKLY/MONTHLY rules
+      // whose current instances are VERIFIED, generate the next period instance
+      // as PROPOSED (manager review). Idempotent per rule+mine+period.
+      const created: Task[] = [];
+      const now = new Date();
+      for (const rule of state.rules) {
+        if (!rule.cadence) continue;
+        const instances = state.tasks.filter((t) => t.obligationRef === rule.id);
+        const allClosed = instances.length > 0 && instances.every((t) => t.status === 'VERIFIED');
+        if (!allClosed) continue;
+        const nextOffset = rule.cadence.kind === 'WEEKLY' ? 7 : 30;
+        const periodLabel =
+          rule.cadence.kind === 'WEEKLY'
+            ? `Week ${Math.ceil((now.getTime() / 86400000 + 4) % 52)} · ${now.getFullYear()}`
+            : `Month ${now.getMonth() + 2} · ${now.getFullYear()}`;
+        for (const template of instances) {
+          const exists = state.tasks.some(
+            (t) => t.obligationRef === rule.id && t.mineId === template.mineId && t.periodLabel === periodLabel,
+          );
+          if (exists) continue;
+          const nextId = `${template.id.replace(/W\d+/, 'W' + Math.ceil((now.getTime() / 86400000 + 4) % 52))}-N${created.length}`;
+          const next: Task = {
+            ...clone(template),
+            id: nextId,
+            status: 'PROPOSED',
+            urgencyGroup: 'DUE_SOON',
+            periodLabel,
+            createdAt: toISO(now),
+            deadline: toISO(addDays(now, nextOffset)),
+            deadlineDate: `Due ${toISO(addDays(now, nextOffset)).slice(5, 10)}`,
+            hoursRemaining: nextOffset * 24,
+            isCriticalDoThisNext: false,
+            evidenceItems: template.evidenceItems.map((ev) => ({
+              ...ev,
+              status: 'pending' as const,
+              metadata: undefined,
+              photoUrl: undefined,
+              rejectionReason: undefined,
+            })),
+            remediationNotes: '',
+            submittedAt: undefined,
+            verifiedAt: undefined,
+            closedAt: undefined,
+            closureCertificate: undefined,
+          };
+          state.tasks = [...state.tasks, next];
+          created.push(clone(next));
+          log('SCHEDULER', 'RECURRING_INSTANCE_GENERATED', next.id, `${rule.id} · ${periodLabel}`);
+        }
+      }
+      if (created.length > 0) {
+        state = { ...state, updatedAt: toISO(now) };
+      }
+      return { state: clone(state), created };
     },
   };
 }

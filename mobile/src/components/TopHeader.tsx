@@ -51,7 +51,7 @@ export const TopHeader: React.FC<TopHeaderProps> = ({
             Good morning, {MINE_INFO.user.shortName}
           </h1>
           <p className="text-xs font-medium text-[#718096] mt-0.5">
-            {MINE_INFO.name}
+            {MINE_INFO.name} · {MINE_INFO.area}
           </p>
         </div>
 

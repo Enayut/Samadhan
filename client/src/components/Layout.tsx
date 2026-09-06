@@ -1,31 +1,28 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { NavLink, Outlet } from 'react-router-dom';
-import { useAppContext, ROLE_USER_NAMES } from '../store/AppContext';
-import { UserRole } from '../types';
-import { 
-  Activity, 
-  ShieldCheck, 
-  AlertOctagon, 
-  BrainCircuit, 
-  Menu, 
+import { useAppContext, PERSONA_LABEL, type Persona } from '../store/AppContext';
+import {
+  Activity,
+  ShieldCheck,
+  BrainCircuit,
+  Menu,
   X,
   Bell,
-  HardHat,
   Building2,
   Scale,
   ChevronDown,
   Check,
-  FileCheck,
-  Search,
   Map,
   CalendarDays,
-  RotateCcw
+  ClipboardList,
+  RotateCcw,
+  Mountain,
 } from 'lucide-react';
 import { format } from 'date-fns';
 import { motion, AnimatePresence } from 'motion/react';
 
 export function Layout() {
-  const { state, setRole, resetDemo } = useAppContext();
+  const { state, persona, setPersona, resetDemo } = useAppContext();
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [roleMenuOpen, setRoleMenuOpen] = useState(false);
   const roleMenuRef = useRef<HTMLDivElement>(null);
@@ -40,35 +37,19 @@ export function Layout() {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  const defaultNav = [
+  const navItems = [
     { to: '/', icon: Activity, label: 'Dashboard' },
-    { to: '/intake', icon: BrainCircuit, label: 'Alert Intake' },
+    { to: '/intake', icon: BrainCircuit, label: 'Compliance Ingest' },
+    { to: '/review', icon: ClipboardList, label: 'Manager Review' },
     { to: '/calendar', icon: CalendarDays, label: 'Calendar' },
-    { to: '/gis', icon: Map, label: 'GIS View' },
-    { to: '/compliance', icon: ShieldCheck, label: 'Governance Register' }
+    { to: '/gis', icon: Map, label: 'Area Map' },
+    { to: '/compliance', icon: ShieldCheck, label: 'Governance Register' },
   ];
 
-  const roleNavConfig: Record<string, {to: string, icon: any, label: string}[]> = {
-    'Mine Manager': defaultNav,
-    'Mine Safety Officer': defaultNav,
-    'Mine Engineer': defaultNav,
-    'Area Safety Officer': defaultNav,
-    'Corporate Management': defaultNav,
-    'Regulatory Authority': defaultNav
+  const PERSONA_ICONS: Record<Persona, any> = {
+    AREA_MANAGER: Building2,
+    REGULATORY_OFFICIAL: Scale,
   };
-
-  const navItems = roleNavConfig[state.role] || defaultNav;
-
-  const roleIcons: Record<string, any> = {
-    'Mine Manager': HardHat,
-    'Mine Safety Officer': HardHat,
-    'Mine Engineer': HardHat,
-    'Area Safety Officer': Building2,
-    'Corporate Management': Building2,
-    'Regulatory Authority': Scale
-  };
-
-  const CurrentRoleIcon = roleIcons[state.role] || HardHat;
 
   return (
     <div className="flex h-screen bg-paper-100 font-sans print:h-auto print:bg-paper-50">
@@ -135,28 +116,21 @@ export function Layout() {
                 <span className="font-mono text-paper-50">{format(state.lastSync, 'HH:mm:ss')}</span>
               </div>
               <div className="flex items-center gap-2">
-                <Bell size={14} className="text-paper-100/70" />
-                <span className="text-paper-100/70">Active Alerts:</span>
-                <span className="font-bold text-safety-amber">{state.alerts.length}</span>
+                <Mountain size={14} className="text-paper-100/70" />
+                <span className="text-paper-100/70">Mines:</span>
+                <span className="font-bold text-safety-amber">{state.sites.length}</span>
               </div>
               <div className="flex items-center gap-2">
-                <Building2 size={14} className="text-paper-100/70" />
-                <span className="text-paper-100/70">Connected Sites:</span>
-                <span className="font-bold">{state.sites.length}</span>
+                <Bell size={14} className="text-paper-100/70" />
+                <span className="text-paper-100/70">Open obligations:</span>
+                <span className="font-bold text-safety-amber">
+                  {state.tasks.filter((t) => !['VERIFIED'].includes(t.status)).length}
+                </span>
               </div>
             </div>
           </div>
 
-          <div className="flex-1 max-w-md mx-4 hidden lg:block">
-            <div className="relative">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-paper-100/50" size={16} />
-              <input 
-                type="text" 
-                placeholder="Global search across network (Cmd+K)..." 
-                className="w-full bg-anthracite-900 border border-anthracite-800 focus:border-safety-amber focus:ring-1 focus:ring-safety-amber text-sm text-paper-50 placeholder:text-paper-100/50 rounded-lg pl-9 pr-4 py-2 outline-none transition-colors"
-              />
-            </div>
-          </div>
+          <div className="flex-1 max-w-md mx-4 hidden lg:block" />
 
           {/* Reset demo state */}
           <button
@@ -171,18 +145,18 @@ export function Layout() {
             <RotateCcw size={16} />
           </button>
 
-          {/* Role Switcher */}
+          {/* Persona Switcher */}
           <div className="flex items-center gap-3 relative shrink-0" ref={roleMenuRef}>
             <button 
               onClick={() => setRoleMenuOpen(!roleMenuOpen)}
               className="flex items-center gap-3 bg-anthracite-800 hover:bg-anthracite-700 px-3 py-2 rounded-lg border border-anthracite-700 transition-colors focus:outline-none"
             >
               <div className="w-8 h-8 rounded bg-anthracite-950 flex items-center justify-center shrink-0">
-                <CurrentRoleIcon size={16} className="text-safety-amber" />
+                {React.createElement(PERSONA_ICONS[persona], { size: 16, className: 'text-safety-amber' })}
               </div>
               <div className="text-left hidden md:block pr-2">
                 <div className="text-[10px] text-paper-100/50 font-medium uppercase tracking-wider leading-none mb-1">Viewing As</div>
-                <div className="text-sm font-semibold text-paper-50 leading-none">{state.role}</div>
+                <div className="text-sm font-semibold text-paper-50 leading-none">{PERSONA_LABEL[persona]}</div>
               </div>
               <ChevronDown size={16} className={`text-paper-100/50 transition-transform duration-200 ${roleMenuOpen ? 'rotate-180' : ''}`} />
             </button>
@@ -194,20 +168,20 @@ export function Layout() {
                   animate={{ opacity: 1, y: 0, scale: 1 }}
                   exit={{ opacity: 0, y: 10, scale: 0.95 }}
                   transition={{ duration: 0.15, ease: "easeOut" }}
-                  className="absolute top-full right-0 mt-2 w-72 bg-anthracite-950 border border-anthracite-800 rounded-xl shadow-xl overflow-hidden z-50"
+                  className="absolute top-full right-0 mt-2 w-80 bg-anthracite-950 border border-anthracite-800 rounded-xl shadow-xl overflow-hidden z-50"
                 >
                   <div className="p-3 border-b border-anthracite-800 bg-anthracite-900/50">
-                    <p className="text-xs font-medium text-paper-100/70 uppercase tracking-wider">Switch Persona</p>
+                    <p className="text-xs font-medium text-paper-100/70 uppercase tracking-wider">Desktop persona</p>
+                    <p className="text-[10px] text-paper-100/40 mt-0.5">Mine officials use the mobile app — /mobile</p>
                   </div>
                   <div className="p-2 space-y-1">
-                    {(['Mine Manager', 'Mine Safety Officer', 'Mine Engineer', 'Area Safety Officer', 'Corporate Management', 'Regulatory Authority'] as UserRole[]).map((r) => {
-                      const Icon = roleIcons[r as keyof typeof roleIcons] || HardHat;
-                      const isActive = state.role === r;
-                      const userName = ROLE_USER_NAMES[r];
+                    {(['AREA_MANAGER', 'REGULATORY_OFFICIAL'] as Persona[]).map((p) => {
+                      const Icon = PERSONA_ICONS[p];
+                      const isActive = persona === p;
                       return (
                         <button
-                          key={r}
-                          onClick={() => { setRole(r, userName); setRoleMenuOpen(false); }}
+                          key={p}
+                          onClick={() => { setPersona(p); setRoleMenuOpen(false); }}
                           className={`w-full flex items-start gap-3 p-3 rounded-lg text-left transition-colors ${isActive ? 'bg-anthracite-800' : 'hover:bg-anthracite-800/50'}`}
                         >
                           <div className={`mt-0.5 shrink-0 w-7 h-7 rounded-md flex items-center justify-center ${isActive ? 'bg-safety-amber text-anthracite-950' : 'bg-anthracite-800 text-paper-100/70'}`}>
@@ -215,7 +189,7 @@ export function Layout() {
                           </div>
                           <div className="flex-1">
                             <div className="text-sm font-semibold text-paper-50 flex items-center justify-between">
-                              {r} ({userName})
+                              {PERSONA_LABEL[p]}
                               {isActive && <Check size={16} className="text-safety-amber" />}
                             </div>
                           </div>

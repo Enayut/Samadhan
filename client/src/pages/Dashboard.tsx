@@ -1,302 +1,376 @@
-import React, { useMemo, useState } from 'react';
-import { motion } from 'motion/react';
+import React, { useMemo } from 'react';
 import { useAppContext } from '../store/AppContext';
-import { Link } from 'react-router-dom';
-import { AlertCircle, CheckCircle2, Clock, FileCheck, ShieldAlert, FileText, ArrowRight, Activity, CalendarClock, Sparkles, BrainCircuit } from 'lucide-react';
-import { format, isPast, differenceInDays } from 'date-fns';
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip as RechartsTooltip, ResponsiveContainer, Legend, PieChart, Pie, Cell } from 'recharts';
-import { GovernanceObjectModal } from '../components/GovernanceObjectModal';
-import { GovernanceObject, GovStatus } from '../types';
+import { Link, useNavigate } from 'react-router-dom';
+import {
+  CheckCircle2,
+  Clock,
+  ShieldCheck,
+  AlertTriangle,
+  ArrowRight,
+  Activity,
+  CalendarClock,
+  FileCheck2,
+  Map,
+  Mountain,
+  Landmark,
+  Pickaxe,
+  Layers,
+  Database,
+  RefreshCw,
+} from 'lucide-react';
+import { format, isValid } from 'date-fns';
+import type { Task } from '../../../shared/demo/types';
+import { STATUS_COLOR, STATUS_LABEL } from '../services/demoApi';
+
+// Lifecycle strip — the central visual concept of the product.
+const LIFECYCLE = [
+  'Requirement',
+  'Owner',
+  'Deadline',
+  'Field action',
+  'Evidence',
+  'Independent verification',
+  'Verified record',
+];
+
+function LifecycleStrip() {
+  return (
+    <div className="bg-white rounded-xl border border-paper-100 shadow-sm px-4 py-3 overflow-x-auto">
+      <div className="flex items-center gap-2 min-w-max">
+        {LIFECYCLE.map((step, i) => (
+          <React.Fragment key={step}>
+            <div className="flex items-center gap-2">
+              <span className="w-5 h-5 rounded-full bg-anthracite-950 text-safety-amber text-[10px] font-bold flex items-center justify-center shrink-0">
+                {i + 1}
+              </span>
+              <span className="text-xs font-bold text-anthracite-950 whitespace-nowrap">{step}</span>
+            </div>
+            {i < LIFECYCLE.length - 1 && <ArrowRight size={13} className="text-anthracite-800/30 shrink-0" />}
+          </React.Fragment>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function mineIcon(siteId: string) {
+  switch (siteId) {
+    case 'MINE-001':
+      return Mountain;
+    case 'MINE-004':
+      return Layers;
+    default:
+      return Pickaxe;
+  }
+}
+
+function TaskRow({ task }: { task: Task }) {
+  const navigate = useNavigate();
+  const color = STATUS_COLOR[task.status] || '#6B7280';
+  const deadline = new Date(task.deadline);
+  return (
+    <button
+      onClick={() => navigate(`/compliance?focus=${task.id}`)}
+      className="w-full text-left px-4 py-2.5 hover:bg-paper-50 transition-colors flex items-center gap-3 border-b border-paper-100/60 last:border-0"
+    >
+      <span
+        className="shrink-0 w-2 h-2 rounded-full"
+        style={{ backgroundColor: color }}
+        title={STATUS_LABEL[task.status] || task.status}
+      />
+      <div className="min-w-0 flex-1">
+        <p className="text-sm font-medium text-anthracite-950 truncate">{task.title}</p>
+        <p className="text-[11px] text-anthracite-800/60 truncate">
+          {task.mineId} · {task.owner.name} · {task.sourceCitation}
+        </p>
+      </div>
+      {isValid(deadline) && (
+        <span className="shrink-0 text-[11px] font-bold text-anthracite-800/70 flex items-center gap-1">
+          <CalendarClock size={11} /> {format(deadline, 'd MMM')}
+        </span>
+      )}
+      <span
+        className="shrink-0 text-[10px] font-bold px-2 py-0.5 rounded-full border"
+        style={{ color, backgroundColor: `${color}12`, borderColor: `${color}30` }}
+      >
+        {STATUS_LABEL[task.status] || task.status}
+      </span>
+    </button>
+  );
+}
 
 export function Dashboard() {
-  const { state } = useAppContext();
-  const { role } = state;
-  const [selectedObjId, setSelectedObjId] = useState<string | null>(null);
+  const { state, schedulerTick } = useAppContext();
+  const navigate = useNavigate();
+
+  const perMine = useMemo(() => {
+    return state.sites.map((site) => {
+      const tasks = state.tasks.filter((t) => t.mineId === site.id);
+      const verified = tasks.filter((t) => t.status === 'VERIFIED').length;
+      const inProgress = tasks.filter(
+        (t) => ['ASSIGNED', 'IN_PROGRESS', 'REJECTED'].includes(t.status),
+      ).length;
+      const awaiting = tasks.filter((t) => t.status === 'AWAITING_VERIFICATION').length;
+      const overdue = tasks.filter((t) => ['OVERDUE', 'ESCALATED'].includes(t.status)).length;
+      const proposed = tasks.filter((t) => t.status === 'PROPOSED').length;
+      const openTotal = tasks.length - verified;
+      const attention =
+        overdue > 0 ? 'red' : overdue === 0 && (awaiting > 0 || inProgress > 0) ? 'amber' : 'green';
+      return { site, tasks, verified, inProgress, awaiting, overdue, proposed, openTotal, attention };
+    });
+  }, [state.sites, state.tasks]);
+
+  const totals = useMemo(() => {
+    const compliant = state.tasks.filter((t) => t.status === 'VERIFIED').length;
+    const inProgress = state.tasks.filter((t) =>
+      ['ASSIGNED', 'IN_PROGRESS', 'REJECTED'].includes(t.status),
+    ).length;
+    const awaiting = state.tasks.filter((t) => t.status === 'AWAITING_VERIFICATION').length;
+    const overdue = state.tasks.filter((t) => ['OVERDUE', 'ESCALATED'].includes(t.status)).length;
+    const proposed = state.tasks.filter((t) => t.status === 'PROPOSED').length;
+    return { compliant, inProgress, awaiting, overdue, proposed };
+  }, [state.tasks]);
+
+  const upcoming = useMemo(
+    () =>
+      state.tasks
+        .filter((t) => !['VERIFIED'].includes(t.status))
+        .sort((a, b) => new Date(a.deadline).getTime() - new Date(b.deadline).getTime())
+        .slice(0, 6),
+    [state.tasks],
+  );
+
+  const attentionList = useMemo(
+    () =>
+      state.tasks
+        .filter((t) => ['OVERDUE', 'ESCALATED', 'REJECTED'].includes(t.status))
+        .slice(0, 6),
+    [state.tasks],
+  );
+
+  const recentActivity = useMemo(() => [...state.audit].slice(-8).reverse(), [state.audit]);
 
   return (
     <div className="space-y-6 animate-in fade-in duration-500">
-      <GovernanceObjectModal objectId={selectedObjId} onClose={() => setSelectedObjId(null)} />
-      
-      <AlertBanner />
-      
-      <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-4 mb-8">
+      {/* Header */}
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-4">
         <div>
-          <h1 className="text-3xl font-display font-bold text-anthracite-950">
-            {role === 'Mine Manager' || role.includes('Officer') || role === 'Mine Engineer' ? 'Mine Dashboard' : role === 'Corporate Management' ? 'Corporate Oversight' : 'Regulatory Dashboard'}
-          </h1>
-          <p className="text-anthracite-800/80 mt-1">Real-time governance and compliance metrics.</p>
+          <h1 className="text-3xl font-display font-bold text-anthracite-950">Area Compliance Monitor</h1>
+          <p className="text-anthracite-800/80 mt-1">
+            North Karanpura Coalfield · Central Coalfields Limited · Jharkhand — five mines, one live picture
+            of compliance.
+          </p>
         </div>
-        <div className="flex gap-4">
-          <div className="bg-paper-50 px-4 py-2 rounded-lg border border-paper-100/50 shadow-sm flex flex-col items-end">
-            <span className="text-xs text-anthracite-800 uppercase tracking-wider font-bold">Sync Status</span>
-            <span className="text-sm font-medium text-verdant flex items-center gap-1"><CheckCircle2 size={14} /> SYNCED</span>
-          </div>
-          {role === 'Regulatory Authority' && (
-            <div className="bg-[#C1502E]/10 px-4 py-2 rounded-lg border border-[#C1502E]/20 shadow-sm flex flex-col items-end">
-               <span className="text-xs text-[#C1502E] uppercase tracking-wider font-bold">Mode</span>
-               <span className="text-sm font-medium text-[#C1502E]">SIMULATION</span>
+        <div className="flex items-center gap-3">
+          <button
+            onClick={() => schedulerTick()}
+            title="Run the recurring-compliance scheduler (generates next weekly/monthly instances)"
+            className="inline-flex items-center gap-2 bg-white hover:bg-paper-50 border border-paper-100 text-anthracite-950 px-3 py-2 rounded-lg text-xs font-bold shadow-sm transition-colors"
+          >
+            <RefreshCw size={13} /> Run scheduler
+          </button>
+          <Link
+            to="/gis"
+            className="inline-flex items-center gap-2 bg-white hover:bg-paper-50 border border-paper-100 text-anthracite-950 px-3 py-2 rounded-lg text-xs font-bold shadow-sm transition-colors"
+          >
+            <Map size={14} /> Area map
+          </Link>
+        </div>
+      </div>
+
+      <LifecycleStrip />
+
+      {/* Area totals */}
+      <div className="grid grid-cols-2 lg:grid-cols-5 gap-3">
+        {[
+          { label: 'Compliant (verified)', value: totals.compliant, color: '#4C7A66', icon: ShieldCheck },
+          { label: 'In progress', value: totals.inProgress, color: '#F2A93B', icon: Activity },
+          { label: 'Awaiting verification', value: totals.awaiting, color: '#4A7C9B', icon: FileCheck2 },
+          { label: 'Attention required', value: totals.overdue, color: '#C1502E', icon: AlertTriangle },
+          { label: 'Proposed (in review)', value: totals.proposed, color: '#8A9098', icon: Clock },
+        ].map((stat) => (
+          <div key={stat.label} className="bg-white p-4 rounded-xl shadow-sm border border-paper-100 relative overflow-hidden">
+            <div className="absolute top-0 left-0 w-1 h-full" style={{ backgroundColor: stat.color }} />
+            <div className="pl-2 flex items-center justify-between">
+              <p className="text-xs font-bold text-anthracite-800 uppercase tracking-wider">{stat.label}</p>
+              <stat.icon size={15} style={{ color: stat.color }} />
             </div>
-          )}
-        </div>
-      </div>
-
-      <DashboardContent onOpenModal={setSelectedObjId} />
-    </div>
-  );
-}
-
-const STATUS_COLORS: Record<GovStatus, string> = {
-  'Closed': '#4C7A66',       // Green
-  'Submitted': '#4A7C9B',    // Blue
-  'In Progress': '#F2A93B',  // Amber
-  'Rejected': '#A93226',     // Dark red — returned to owner
-  'Overdue': '#C1502E',      // Red
-  'Escalated': '#C1502E'     // Red
-};
-
-function AlertBanner() {
-  const { state } = useAppContext();
-  // The banner tracks the DGMS safety alert hero (first in the inbox).
-  const heroEntry =
-    state.pipeline.alerts.find((p) => p.alert.kind === 'dgms-alert') ?? state.pipeline.alerts[0];
-  const alert = heroEntry?.alert ?? null;
-  const fanout = (heroEntry?.fanout as { governanceObjects?: number } | null) ?? null;
-  const processed = !!heroEntry?.extraction;
-  const receivedCount = state.pipeline.alerts.filter((p) => p.alert.status === 'received').length;
-
-  if (state.loading) {
-    return (
-      <div className="bg-white rounded-xl border border-paper-100 shadow-sm p-6 flex items-center justify-center gap-3 text-anthracite-800/60">
-        <BrainCircuit size={18} className="animate-pulse text-steel" />
-        <span className="text-sm font-medium">Loading demo state…</span>
-      </div>
-    );
-  }
-
-  const confirmed = !!fanout;
-  const alertTitle = alert?.title || 'DGMS Safety Alert 23/2026';
-
-  let bannerTitle: string;
-  let bannerAction: string;
-  if (confirmed) {
-    bannerTitle = `${alertTitle} — ${fanout?.governanceObjects ?? 183} governance obligations created across 61 mines`;
-    bannerAction = 'Open Alert Intelligence';
-  } else if (processed) {
-    bannerTitle = `${alertTitle} — AI extraction complete, awaiting confirmation`;
-    bannerAction = 'Review Extraction';
-  } else {
-    bannerTitle = `${alertTitle} is awaiting AI processing`;
-    bannerAction = 'Process with AI';
-  }
-
-  return (
-    <div
-      className={`rounded-xl border shadow-sm p-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 ${
-        confirmed ? 'bg-verdant/5 border-verdant/25' : 'bg-safety-amber/5 border-safety-amber/30'
-      }`}
-    >
-      <div className="flex items-start gap-3">
-        <div
-          className={`p-2 rounded-lg shrink-0 ${
-            confirmed ? 'bg-verdant/10 text-verdant' : 'bg-safety-amber/10 text-safety-amber'
-          }`}
-        >
-          {confirmed ? <CheckCircle2 size={20} /> : <Sparkles size={20} />}
-        </div>
-        <div>
-          <div className="text-xs font-bold uppercase tracking-wider text-anthracite-800/60">
-            Active DGMS Alert · {alert?.ref || 'DGMS/2026/SA-041'}
-            {receivedCount > 0 && ` · ${receivedCount} alert${receivedCount === 1 ? '' : 's'} awaiting AI`}
+            <p className="text-3xl font-display font-bold text-anthracite-950 pl-2 mt-1">{stat.value}</p>
           </div>
-          <p className="text-sm font-medium text-anthracite-950 mt-0.5">{bannerTitle}</p>
-        </div>
-      </div>
-      <Link
-        to="/intake"
-        className={`shrink-0 inline-flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-bold shadow-sm transition-colors ${
-          confirmed
-            ? 'bg-verdant hover:bg-verdant/90 text-white'
-            : 'bg-anthracite-950 hover:bg-anthracite-800 text-paper-50'
-        }`}
-      >
-        {bannerAction} <ArrowRight size={15} />
-      </Link>
-    </div>
-  );
-}
-
-function DashboardContent({ onOpenModal }: { onOpenModal: (id: string) => void }) {
-  const { state } = useAppContext();
-  const { govObjects } = state;
-
-  const summaryData = useMemo(() => {
-    const closed = govObjects.filter(o => o.status === 'Closed').length;
-    const submitted = govObjects.filter(o => o.status === 'Submitted').length;
-    // Rejected items are reopened and awaiting owner correction — they belong in the open bucket.
-    const inProgress = govObjects.filter(o => o.status === 'In Progress' || o.status === 'Rejected').length;
-    const escalatedOrOverdue = govObjects.filter(o => o.status === 'Escalated' || o.status === 'Overdue').length;
-
-    return [
-      { name: 'Verified Closed', value: closed, color: STATUS_COLORS['Closed'], status: 'Closed' },
-      { name: 'Awaiting Verification', value: submitted, color: STATUS_COLORS['Submitted'], status: 'Submitted' },
-      { name: 'In Progress', value: inProgress, color: STATUS_COLORS['In Progress'], status: 'In Progress' },
-      { name: 'Overdue / Escalated', value: escalatedOrOverdue, color: STATUS_COLORS['Overdue'], status: 'Overdue' }
-    ];
-  }, [govObjects]);
-
-  const domainData = useMemo(() => {
-    const domains = ['Safety', 'Environment', 'Production', 'Labour', 'Contractor', 'Grievance'];
-    return domains.map(domain => {
-      const objects = govObjects.filter(o => o.domain === domain);
-      return {
-        domain,
-        Closed: objects.filter(o => o.status === 'Closed').length,
-        Submitted: objects.filter(o => o.status === 'Submitted').length,
-        'In Progress': objects.filter(o => o.status === 'In Progress' || o.status === 'Rejected').length,
-        'Overdue/Escalated': objects.filter(o => o.status === 'Escalated' || o.status === 'Overdue').length,
-      };
-    }).filter(d => d.Closed > 0 || d.Submitted > 0 || d['In Progress'] > 0 || d['Overdue/Escalated'] > 0);
-  }, [govObjects]);
-
-  const recentTasks = [...govObjects].sort((a, b) => new Date(a.deadline).getTime() - new Date(b.deadline).getTime()).slice(0, 8);
-
-  const cardVariants = {
-    hidden: { opacity: 0, y: 20 },
-    visible: { opacity: 1, y: 0 }
-  };
-
-  return (
-    <motion.div 
-      initial="hidden"
-      animate="visible"
-      variants={{ visible: { transition: { staggerChildren: 0.1 } } }}
-      className="space-y-6"
-    >
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-        {summaryData.map(stat => (
-          <motion.div key={stat.name} variants={cardVariants} className="bg-white p-6 rounded-xl shadow-sm border border-paper-100 flex flex-col relative overflow-hidden">
-             <div className="absolute top-0 left-0 w-1 h-full" style={{ backgroundColor: stat.color }}></div>
-             <p className="text-sm font-medium text-anthracite-800 mb-2 pl-2">{stat.name}</p>
-             <p className="text-3xl font-display font-bold text-anthracite-950 pl-2">{stat.value}</p>
-          </motion.div>
         ))}
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        
-        {/* Compliance By Status (Pie Chart) */}
-        <motion.div variants={cardVariants} className="bg-white p-6 rounded-xl shadow-sm border border-paper-100">
-          <h2 className="text-lg font-display font-semibold mb-4 border-b border-paper-100 pb-2 text-anthracite-950">Status Overview</h2>
-          <div className="h-64">
-            <ResponsiveContainer width="100%" height="100%">
-              <PieChart>
-                <Pie
-                  data={summaryData}
-                  cx="50%"
-                  cy="50%"
-                  innerRadius={60}
-                  outerRadius={80}
-                  paddingAngle={5}
-                  dataKey="value"
-                >
-                  {summaryData.map((entry, index) => (
-                    <Cell key={`cell-${index}`} fill={entry.color} />
+      {/* Five-mine grid */}
+      <div>
+        <div className="flex items-center justify-between mb-3">
+          <h2 className="text-lg font-display font-semibold text-anthracite-950">Five mines · current state</h2>
+          <span className="text-[11px] font-bold text-anthracite-800/60 uppercase tracking-wider">
+            CCL · North Karanpura
+          </span>
+        </div>
+        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
+          {perMine.map(({ site, tasks, verified, inProgress, awaiting, overdue, proposed, openTotal, attention }) => {
+            const Icon = mineIcon(site.id);
+            const accent =
+              attention === 'red' ? '#C1502E' : attention === 'amber' ? '#F2A93B' : '#4C7A66';
+            return (
+              <button
+                key={site.id}
+                onClick={() => navigate(`/mine/${site.id}`)}
+                className="bg-white rounded-xl shadow-sm border border-paper-100 p-5 text-left hover:shadow-md transition-shadow relative overflow-hidden group"
+              >
+                <div className="absolute top-0 left-0 w-full h-1" style={{ backgroundColor: accent }} />
+                <div className="flex items-start justify-between gap-3">
+                  <div className="flex items-start gap-3 min-w-0">
+                    <div
+                      className="w-9 h-9 rounded-lg flex items-center justify-center shrink-0"
+                      style={{ backgroundColor: `${accent}14`, color: accent }}
+                    >
+                      <Icon size={18} />
+                    </div>
+                    <div className="min-w-0">
+                      <div className="flex items-center gap-2">
+                        <span className="font-mono text-[11px] font-bold text-steel">{site.id}</span>
+                        {site.gisAnchor && (
+                          <span className="text-[9px] font-bold text-steel bg-steel/10 border border-steel/25 rounded px-1.5 py-0.5 uppercase">
+                            GIS anchor
+                          </span>
+                        )}
+                      </div>
+                      <p className="text-base font-display font-bold text-anthracite-950 leading-tight truncate">
+                        {site.name}
+                      </p>
+                      <p className="text-[11px] text-anthracite-800/60 truncate">
+                        {site.type} · {site.district} · {site.area}
+                      </p>
+                    </div>
+                  </div>
+                  <span
+                    className="shrink-0 text-[10px] font-bold px-2 py-0.5 rounded-full border uppercase tracking-wider"
+                    style={{ color: accent, backgroundColor: `${accent}12`, borderColor: `${accent}30` }}
+                  >
+                    {attention === 'red' ? 'Attention' : attention === 'amber' ? 'Active' : 'Nominal'}
+                  </span>
+                </div>
+
+                <div className="grid grid-cols-5 gap-1 mt-4 pt-3 border-t border-paper-100 text-center">
+                  {[
+                    { label: 'Verified', value: verified },
+                    { label: 'In prog.', value: inProgress },
+                    { label: 'Verifying', value: awaiting },
+                    { label: 'Overdue', value: overdue },
+                    { label: 'Proposed', value: proposed },
+                  ].map((cell) => (
+                    <div key={cell.label}>
+                      <div
+                        className="text-lg font-display font-bold"
+                        style={{ color: cell.value > 0 && cell.label === 'Overdue' ? '#C1502E' : '#12161A' }}
+                      >
+                        {cell.value}
+                      </div>
+                      <div className="text-[9px] font-bold uppercase tracking-wider text-anthracite-800/50">
+                        {cell.label}
+                      </div>
+                    </div>
                   ))}
-                </Pie>
-                <RechartsTooltip contentStyle={{ backgroundColor: '#1D2329', color: '#FAF8F3', border: 'none', borderRadius: '6px', fontFamily: 'Poppins' }} />
-                <Legend verticalAlign="bottom" height={36} iconType="circle" wrapperStyle={{ fontFamily: 'Poppins', fontSize: '12px' }} />
-              </PieChart>
-            </ResponsiveContainer>
-          </div>
-        </motion.div>
+                </div>
+                <div className="mt-3 flex items-center justify-between text-[11px] font-bold">
+                  <span className="text-anthracite-800/60">{openTotal} open of {tasks.length} obligations</span>
+                  <span className="text-steel flex items-center gap-1 group-hover:translate-x-0.5 transition-transform">
+                    {site.id === 'MINE-001' ? 'Open mine detail + GIS' : 'Open mine detail'} <ArrowRight size={12} />
+                  </span>
+                </div>
+              </button>
+            );
+          })}
 
-        {/* Compliance By Domain (Bar Chart) */}
-        <motion.div variants={cardVariants} className="lg:col-span-2 bg-white p-6 rounded-xl shadow-sm border border-paper-100">
-          <h2 className="text-lg font-display font-semibold mb-4 border-b border-paper-100 pb-2 text-anthracite-950">Task Distribution by Domain</h2>
-          <div className="h-64">
-            <ResponsiveContainer width="100%" height="100%">
-              <BarChart data={domainData} margin={{ top: 20, right: 30, left: -20, bottom: 5 }}>
-                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#e5e5e5" />
-                <XAxis dataKey="domain" axisLine={false} tickLine={false} tick={{fill: '#586069', fontFamily: 'Poppins', fontSize: 12}} />
-                <YAxis axisLine={false} tickLine={false} tick={{fill: '#586069', fontFamily: 'Poppins', fontSize: 12}} />
-                <RechartsTooltip cursor={{fill: '#F1EEE6'}} contentStyle={{ backgroundColor: '#1D2329', color: '#FAF8F3', border: 'none', borderRadius: '6px', fontFamily: 'Poppins' }} />
-                <Legend verticalAlign="top" height={36} iconType="circle" wrapperStyle={{ fontFamily: 'Poppins', fontSize: '12px' }} />
-                <Bar dataKey="Closed" stackId="a" fill={STATUS_COLORS['Closed']} />
-                <Bar dataKey="Submitted" stackId="a" fill={STATUS_COLORS['Submitted']} />
-                <Bar dataKey="In Progress" stackId="a" fill={STATUS_COLORS['In Progress']} />
-                <Bar dataKey="Overdue/Escalated" stackId="a" fill={STATUS_COLORS['Overdue']} />
-              </BarChart>
-            </ResponsiveContainer>
+          {/* Legacy-noise guard: nothing here — five mines only */}
+          <div className="bg-white rounded-xl shadow-sm border border-paper-100 p-5 flex flex-col justify-between">
+            <div>
+              <div className="flex items-center gap-2 text-sm font-bold text-anthracite-950">
+                <Landmark size={16} className="text-steel" /> Governance spine
+              </div>
+              <p className="text-xs text-anthracite-800/70 mt-2 leading-relaxed">
+                Every obligation runs the same spine: a rule decides applicability, owner and deadline —
+                field evidence is geo-tagged and time-stamped — an independent verifier closes it. Rules
+                enforce, AI advises, people decide.
+              </p>
+            </div>
+            <div className="mt-4 flex flex-col gap-2">
+              <Link
+                to="/intake"
+                className="w-full flex items-center justify-between text-xs font-bold text-steel border border-steel/25 rounded-lg px-3 py-2 hover:bg-steel/5 transition-colors"
+              >
+                <span className="flex items-center gap-2"><Database size={13} /> Ingest a requirement</span>
+                <ArrowRight size={13} />
+              </Link>
+              <Link
+                to="/review"
+                className="w-full flex items-center justify-between text-xs font-bold text-anthracite-950 bg-anthracite-950 text-paper-50 rounded-lg px-3 py-2 hover:bg-anthracite-800 transition-colors"
+              >
+                <span className="flex items-center gap-2"><CheckCircle2 size={13} /> Manager review queue</span>
+                <ArrowRight size={13} />
+              </Link>
+            </div>
           </div>
-        </motion.div>
-
+        </div>
       </div>
 
-      {/* Actionable List */}
-      <motion.div variants={cardVariants} className="bg-white p-6 rounded-xl shadow-sm border border-paper-100">
-        <div className="flex justify-between items-center border-b border-paper-100 pb-4 mb-4">
-          <h2 className="text-lg font-display font-semibold text-anthracite-950">Governance Action Items</h2>
-          <button className="text-sm text-steel hover:text-steel/80 font-medium flex items-center gap-1 transition-colors">
-            View All <ArrowRight size={16} />
-          </button>
+      {/* Lists: attention / upcoming / activity */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <div className="bg-white rounded-xl shadow-sm border border-paper-100 overflow-hidden">
+          <div className="flex items-center justify-between px-5 py-3 border-b border-paper-100 bg-paper-50">
+            <div className="flex items-center gap-2 text-sm font-bold text-anthracite-950">
+              <AlertTriangle size={15} className="text-signal-rust" /> Needs attention
+            </div>
+            <span className="text-[10px] font-bold text-anthracite-800/60">{attentionList.length}</span>
+          </div>
+          {attentionList.length === 0 ? (
+            <p className="px-5 py-6 text-xs text-anthracite-800/60 flex items-center gap-2">
+              <CheckCircle2 size={14} className="text-verdant" /> Nothing overdue — the area is on cadence.
+            </p>
+          ) : (
+            attentionList.map((t) => <TaskRow key={t.id} task={t} />)
+          )}
         </div>
-        
-        <div className="overflow-x-auto">
-          <table className="w-full text-left text-sm">
-            <thead>
-              <tr className="text-anthracite-800 border-b border-paper-100">
-                <th className="py-3 px-4 font-bold uppercase tracking-wider text-xs">Domain & Source</th>
-                <th className="py-3 px-4 font-bold uppercase tracking-wider text-xs">Title</th>
-                <th className="py-3 px-4 font-bold uppercase tracking-wider text-xs">Owner</th>
-                <th className="py-3 px-4 font-bold uppercase tracking-wider text-xs">Deadline</th>
-                <th className="py-3 px-4 font-bold uppercase tracking-wider text-xs">Status</th>
-              </tr>
-            </thead>
-            <tbody>
-              {recentTasks.map((task) => (
-                <motion.tr 
-                  key={task.id}
-                  whileHover={{ backgroundColor: '#F8F9FA' }}
-                  onClick={() => onOpenModal(task.id)}
-                  className="border-b border-paper-100/50 last:border-0 cursor-pointer transition-colors"
-                >
-                  <td className="py-3 px-4">
-                    <div className="flex flex-col gap-1">
-                      <span className="font-bold text-anthracite-950">{task.domain}</span>
-                      <span className="text-xs text-anthracite-800">{task.source}</span>
-                    </div>
-                  </td>
-                  <td className="py-3 px-4 font-medium text-anthracite-950">{task.title}</td>
-                  <td className="py-3 px-4">
-                    <div className="flex flex-col">
-                      <span className="text-anthracite-950">{task.owner.name}</span>
-                      <span className="text-xs text-anthracite-800">{task.owner.role}</span>
-                    </div>
-                  </td>
-                  <td className="py-3 px-4">
-                    <div className="flex items-center gap-1 text-anthracite-950">
-                      <CalendarClock size={14} className="text-anthracite-800/70" />
-                      {format(new Date(task.deadline), 'MMM dd')}
-                    </div>
-                  </td>
-                  <td className="py-3 px-4">
-                    <span 
-                      className={`inline-flex items-center px-2.5 py-1 rounded-full text-xs font-bold border`}
-                      style={{
-                        backgroundColor: `${STATUS_COLORS[task.status]}15`,
-                        color: STATUS_COLORS[task.status],
-                        borderColor: `${STATUS_COLORS[task.status]}30`
-                      }}
-                    >
-                      {task.status}
-                    </span>
-                  </td>
-                </motion.tr>
-              ))}
-            </tbody>
-          </table>
+
+        <div className="bg-white rounded-xl shadow-sm border border-paper-100 overflow-hidden">
+          <div className="flex items-center justify-between px-5 py-3 border-b border-paper-100 bg-paper-50">
+            <div className="flex items-center gap-2 text-sm font-bold text-anthracite-950">
+              <CalendarClock size={15} className="text-steel" /> Upcoming obligations
+            </div>
+            <span className="text-[10px] font-bold text-anthracite-800/60">{upcoming.length}</span>
+          </div>
+          {upcoming.map((t) => <TaskRow key={t.id} task={t} />)}
         </div>
-      </motion.div>
-    </motion.div>
+
+        <div className="bg-white rounded-xl shadow-sm border border-paper-100 overflow-hidden">
+          <div className="flex items-center justify-between px-5 py-3 border-b border-paper-100 bg-paper-50">
+            <div className="flex items-center gap-2 text-sm font-bold text-anthracite-950">
+              <Activity size={15} className="text-verdant" /> Recent activity
+            </div>
+            <span className="text-[10px] font-bold text-anthracite-800/60">audit trail</span>
+          </div>
+          <div className="divide-y divide-paper-100/60">
+            {recentActivity.length === 0 && (
+              <p className="px-5 py-6 text-xs text-anthracite-800/60">No transitions yet — publish an obligation to begin.</p>
+            )}
+            {recentActivity.map((ev, i) => (
+              <div key={i} className="px-5 py-2.5 flex items-start gap-3">
+                <span className="mt-1.5 w-1.5 h-1.5 rounded-full bg-steel shrink-0" />
+                <div className="min-w-0">
+                  <p className="text-xs font-medium text-anthracite-950">
+                    <span className="font-mono text-[10px] text-steel">{ev.actor}</span> · {ev.action.replaceAll('_', ' ')}
+                  </p>
+                  <p className="text-[11px] text-anthracite-800/60 truncate">
+                    {ev.entity}{ev.detail ? ` · ${ev.detail}` : ''}
+                  </p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+    </div>
   );
 }

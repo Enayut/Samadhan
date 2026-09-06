@@ -1,32 +1,32 @@
 {
-  "note": "SIMULATED similarity result. A real vector search (Pinecone or pg_trgm) would run against the historical corpus; the demo returns this deterministic precomputed match set.",
-  "searched": 120,
+  "note": "Organizational-memory seed (advisory, demo). A real vector search would run over closed obligations; the demo uses this deterministic record set so the advisory panel is reproducible. Records are labelled org-memory seed — they are NOT real compliance events.",
+  "searched": 5,
   "matched": 3,
-  "badge": "RECURRENCE DETECTED",
+  "badge": "ORGANIZATIONAL MEMORY",
   "items": [
     {
       "mineId": "MINE-002",
-      "year": 2019,
-      "title": "Dumper crossed OB dump-edge berm",
-      "closure": "Closed D+21"
-    },
-    {
-      "mineId": "MINE-014",
-      "year": 2021,
-      "title": "Dump-edge berm breach — near miss",
-      "closure": "Closed D+28"
-    },
-    {
-      "mineId": "MINE-038",
       "year": 2023,
-      "title": "Inadequate stop-blocks at tipping point",
-      "closure": "Closed D+14"
+      "title": "Weekly slope monitoring (highwall) — Ashoka OCP",
+      "closure": "Closed D+12"
+    },
+    {
+      "mineId": "MINE-003",
+      "year": 2024,
+      "title": "Weekly slope monitoring (highwall) — Magadh OCP",
+      "closure": "Closed D+9"
+    },
+    {
+      "mineId": "MINE-001",
+      "year": 2024,
+      "title": "Weekly slope monitoring — Piparwar Bench 3B",
+      "closure": "Closed on time (41 weeks)"
     }
   ],
-  "suggestion": "Same dump-edge berm pattern flagged in prior alerts — these closures ran 2–4 weeks; audit berm SOP compliance now.",
+  "suggestion": "Ashoka and Magadh closed this pattern late before; Piparwar closed on time for 41 consecutive weeks. Advisory: keep weekly cadence and schedule the Ashoka/Magadh instances early.",
   "searchStages": [
-    "Embedding alert cause codes…",
-    "Searching 120 historical findings…",
-    "Ranking similarity (cosine > 0.86)…"
+    "Embedding requirement clauses…",
+    "Searching 5 organizational-memory records…",
+    "Ranking similarity (cosine > 0.80)…"
   ]
 }

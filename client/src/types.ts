@@ -1,96 +1,28 @@
-export type UserRole = 'Mine Manager' | 'Mine Safety Officer' | 'Mine Engineer' | 'Area Safety Officer' | 'Corporate Management' | 'Regulatory Authority';
-export type Subsidiary = 'SECL' | 'WCL' | 'ECL' | 'BCCL' | 'CCL' | 'NCL' | 'MCL' | 'NEC';
-
-export interface MineSite {
-  id: string;
-  name: string;
-  subsidiary: Subsidiary;
-  district: string;
-  lat: number;
-  lng: number;
-}
-
-export type Domain = 'Safety' | 'Environment' | 'Production' | 'Labour' | 'Contractor' | 'Grievance';
-export type Severity = 'Low' | 'Medium' | 'High' | 'Critical';
-
-export type GovStatus = 'Closed' | 'Submitted' | 'In Progress' | 'Rejected' | 'Overdue' | 'Escalated';
-
-export interface UserRef {
-  name: string;
-  role: string;
-}
-
-export interface EvidenceItem {
-  id: string;
-  title: string;
-  status: 'Missing' | 'Present' | 'Flagged';
-  timestamp?: string;
-  geoTag?: string;
-  rejectionReason?: string;
-}
-
-export interface EscalationEvent {
-  timestamp: string;
-  level: string;
-  notified: string;
-}
-
-export interface ClosureCertificate {
-  taskId: string;
-  source: string;
-  ownerName: string;
-  ownerRole: string;
-  verifierName: string;
-  verifierRole: string;
-  created: string;
-  submitted: string;
-  verified: string;
-  evidenceCount: number;
-  evidenceHashes: string[];
-  hash: string;
-  auditHash?: string;
-  closedAt: string;
-}
-
-export interface GovernanceObject {
-  id: string;
-  domain: Domain;
-  title: string;
-  source: string;
-  severity: Severity;
-  mineId: string;
-  owner: UserRef;
-  deadline: string;
-  status: GovStatus;
-  evidence_checklist: EvidenceItem[];
-  verifier: UserRef;
-  escalation_level?: string; // 'L1', 'L2'
-  created_at: string;
-  closed_at?: string;
-  escalations: EscalationEvent[];
-  closure_certificate?: ClosureCertificate;
-}
-
-export interface Alert {
-  id: string;
-  timestamp?: string;
-  message: string;
-  type: 'info' | 'warning' | 'critical';
-  siteId?: string;
-  kind?: string;
-  ref?: string;
-  alertNo?: string;
-  title?: string;
-  issued?: string;
-  severity?: string;
-  status?: string;
-  source?: string;
-  domain?: string;
-  ackDeadline?: string;
-  ackDeadlineDate?: string;
-  summary?: string;
-  paragraphs?: string[];
-  pdfUrl?: string;
-  pdfSource?: string;
-  pdfReplicaSvg?: string;
-}
+// Shared demo types (re-exported from the canonical shared/demo package).
+// Canonical source: shared/demo/types.ts (one source of truth for desktop,
+// mobile and the demo server).
+export type {
+  DomainId,
+  TaskStatus,
+  UrgencyGroup,
+  AlertSourceKey,
+  DocumentStatus,
+  EvidenceStatus,
+  EvidenceType,
+  EvidenceMetadata,
+  EvidenceItem,
+  UserRef,
+  FormFieldSpec,
+  FormSpec,
+  EscalationEvent,
+  ClosureCertificate,
+  Task,
+  MineSite,
+  Alert,
+  AuditEvent,
+  DocumentPipeline,
+  PipelineState,
+  ObligationRule,
+  DemoState,
+  MobileState,
+} from '../../shared/demo/types';
