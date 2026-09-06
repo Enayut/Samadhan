@@ -1,0 +1,801 @@
+Preface
+
+The mining industry is characterized by diverse geological, technological and operational conditions, with
+varying degrees of inherent hazards and associated risks. In this context, the adoption of a risk-based
+approach at the mine level has assumed increasing importance for prioritizing resources, identifying
+critical areas of concern and implementing preventive measures for reducing the likelihood and severity of
+mine accidents.
+
+With a view to strengthening this approach at the national level, it is considered desirable to develop a
+robust and transparent framework for assessing the risk profile, regulatory compliance and overall
+safety performance of individual mines. Such a framework would facilitate data-driven prioritization of
+regulatory interventions, encourage continuous improvement in safety performance and promote a culture
+of self-regulation and proactive risk management within the mining industry.
+
+Accordingly, a Committee was constituted to examine and formulate a framework for the National Risk
+Rating Index (NRRI) and the National Compliance Rating Index (NCRI). The Committee has
+submitted its report containing recommendations regarding the methodology, parameters, indicators and
+scoring framework for assessment of risk and compliance at the national level.
+
+The proposed integration of the NRRI and NCRI would provide the basis for determining an Overall
+Mine Safety Rating (OMSR), which is intended to provide a holistic assessment of a mine by taking into
+account both its inherent risk profile and its safety management and regulatory compliance performance.
+The proposed framework is envisaged as an instrument for prioritizing inspections and regulatory
+resources, identifying areas requiring focused intervention, encouraging improved safety
+performance and recognizing mines demonstrating exemplary safety standards.
+
+The proposed rating framework is also intended to facilitate benchmarking of mine safety performance
+against recognized good practices and, where appropriate, internationally accepted approaches, thereby
+promoting continuous improvement, responsible mining and self-regulation.
+
+Before finalization of the methodology and scoring framework for the NRRI, NCRI and OMSR, it is
+considered appropriate to obtain wider views and expert inputs from all concerned stakeholders.
+Accordingly, the report of the Committee is being placed in the public domain for comments and
+suggestions from mine operators, workers’ representatives, researchers, academicians, professional and
+technical institutions, industry experts and other stakeholders associated with mine safety and allied fields.
+
+Stakeholders are invited to critically examine the proposed parameters, indicators, weightages, scoring
+methodology and overall framework and furnish specific, evidence-based and constructive
+comments/suggestions within fifteen (15) days from the date of publication of this document. The inputs
+received will be examined appropriately and may be considered while finalizing the National Risk Rating
+Index, National Compliance Rating Index and Overall Mine Safety Rating framework.
+
+The objective of this consultation is to develop a credible, transparent, objective, practicable and
+continuously improvable national mine safety rating system that strengthens preventive safety
+management, facilitates effective regulatory intervention and promotes a sustained culture of risk
+management, compliance and self-regulation across the Indian mining industry.
+
+
+
+
+                                                                                                Page 1 of 19
+                                        CHAPTER I
+
+                                     BACKGROUND
+
+1.0 Background Information:
+
+1.1 Mining, by its very nature, is a high-risk economic activity involving complex
+    interactions between geological, technical, and human factors. In India, where
+    mining contributes significantly to the national economy and supports critical sectors
+    such as energy, infrastructure, and manufacturing, the scale of operations is vast
+    ranging from deep underground coal mines and large opencast metal mines to
+    extensive oil and gas fields. Given its inherent hazards and socio-economic
+    importance, the need for a robust, scientific, and proactive safety management
+    framework is paramount. The Indian mining-safety regulatory framework is
+    governed by the Occupational Safety, Health and Working Conditions Code, 2020,
+    along with the rules, regulations, and orders made thereunder, and is administered
+    by the Directorate General of Mines Safety (DGMS). Over time, the regulatory
+    framework has gradually evolved from a prescriptive, rule-based approach towards
+    a risk-based and performance-oriented model of safety governance. In this evolving
+    regulatory environment, two complementary indices the National Risk Rating Index
+    (NRRI) and the National Compliance Rating Index (NCRI) have been conceptualized
+    to modernize the assessment of mine safety and promote sustainable and
+    responsible mining practices.
+1.2 Building upon these frameworks, the integration of the National Risk Rating Index
+    (NRRI) and the National Compliance Rating Index (NCRI) leads to the development
+    of an Overall Mine Safety Rating (OMSR), which holistically represents both the
+    inherent risk profile and the safety management performance of a mine. This
+    composite rating enables a balanced evaluation - recognizing that even a high-risk
+    mine can operate safely if robust compliance systems, monitoring technologies, and
+    proactive safety cultures are in place. Conversely, low-risk mines with poor
+    compliance can still pose significant hazards. By combining these two indices
+    through a weighted or normalized model, the OMSR provides a scientific and
+    transparent basis for classifying mines, prioritizing inspections, allocating regulatory
+    resources, and incentivizing good safety practices. In the Indian regulatory context,
+    such an integrated rating system supports DGMS in data-driven decision-making,
+    continuous safety improvement, and sustainable resource development aligned with
+    national safety and ESG (Environmental, Social, and Governance) goals.
+
+1.3 Earlier National Safety Award (NSA) was conferred to mines annually based on LAFP
+    (Longest Accident-Free Period), LIFR (Lowest Injury Frequency Rate), LIFRM
+    (Lowest Injury Frequency Rate on Man shift), LIFRO (Lowest Injury Frequency Rate
+    based on output (composite of ore/coal and overburden). The criteria adopted was
+    not comprehensive.
+
+
+                                                                                Page 2 of 19
+2.0 Committee
+
+2.1 Mandate of the Committee was to suggest methodologies for determining new
+    National Index for standardization of Risk Rating & Compliance Rating mines. This
+    calculated index will be based on a measurable Risk Index and Compliance.
+
+     Index shall be prepared to each categorization of mines (Coal/Metal/Oil), which will
+     incorporate the existing list of the mines, statutory compliance by respective mine
+     managements. The index will incorporate all statutory compliance parameters,
+     safety statistics and other measurable indicators.
+
+2.2 Proceedings of the Committee:
+
+     The committee held its meeting virtually on 05.08.2025, 08.10.2025 and
+     09.10.2025. Meeting was chaired by Sri Niraj Kumar, DDG, NZ, Ghaziabad. The
+     details of the members attending the meeting are enclosed as Annexure-1.
+
+     Committee discussed in detail the following:
+
+     There is no system to categorize mines on national level based on of the inherent
+     risks and compliance and device intervention strategy accordingly. The National Risk
+     Rating Index (NRRI) is a composite framework developed to assess, compare, and
+     monitor the safety and risk profile of mines across India.
+
+     It provides a quantitative risk rating to each mine based on multiple parameters
+     related to operational, geological, environmental, and human factors.
+
+     The main idea is to:
+     -   Identify mines prone to accidents or disasters.
+     -   Prioritize safety interventions.
+     -   Promote a proactive, risk-based approach instead of a reactive one.
+     -   The concept aligns with the “Vision Zero” Accident Policy of the Government of
+         India and aligned with the objective of Directorate General of Mines Safety.
+
+
+
+
+                                                                               Page 3 of 19
+                                      CHAPTER II
+
+        CATEGORIZATION & SUB-CATEGORIZATION OF MINES
+3.0 Categorization & sub-categorization of mines:
+    Committee discussed that for the purpose of risk and compliance rating it is required
+    to categorize mines into coal, metalliferous and oil mines. Further, it was discussed
+    that all coal, metalliferous and oil mines are also required to be further sub-
+    categorized based on production and man shift so that there is a fair rating and
+    compliance indexing within this group. The idea was that mines having different
+    scale of operation will have different risk levels and different level of compliance
+    requirement.
+
+    Accordingly, the annual return data of the mines submitted on DGMS Portal has
+    been analyzed and following categorization has been finalized:
+3.1 Metalliferous Mines:
+
+          Type              Small                 Medium                    Large
+
+     Underground           ≤0.5 MT             >0.5 to ≤1.0 MT             >1.0 MT
+
+     Open Cast             ≤0.5 MT             >0.5 to ≤5.0 MT             >5.0 MT
+
+
+    MT is million ton; MCM is million cubic meters
+
+    Note: In case of open cast mines, production figure includes total mineral and
+    overburden handled in a calendar year.
+3.2 Coal Mines:
+
+         Type           Small            Medium                  Large     Mega Projects
+     Underground       ≤0.5 MT       >0.5 to ≤1.0 MT     >1.0 to ≤2.0 MT      >2.0 MT
+                                       >5.0 to ≤20.0     >20.0 to ≤40.0
+     Open Cast        ≤0.5 MCM                                               >40.0 MCM
+                                           MCM               MCM
+
+3.3 Oil Mines:
+    There will be four categories of mines in oil sector in which two categories in
+    Production Mines, namely Small and Large based on annual production in MMSC
+    (Million Metric Standard Cubic Meters) and the other two will be Workover Mine and
+    Drilling Mine. Further where any mine consists of all these three or two operations,
+    the mine may be classified based on production and the risk rating of each operation
+    shall calculated and be clubbed to get the weighted score of the mine.
+
+
+
+
+                                                                                Page 4 of 19
+             Production Mines              Work Over Mines           Drilling Mines
+
+          Small             Large
+
+        ≤7 MMSC           >7 MMSC
+
+
+3.4 Criteria for Mixed (both Opencast & Underground) mines:
+
+    The annual production would be taken as prime evaluating factors for the mines of
+    mixed category. In cases, where the production in opencast mines exceeds that of
+    underground mines, they should be considered as opencast mines, and vice versa.
+    For mixed mines, the overall score shall be normalized based on the risks calculated
+    separately for the underground and open-cast operations.
+
+
+
+
+                                                                              Page 5 of 19
+                                       CHAPTER III
+                           NATIONAL RISK RATING SYSTEM
+      The following major risk factors are considered for Coal, Metalliferous and Oil Mines
+      separately. Further, in coal & metalliferous mines risk factor has been separately
+      considered for belowground and opencast mines.
+      Risk Rating system has been proposed in three formats, covering (i) belowground
+      mines (both coal and metalliferous), (ii) Open cast (both coal and metalliferous),
+      and (iii) Oil mines. Risk rating system assigns risk score for broad categories based
+      on risk score generated on the basis of risk values assign for risk sub-categories.
+      The assignment of risk score shall be system based, on the basis of the data
+      submitted by mine management.
+      Total score on adding the individual category score gives the inherent Risk score of
+      a mine. Risk score arrived for each risk category is residual risk score which is
+      difference of inherent risk score and risk reduction score. Risk reduction score is
+      calculated on the basis of mitigatory measures taken by mine management against
+      that particular risk category or sub-category.
+      Accordingly, format for submission of details by individual mine has been designed
+      to consider all risk categories, mitigatory measures and a manner to arrive at value
+      of residual risk. This format is designed separately for (i) belowground mines (both
+      coal and metalliferous), (ii) Open cast (both coal and metalliferous), and (iii) Oil
+      mines.
+      Format as mentioned above has been attached as part of Annexure to this report.
+
+
+4.0   RISK SCORING SYSTEM:
+
+4.1 Belowground (Coal & Metalliferous) Mines:
+4.1.1 Geological and Geotechnical Risks (Total category score: 200)
+        o Roof and side conditions (sub-category score: 50)
+        o Rock Mass Rating or any other technical classification ratings (50)
+        o Presence of geological disturbances (50)
+        o Presence of water-bearing strata or weak beds (50)
+4.1.2 Operational Risks (1000)
+       o   Mining methods including multi-seam working (100)
+       o   Mechanization (50)
+       o   Depth (50)
+       o   Equipment condition and maintenance (50)
+
+
+                                                                                Page 6 of 19
+      o   Man-Machine interaction (50)
+      o   Production Level (50)
+      o   Operational area (large, medium and small) (50)
+      o   Existence of old workings (50)
+      o   Explosives and blasting practices (50)
+      o   Ventilation (50)
+      o   Dust control (50)
+      o   Illumination (50)
+      o   Presence of inflammable gases (100)
+      o   Fire and Spontaneous heating (50)
+      o   Inrush of water from underground sources (100)
+      o   Inrush of water from surface sources (50)
+      o   Electricity (50)
+      o   Danger from adjoining mines (50)
+4.1.3 Supervision (100)
+      o   Adequacy of supervision (200)
+               o Manager (50)
+               o Assistant Managers (30)
+               o Safety Officers (10)
+               o Engineers (20)
+               o Surveyors (10)
+               o Mining Supervisor (20)
+               o Assistant Mining Supervisors (20)
+               o Mechanical Supervisors (20)
+               o Electrical Supervisors (20)
+4.1.4 Human and Management Factors (150)
+      o   Safety training (50)
+      o   Safety management system & audits (50)
+      o   safety & compliance culture (50)
+
+
+4.1.5 Emergency Preparedness (200)
+      o   Availability of rescue facilities (100)
+
+                                                            Page 7 of 19
+      o   Emergency Response Plan (50)
+      o   Disaster management plans (25)
+      o   Communication and monitoring systems (25)
+4.1.6 History (100)
+      o   History of Accidents (50)
+      o   History of Dangerous Occurrences (50)
+
+
+4.2 Opencast Mines (Coal & Metalliferous) Mines:
+4.2.1 Geological and Geotechnical Risks (300)
+      o   Pit slope stability (100)
+      o   Dump slope stability (100)
+      o   Presence of geological disturbances (50)
+      o   Presence of water-bearing strata or weak beds (50)
+4.2.2 Operational Risks
+      o   Mining method and depth (100)
+      o   Equipment condition and maintenance (50)
+      o   Man-Machine interaction (50)
+      o   Maintenance of Haul Road (50)
+      o   Maintenance of LMV Road (50)
+      o   Explosives and blasting practices (50)
+      o   Dust control (50)
+      o   Illumination (100)
+      o   Fire (50)
+      o   Inrush of water (50)
+      o   Electricity (50)
+4.2.3 Supervision (100)
+      o   Adequacy of supervision (200)
+             o Manager (50)
+             o Assistant Managers (30)
+             o Safety Officers (10)
+             o Engineers (20)
+             o Surveyors (10)
+
+
+                                                               Page 8 of 19
+             o Mining Supervisor (20)
+             o Assistant Mining Supervisors (20)
+             o Mechanical Supervisors (20)
+             o Electrical Supervisors (20)
+4.2.4 Human and Management Factors (150)
+      o   Safety training (50)
+      o   Safety management system & audits (50)
+      o   safety and compliance culture (50)
+4.2.5 Emergency Preparedness (100)
+      o   Emergency Response Plan (50)
+      o   Disaster management plans (25)
+      o   Communication and monitoring systems (25)
+4.2.6 History (100)
+      o   History of Accidents (50)
+      o   History of Dangerous Occurrences (50)
+
+
+4.3 Oil Mines:
+4.3.1 Operational Risks (750)
+      o   Equipment condition and maintenance (100)
+      o   Man-Machine interaction (100)
+      o   Explosives and Fracturing practices (50)
+      o   Dust control (50)
+      o   Illumination (50)
+      o   Fire (100)
+      o   Explosion (100)
+      o Blowout (100)
+4.3.2 Supervision (100)
+      o   Adequacy of supervision (220)
+             o Agent (20)
+             o Manager (50)
+             o Assistant Managers (30)
+             o Safety Officers (30)
+
+
+                                                      Page 9 of 19
+              o Dy. Manager (20)
+              o Engineers (20)
+              o Fire Officer (20)
+              o Competent person for well perforation (10)
+              o Mechanical / Electrical Supervisors (20)
+4.3.3 Human and Management Factors (150)
+      o   Safety training (50)
+      o   Safety management system & audits (50)
+      o   safety and compliance culture (50)
+4.3.4 Emergency Preparedness (100)
+      o   Emergency Response Plan (50)
+      o   Disaster management plans (25)
+      o   Communication and monitoring systems (25)
+4.3.5 History (100)
+      o   History of Accidents (50)
+      o   History of Dangerous Occurrences (50)
+
+
+     Format as mentioned above has been attached as part of Annexure to this report
+     as furnished below:
+
+
+      Coal Mines (belowground)                                  Annexure I
+
+
+      Metalliferous Mines (belowground)                         Annexure II
+
+
+      Coal Mines (opencast)                                     Annexure III
+
+
+      Metalliferous Mines (opencast)                            Annexure IV
+
+
+      Oil Mines                                                 Annexure V
+
+
+
+
+                                                                         Page 10 of 19
+                                               CHAPTER IV
+                                  NATIONAL RISK RATING INDEX
+
+5.1     Classification of Mines as per Normalized Residual Risk Score
+
+        Based on the computed residual risk score in the previous chapter, the normalized risk score on a
+        scale of 100 will be calculated. Each mine will be classified on the basis of this normalized risk
+        score into three categories, high risk mine, medium risk mine, low risk mine. Indicative action like
+        frequency of inspection and mitigatory measure required has been suggested on the basis of
+        category in which a particular mine falls.
+
+        The category of mine is as below:
+
+                           Normalized Residual
+              Category                                  Risk Level                Indicative Action
+                               Risk Score
+                                                                          Intensive inspection and
+              Category A      More than 70            High Risk Mine      monitoring; immediate
+                                                                          mitigation measures required
+                                                                          Regular inspection; risk
+              Category B        >30 - ≤70           Medium Risk Mine
+                                                                          reduction plan implementation
+                                                                          Routine safety supervision;
+              Category C        Below 30              Low Risk Mine
+                                                                          maintain good practices
+
+
+        Note: Above risk score is normalized risk score on a scale of 100 by adding
+        all individual risk scores and scaling to normalization.
+
+5.2     National Risk Rating Index:
+
+        All mines of the country will be rated category wise on the basis of the normalized
+        risk score of that particular mine. A national level risk based profiling of mines will
+        be created on the basis of this.
+
+5.3     Importance of the National Risk Rating Index
+       (i)      Scientific Risk Management, provides a quantitative, data-driven approach to
+                mine safety management rather than relying on subjective judgement.
+      (ii)      Prioritization of Inspections, helps DGMS and mining companies to allocate
+                resources and inspections based on actual risk rather than size or output alone.
+      (iii)     Reduction of Accidents and Disasters, by identifying weak areas early,
+                preventive actions can be prioritized based on category or sub category wise
+                residual risk score.
+      (iv)      Benchmarking and Performance Evaluation, allows comparison between mines
+                and encourages competition for safety excellence.
+      (v)       Public Accountability and Transparency, the index can be made publicly
+                available to promote responsible mining.
+
+
+                                                                                              Page 11 of 19
+                                        CHAPTER V
+                          NATIONAL COMPLIANCE RATING INDEX
+
+6.1   The National Compliance Rating Index (NCRI) is an assessment system designed to
+      evaluate how well mines comply with safety laws, standards, and best practices as
+      prescribed in the legislation and regulatory bodies.
+
+      Unlike the Risk Rating Index, which measures how risky a mine’s environment is,
+      the Compliance Index measures how effectively a mine’s management and
+      workforce follow safety systems, rules, and preventive measures. It provides a
+      quantitative score for each mine, reflecting its overall safety culture, management
+      effectiveness, and regulatory compliance.
+
+      The NCRI framework will evaluates following major dimensions of mine safety
+      compliance, each consisting of several measurable parameters:
+
+6.1.1 Regulatory Compliance
+      Adherence to the OSH&WC Code, 2020 (erstwhile the Mines Act, 1952)
+
+          •   The Coal Mines Regulations, 2017/ Metalliferous Mines Regulations, 1961 /
+              Oil Mines Regulations, 2017 (250)
+          •   The OSH&WC (Central) Rules, 2026 (200)
+          •   The Central Electricity Authority (Measures relating to Safety and Electric
+              Supply) Regulations, 2023 (50)
+          •   Timely submission of statutory reports & returns (25)
+          •   Notice issued under Sec. 38(1)B(a) and Sec. 38(1)B(k) of the OSH&WC Code,
+              2020 (50)
+          •   Order issued under Sec. 38(1)B(b), 38(1)B(c), 38(1)B(d) and Sec. 38(1)B(l)
+              of the OSH&WC Code, 2020 and in force for more than a year (50)
+          •   Long pending Violations (more than six months) (50)
+
+
+6.1.2 Safety Management System (SMS) Implementation
+      Safety Management Plan & its implementation (100)
+
+      Framing & implementation of Standard Operating Procedures (SOPs) (50)
+
+      Safety awareness campaigns, mock drills, and toolbox talks (25)
+
+      Involvement of trade unions and workers in safety activities (25)
+
+
+
+
+                                                                              Page 12 of 19
+6.1.3 Action post-accident & dangerous occurrences
+      Reporting of accidents & dangerous occurrences (25)
+
+      Analysis & follow up action after accidents & dangerous occurrences. (100)
+      Near-miss reporting and analysis (25)
+
+6.1.4 Training, Awareness, and Worker Participation
+      Compliance of provisions related to the OSH&WC (Central) Rules, 2026 (200), Regular refresher
+      and vocational training programs (100)
+
+6.1.5 Technology and Monitoring Systems
+      Use of modern safety technologies (e.g., proximity sensors, slope stability radar, real-time gas
+      monitoring etc.) (100)
+
+      Maintenance of safety equipment and PPE standards (50)
+
+      Accordingly, format for submission of details by individual mine has been designed
+      to consider all compliance categories and a manner to arrive at value of compliance
+      score. This format is designed separately for (i) belowground mines (both coal and
+      metalliferous), (ii) Open cast (both coal and metalliferous), and (iii) Oil mines.
+      Format as mentioned above has been attached as part of Annexure to this report
+      as furnished below:
+
+       Coal Mines (belowground)                                                   Annexure VI
+
+
+       Metalliferous Mines (belowground)                                          Annexure VII
+
+
+       Coal Mines (opencast)                                                     Annexure VIII
+
+
+       Metalliferous Mines (opencast)                                             Annexure IX
+
+
+       Oil Mines                                                                   Annexure X
+
+
+6.2   Methodology for Arriving at Compliance Score:
+      Each parameter receives a score weighted based on importance. The composite
+      score determines the Mine’s Safety Compliance Score.
+
+      Based on the computed compliance score as detailed above, the normalized compliance score on
+      a scale of 100 will be calculated. Each mine will be classified on the basis of this normalized
+      compliance score into four categories, Excellent, Good, Moderate and Poor. Indicative action like
+      frequency of inspection and mitigatory measure required has been suggested on the basis of
+      category in which a particular mine falls.
+
+      Total score on adding the individual category score gives the inherent Risk score of
+      a mine. Risk score arrived for each risk category is residual risk score which is
+
+                                                                                            Page 13 of 19
+      difference of inherent risk score and risk reduction score. Risk reduction score is
+      calculated on the basis of mitigatory measures taken by mine management against
+      that particular risk category or sub-category.
+
+6.3   Typical Classification of Mines Based on NCRI
+
+          Category      Compliance Rating       Safety Status              Indicative Action
+
+                                                                   Model mine, showcase best
+         Category A          85 – 100             Excellent
+                                                                   practices
+                                                                   Continue improvement, periodic
+         Category B           70 – 84               Good
+                                                                   review
+                                                                   Immediate corrective action
+         Category C           50 – 69             Moderate
+                                                                   needed
+                                                                   Intensive DGMS monitoring,
+         Category D            < 50                  Poor
+                                                                   possible suspension of operations
+
+6.4   Importance of the National Compliance Rating Index
+      (a). Promotes a shift from compliance by enforcement to safety by commitment.
+      (b). Provides an objective, measurable system for comparing safety performance
+           between different mines, companies, and regions.
+      (c). Regulatory Prioritization, helps DGMS to identify non-compliant mines quickly,
+           Plan targeted inspections and audits, Allocate resources efficiently.
+      (d). Incentive-Based System, High-rated mines can receive recognition, awards, or
+           relaxed inspection frequency, while poor performers face stricter scrutiny or
+           penalties.
+      (e). Data-Driven Decision Making, Creates a national database of mine safety
+           compliance, useful for Policy formulation, Research, Safety performance trend
+           analysis, Accident prevention strategy.
+      A high NCRI score can reflect good governance and safety standards
+
+
+
+
+                                                                                       Page 14 of 19
+                                               CHAPTER VI
+                         OVERALL MINE SAFETY RATING (OMSR)
+
+7.1   Overall Mine Safety Rating (OMSR) should combine both NRRI and NCRI,
+      showing how effectively a mine with a certain inherent risk level is managing its
+      safety.
+      Conceptual Relationship
+
+      The relationship can be visualized as:
+
+                        "Safety Performance"=f ("Risk Level”, “Compliance Level")
+
+      A high-risk mine with high compliance can still be safe.
+
+      A low-risk mine with poor compliance can become unsafe.
+
+      Hence, both indices must be balanced to represent true safety status.
+
+7.2   Proposed Mathematical Model
+
+      NRRI: Normalized Risk Rating Index (0 to 100)
+
+      NCRI: Normalized Compliance Rating Index (0 to 100)
+
+      OMSR: Overall Mine Safety Rating (0 to 100)
+
+      Since higher NRRI means higher risk and higher NCRI means better safety,
+
+      we need a formula where risk acts inversely to compliance.
+
+
+      Option 1: Weighted Inverse Relationship
+
+
+              𝑶𝑴𝑺𝑹 = (𝑾𝟏 × 𝑵𝑪𝑹𝑰) + [𝑾𝟐 × (𝟏𝟎𝟎 − 𝑵𝑹𝑹𝑰)]
+
+
+                      Where:
+
+                      𝑊1 = Weight for compliance (e.g., 0.6)
+
+                      𝑊2 = Weight for risk mitigation (e.g., 0.4)
+
+      Option 2: Normalized Index (Balanced View)
+                            𝑵𝑪𝑹𝑰
+               𝑶𝑴𝑺𝑹 =              ×𝑪
+                          (𝑵𝑹𝑹𝑰+𝟏)
+
+
+                      where 𝐶 is a scaling constant (≈100) to fit the output range 0 - 100.
+                      This is simple, effective, and easy for annual benchmarking.
+
+      After deliberations it was decided that Option 2, which gives Normalized Index is
+      most suitable for Calculation of Overall Mine Safety Rating.
+
+                                                                                              Page 15 of 19
+7.3   Classification of OMSR (Overall Mine Safety Rating):
+
+         OMSR (%)          Category       Safety Status             Interpretation
+
+           85–100             A             Excellent     Well-controlled, model mine
+
+                                                          Safe operation, moderate
+           70–84              B              Good
+                                                          improvement needed
+                                                          Some safety gaps, targeted
+           50–69              C             Average
+                                                          improvements needed
+                                                          High-risk and/or poor compliance,
+           35-49              D               Poor
+                                                          unsafe conditions
+                                                          Very High-risk and non-compliant,
+        Less than 35          E            Very poor
+                                                          dangerous conditions
+
+
+7.4   Advantages of the Combined Rating (Overall Mine Safety Rating):
+
+      Integrates both inherent hazards and human/system performance; Enables
+      objective comparison across different mines types; Supports prioritized inspections
+      and resource allocation; Encourages continuous improvement and competition for
+      safety excellence; Provides a scientific tool for policy, ESG reporting, and investment
+      decisions.
+
+      The establishment of unified indices such as the NRRI and NCRI, and their
+      integration into an Overall Mine Safety Rating (OMSR), marks a decisive step toward
+      a modern, data-centric safety governance system in India’s mining industry.
+
+      This framework not only enables objective comparison and benchmarking across
+      diverse mine types—coal, metal, and oil—but also aligns regulatory oversight with
+      the principles of risk-based inspection and preventive safety management.
+
+      By leveraging these indices, DGMS and mining organizations can jointly pursue
+      continuous risk reduction, technology-driven monitoring, and capacity building at
+      all operational levels.
+
+
+
+
+                                                                                     Page 16 of 19
+                                             CHAPTER VII
+
+                                     SUBMISSION PROCESS
+
+
+8.1   Self-Submission forms:
+      Based on the framework, self-submission forms will be developed for different
+      category of mines which will be filled by the mine management themselves digitally.
+      The form will capture data objectively as far as practical to make the evaluation
+      system more transparent and objective.
+
+      An Online portal shall be developed to facilitate submission of forms by the mine
+      management. Mines which fail to digitally self-submit the prescribed forms within
+      the stipulated time may either be assigned the lowest rating category, such as “E”
+      rating, or an alternate mechanism may be developed for obtaining and entering the
+      requisite information through empanelled third-party auditors or other authorized
+      agencies at the cost of the mine management.
+8.2   Verification System:
+
+      Online verification: The data submitted by the mine management in the online portal shall be
+      verified with existing records and information available
+
+      Physical verification: The entries of the high overall safety rated mines shall be verified through
+      physical inspections. Similarly, entries of the mine with abnormally low safety score may also be
+      verified physically.
+
+      To ensure reliability and integrity of the submitted data, provision may also be made
+      for periodic verification, random audits, cross-validation with inspection findings,
+      and third-party assessment wherever considered necessary
+
+      This submission of the prescribed forms for the National Risk Rating Index (NRRI)
+      and National Compliance Rating Index (NCRI) will be mandatory for all mines across
+      the country, irrespective of category, mineral, size, or ownership.
+
+      Repeated non-submission or deliberate suppression of information may also be
+      considered as an adverse compliance factor while determining the overall mine
+      safety rating.
+8.3   Software Development:
+      A dedicated and integrated software system may be developed for implementation
+      of the National Risk Rating Index (NRRI) and National Compliance Rating Index
+      (NCRI) framework. The software shall function as a centralized digital platform for
+      submission, processing, validation, analysis, and monitoring of mine-related safety
+      and compliance data across the country.
+
+
+
+                                                                                            Page 17 of 19
+The software architecture may be designed to support scalability, interoperability,
+reliability, and secure handling of large volumes of data generated from mines of
+different categories and minerals. The system may include separate user interfaces
+for mine managements, DGMS officials, third-party auditors, and administrators
+with role-based access controls and authentication mechanisms.
+
+The platform may provide online self-submission modules with predefined formats,
+automated data validation checks, field verification, logical consistency checks, and
+document upload facilities to minimize errors and improve quality of submitted data.
+Provision may also be incorporated for digital signatures, electronic
+acknowledgements, and audit trails to ensure authenticity and traceability of
+submissions.
+
+The system should automatically generate National Risk Rating Index (NRRI),
+National Compliance Rating Index (NCRI), and Overall Mine Safety Ratings based
+on predefined algorithms.
+
+Provision may further be made for integration of the software with existing
+government digital platforms such as the Shram Suvidha Portal to generate risk
+based inspection.
+
+The software may also incorporate Artificial Intelligence (AI) and data analytics tools
+for identification of abnormal trends, predictive risk assessment, early warning
+generation, and prioritization of mines for inspections under the risk-based
+randomized inspection system.
+
+At a later stage this system can be further upgraded for automated alerts for
+delayed submissions, adverse safety indicators, recurring violations, increasing
+accident trends, or sudden deterioration in compliance levels.
+
+
+
+
+                                                                          Page 18 of 19
+                                        CHAPTER VIII
+                           OUTCOME & RECOMMENDATIONS
+
+9.1 Outcomes:
+      (a). The proposed framework is expected to promote a culture continuous
+           improvement and responsible mining practices.
+
+      (b). The Overall Mine Safety Rating derived from the aforesaid indices is expected to
+           promote accountability and healthy competition among mine operators towards
+           achieving higher standards of safety and compliance.
+
+      (c). The system may also incentivize timely reporting of accidents, dangerous
+           occurrences, and near-miss incidents, thereby strengthening preventive safety
+           culture in the mining sector.
+9.2    Recommendations:
+      (a). It is recommended that submission of the prescribed forms for the National Risk
+           Rating Index (NRRI) and National Compliance Rating Index (NCRI) be made
+           mandatory for all mines across the country, irrespective of category, mineral,
+           size, or ownership.
+
+      (b). The Overall Mine Safety Rating shall be publicized in web portal for information.
+           This will serve as motivation for higher overall mine safety rating.
+
+      (c). The overall mine safety rating shall be incorporated in Shram Suvidha portal and
+           shall be factored into the risk-based randomized inspection selection process.
+           Mines with Higher OMSR may be subjected to reduced inspection frequency.
+           Mines with poor ratings may receive enhanced and targeted inspections.
+
+      (d). Periodic review and updating of the indices may be undertaken to ensure
+           alignment with current trends.
+
+      (e). It is also recommended that a structured reward and recognition system be
+           instituted for mines with higher Overall Safety Rating Index. As system of
+           incentivising such mines by other government departments may also be thought
+           upon. Such mines may be facilitated for grant of future leases and other
+           clearances.
+
+      (f). A detailed notification in this regard may be issued so as to formalise the whole
+           process and give a legitimate dimension to it.
+
+
+
+
+                                                                                Page 19 of 19
+

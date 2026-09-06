@@ -1,0 +1,6 @@
+{
+  "name": "SAMAADHAN - Mining Compliance & GIS",
+  "description": "Mining compliance, GIS, and 3D terrain visualization system grounded in real-world geospatial data and provenance for MINE-001.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

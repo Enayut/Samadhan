@@ -6,6 +6,8 @@
   "scripts": {
     "build:mobile": "cd mobile && npm run build",
     "demo": "npm run build:mobile && cd client && npm run dev",
+    "demo:reset": "node scripts/demo-reset.mjs",
+    "demo:backend": "cd backend && python3 backend.py",
     "typecheck": "cd client && npx tsc --noEmit && cd ../mobile && npx tsc --noEmit"
   }
 }

@@ -1,0 +1,37 @@
+{
+  "note": "Recurring schedule state — cadence instances generated deterministically by the store (schedulerTick / rule engine). Instances are derived from obligations.json rules; this file seeds the current-week hero instance and next-cycle placeholders only.",
+  "instances": [
+    {
+      "id": "SCH-SLOPE-W36",
+      "ruleId": "OBL-SLOPE-WEEKLY",
+      "mineId": "MINE-001",
+      "periodLabel": "Week 36 · 2026",
+      "dueDateOffsetDays": 4,
+      "taskRef": "TASK-SLOPE-WK-2026-W36",
+      "status": "SCHEDULED"
+    },
+    {
+      "id": "SCH-SLOPE-W36-M002",
+      "ruleId": "OBL-SLOPE-WEEKLY",
+      "mineId": "MINE-002",
+      "periodLabel": "Week 36 · 2026",
+      "dueDateOffsetDays": 4,
+      "taskRef": "TASK-SLOPE-WK-2026-W36-M002",
+      "status": "SCHEDULED"
+    },
+    {
+      "id": "SCH-SLOPE-W36-M003",
+      "ruleId": "OBL-SLOPE-WEEKLY",
+      "mineId": "MINE-003",
+      "periodLabel": "Week 36 · 2026",
+      "dueDateOffsetDays": 4,
+      "taskRef": "TASK-SLOPE-WK-2026-W36-M003",
+      "status": "SCHEDULED"
+    }
+  ],
+  "nextInstances": [
+    { "id": "SCH-SLOPE-W37", "ruleId": "OBL-SLOPE-WEEKLY", "cadence": "WEEKLY", "nextOffsetDays": 11 },
+    { "id": "SCH-DUST-W37", "ruleId": "OBL-DUST-WEEKLY", "cadence": "WEEKLY", "nextOffsetDays": 4 },
+    { "id": "SCH-GEOTECH-M09", "ruleId": "OBL-SLOPE-GEOTECH-MONTHLY", "cadence": "MONTHLY", "nextOffsetDays": 25 }
+  ]
+}

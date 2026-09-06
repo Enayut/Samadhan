@@ -46,6 +46,25 @@ export interface EvidenceItem {
   fileName?: string;
   metadata?: EvidenceMetadata;
   aiWarning?: string; // non-blocking amber chip
+  rejectionReason?: string;
+  gpsHint?: string; // demo GPS hint from the rule-derived evidence checklist
+}
+
+export interface FormFieldSpec {
+  id: string;
+  label: string;
+  type: 'text' | 'number' | 'select' | 'textarea';
+  value?: string;
+  placeholder?: string;
+  hint?: string;
+  options?: string[];
+  readOnly?: boolean;
+}
+
+export interface FormSpec {
+  formId: string;
+  title: string;
+  fields: FormFieldSpec[];
 }
 
 export interface Task {
@@ -72,7 +91,17 @@ export interface Task {
   evidenceItems: EvidenceItem[];
   remediationNotes: string;
   observationCategory?: string;
+  form?: FormSpec;
+  formValues?: Record<string, string>;
+  submissionCount?: number;
 }
+
+export type TaskStatusShared =
+  | 'PROPOSED'
+  | 'ASSIGNED'
+  | TaskStatus
+  | 'OVERDUE'
+  | 'ESCALATED';
 
 export interface ObservationReport {
   id: string;

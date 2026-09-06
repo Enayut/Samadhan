@@ -1,0 +1,94 @@
+[
+  {
+    "id": "u-manager",
+    "name": "A. Kumar",
+    "role": "Area Manager",
+    "actor": "AREA_MANAGER",
+    "employeeId": "AM-001",
+    "mineId": null,
+    "avatar": "AK",
+    "scope": "All five mines — North Karanpura operational area"
+  },
+  {
+    "id": "u-regulator",
+    "name": "R. Sharma",
+    "role": "Regulatory Official",
+    "actor": "REGULATORY_OFFICIAL",
+    "employeeId": "DGMS-RO-114",
+    "mineId": null,
+    "avatar": "RS",
+    "scope": "Area oversight — independent verification"
+  },
+  {
+    "id": "u-ram",
+    "name": "Ram Singh",
+    "role": "Mine Safety Officer",
+    "actor": "MINE_OFFICIAL",
+    "employeeId": "MSO-402",
+    "dgmsCertNo": "DGMS/FMC/2019/8821",
+    "mineId": "MINE-001",
+    "avatar": "RS",
+    "scope": "Piparwar OCP field execution (mobile user)"
+  },
+  {
+    "id": "u-singh",
+    "name": "S. Singh",
+    "role": "Mine Manager",
+    "actor": "MINE_OFFICIAL",
+    "employeeId": "MM-118",
+    "mineId": "MINE-001",
+    "avatar": "SS",
+    "scope": "Piparwar OCP"
+  },
+  {
+    "id": "u-verma",
+    "name": "P. Verma",
+    "role": "Mine Engineer",
+    "actor": "MINE_OFFICIAL",
+    "employeeId": "ME-204",
+    "mineId": "MINE-001",
+    "avatar": "PV",
+    "scope": "Piparwar OCP"
+  },
+  {
+    "id": "u-ashoka-mso",
+    "name": "M. Hembram",
+    "role": "Mine Safety Officer",
+    "actor": "MINE_OFFICIAL",
+    "employeeId": "MSO-517",
+    "mineId": "MINE-002",
+    "avatar": "MH",
+    "scope": "Ashoka OCP"
+  },
+  {
+    "id": "u-magadh-mso",
+    "name": "D. Prasad",
+    "role": "Mine Safety Officer",
+    "roleNote": "indicative demo identity",
+    "actor": "MINE_OFFICIAL",
+    "employeeId": "MSO-633",
+    "mineId": "MINE-003",
+    "avatar": "DP",
+    "scope": "Magadh OCP"
+  },
+  {
+    "id": "u-amrapali-mm",
+    "name": "K. Toppo",
+    "role": "Mine Manager",
+    "actor": "MINE_OFFICIAL",
+    "employeeId": "MM-447",
+    "mineId": "MINE-005",
+    "avatar": "KT",
+    "scope": "Amrapali OCP"
+  },
+  {
+    "id": "u-agm",
+    "name": "Area General Manager",
+    "role": "Area General Manager",
+    "actor": "AREA_MANAGER",
+    "employeeId": "AGM-002",
+    "mineId": null,
+    "avatar": "AG",
+    "scope": "Escalation L1 target"
+  }
+]

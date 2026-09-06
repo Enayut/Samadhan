@@ -1,0 +1,32 @@
+{
+  "note": "Organizational-memory seed (advisory, demo). A real vector search would run over closed obligations; the demo uses this deterministic record set so the advisory panel is reproducible. Records are labelled org-memory seed — they are NOT real compliance events.",
+  "searched": 5,
+  "matched": 3,
+  "badge": "ORGANIZATIONAL MEMORY",
+  "items": [
+    {
+      "mineId": "MINE-002",
+      "year": 2023,
+      "title": "Weekly slope monitoring (highwall) — Ashoka OCP",
+      "closure": "Closed D+12"
+    },
+    {
+      "mineId": "MINE-003",
+      "year": 2024,
+      "title": "Weekly slope monitoring (highwall) — Magadh OCP",
+      "closure": "Closed D+9"
+    },
+    {
+      "mineId": "MINE-001",
+      "year": 2024,
+      "title": "Weekly slope monitoring — Piparwar Bench 3B",
+      "closure": "Closed on time (41 weeks)"
+    }
+  ],
+  "suggestion": "Ashoka and Magadh closed this pattern late before; Piparwar closed on time for 41 consecutive weeks. Advisory: keep weekly cadence and schedule the Ashoka/Magadh instances early.",
+  "searchStages": [
+    "Embedding requirement clauses…",
+    "Searching 5 organizational-memory records…",
+    "Ranking similarity (cosine > 0.80)…"
+  ]
+}

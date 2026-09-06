@@ -1,0 +1,50 @@
+[
+  {
+    "id": "SAFETY",
+    "label": "Safety",
+    "color": "#C1502E",
+    "icon": "Shield",
+    "description": "DGMS circulars, strata/slope monitoring, inspections, field observations",
+    "example": "Weekly slope-displacement monitoring — Bench 3B high-wall (EX-07)"
+  },
+  {
+    "id": "ENVIRONMENT",
+    "label": "Environment",
+    "color": "#4C7A66",
+    "icon": "Trees",
+    "description": "EC conditions, dust suppression, ambient monitoring, inspections",
+    "example": "Weekly haul-road dust-suppression verification — EC Condition 14"
+  },
+  {
+    "id": "PRODUCTION",
+    "label": "Production",
+    "color": "#D69E2E",
+    "icon": "Factory",
+    "description": "Shift reports, OBR progress, maintenance schedule compliance",
+    "example": "Submit shift-wise OBR progress report"
+  },
+  {
+    "id": "LABOUR",
+    "label": "Labour",
+    "color": "#5A67D8",
+    "icon": "Users",
+    "description": "PPE compliance, medical fitness, competency certificates, attendance registers",
+    "example": "PPE compliance audit — Shovel Crew B"
+  },
+  {
+    "id": "CONTRACTOR",
+    "label": "Contractor",
+    "color": "#3182CE",
+    "icon": "HardHat",
+    "description": "Licence expiry, insurance, PME, safety induction",
+    "example": "CLRA contractor licence renewal — before expiry"
+  },
+  {
+    "id": "GRIEVANCE",
+    "label": "Grievance",
+    "color": "#718096",
+    "icon": "FileText",
+    "description": "Worker complaint intake and resolution",
+    "example": "Drinking water cooler maintenance"
+  }
+]

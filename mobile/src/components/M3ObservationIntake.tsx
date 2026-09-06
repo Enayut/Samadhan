@@ -1,11 +1,10 @@
 import React, { useState } from 'react';
 import { Task } from '../types';
 import { ConfirmationModal } from './ConfirmationModal';
+import { GalleryPickerModal, GALLERY_FALLBACK_SVG } from './GalleryPickerModal';
 import {
-  Camera,
   X,
-  Zap,
-  ZapOff,
+  Images,
   RefreshCw,
   MapPin,
   Send,
@@ -33,9 +32,10 @@ export const M3ObservationIntake: React.FC<M3ObservationIntakeProps> = ({
   onClose,
   onCreateObservationTask,
 }) => {
-  const [step, setStep] = useState<'camera' | 'sheet'>('camera');
-  const [flash, setFlash] = useState(false);
+  const [step, setStep] = useState<'sheet'>('sheet');
+  const [isGalleryOpen, setIsGalleryOpen] = useState(true);
   const [photoUrl, setPhotoUrl] = useState<string>('');
+  const [photoLabel, setPhotoLabel] = useState<string>('');
   const locationLabel = 'Pit 4 · Bench 2';
 
   // Form states in Step 2
@@ -45,23 +45,10 @@ export const M3ObservationIntake: React.FC<M3ObservationIntakeProps> = ({
   const [isSubmittingConfirmOpen, setIsSubmittingConfirmOpen] = useState(false);
   const [showSuccessToast, setShowSuccessToast] = useState(false);
 
-  const handleCapturePhoto = () => {
-    const svgContent = `<svg xmlns="http://www.w3.org/2000/svg" width="400" height="300" viewBox="0 0 400 300">
-      <rect width="400" height="300" fill="%232D3748"/>
-      <path d="M0 220 Q100 160 200 190 T400 150 L400 300 L0 300 Z" fill="%231A202C"/>
-      <polygon points="120,180 160,110 200,180" fill="%23E53E3E"/>
-      <rect x="155" y="135" width="10" height="25" fill="%23FFFFFF"/>
-      <circle cx="160" cy="170" r="5" fill="%23FFFFFF"/>
-      <text x="200" y="270" fill="%23ECC94B" font-family="monospace" font-size="11" text-anchor="middle" font-weight="bold">FIELD HAZARD OBSERVATION</text>
-    </svg>`;
-
-    setPhotoUrl(`data:image/svg+xml;utf8,${encodeURIComponent(svgContent)}`);
-    setStep('sheet');
-  };
-
-  const handleSkipToType = () => {
-    setPhotoUrl('');
-    setStep('sheet');
+  const handleGalleryConfirm = (data: { photoUrl: string; photoLabel: string; gps: string; sha256: string; timestamp: string }) => {
+    setPhotoUrl(data.photoUrl);
+    setPhotoLabel(data.photoLabel);
+    setIsGalleryOpen(false);
   };
 
   const isFormValid = !!category && description.trim().length >= 8;
@@ -104,7 +91,7 @@ export const M3ObservationIntake: React.FC<M3ObservationIntakeProps> = ({
                   hour: '2-digit',
                   minute: '2-digit',
                 }) + ' IST',
-                gps: '23.7942° N, 86.4288° E',
+                gps: '23.6911° N, 85.0667° E · Piparwar OCP',
                 user: 'R. Singh (MSO-402)',
                 sha256: '9a8b1c098df765e43a21b098',
               }
@@ -122,241 +109,184 @@ export const M3ObservationIntake: React.FC<M3ObservationIntakeProps> = ({
 
   return (
     <div className="fixed inset-0 z-50 flex flex-col justify-end bg-black/80 backdrop-blur-xs select-none max-w-[430px] mx-auto overflow-hidden">
-      {/* STEP 1: Minimal Full-Screen Mobile Camera */}
-      {step === 'camera' ? (
-        <div className="relative w-full h-full flex flex-col justify-between bg-[#1A202C]">
-          {/* Top Bar */}
-          <div className="flex items-center justify-between px-5 py-4 bg-black/50 backdrop-blur-md z-10 text-white">
-            <button
-              type="button"
-              onClick={onClose}
-              className="p-2 rounded-full bg-white/10 hover:bg-white/20 active:scale-95"
-            >
-              <X className="w-5 h-5" />
-            </button>
+      {/* Visually Minimal Classification Sheet */}
+      <div className="relative w-full max-h-[90vh] bg-white rounded-t-[20px] shadow-2xl flex flex-col overflow-hidden animate-in slide-in-from-bottom duration-200">
+        <div className="w-full flex justify-center pt-3 pb-1 cursor-grab" onClick={onClose}>
+          <div className="w-10 h-1 rounded-full bg-slate-300"></div>
+        </div>
 
-            {/* Small unobtrusive location indicator */}
-            <div className="flex items-center gap-1.5 text-xs text-slate-300 font-medium">
-              <MapPin className="w-3.5 h-3.5 text-[#ECC94B]" />
+        {/* Header */}
+        <div className="px-5 py-3 border-b border-[#E2E8F0] flex items-center justify-between">
+          <div>
+            <h2 className="text-base font-extrabold text-[#1A202C]">Log Observation</h2>
+            <div className="flex items-center gap-1 text-[11px] text-[#718096] mt-0.5">
+              <MapPin className="w-3 h-3 text-[#E53E3E]" />
               <span>{locationLabel}</span>
             </div>
-
-            <button
-              type="button"
-              onClick={() => setFlash(!flash)}
-              className={`p-2 rounded-full ${
-                flash ? 'bg-[#ECC94B] text-black' : 'bg-white/10 text-white'
-              }`}
-            >
-              {flash ? <Zap className="w-5 h-5" /> : <ZapOff className="w-5 h-5" />}
-            </button>
           </div>
-
-          {/* Camera Viewfinder Area */}
-          <div className="relative flex-1 flex flex-col items-center justify-center p-6">
-            <div className="relative w-full aspect-4/3 border border-dashed border-[#ECC94B]/70 rounded-[14px] flex flex-col items-center justify-between p-4 pointer-events-none">
-              <div className="w-full flex justify-between">
-                <div className="w-5 h-5 border-t-2 border-l-2 border-[#ECC94B]"></div>
-                <div className="w-5 h-5 border-t-2 border-r-2 border-[#ECC94B]"></div>
-              </div>
-
-              <div className="px-4 py-1.5 rounded-full bg-black/60 backdrop-blur-md text-center">
-                <p className="text-xs font-semibold text-white">
-                  Frame hazard or condition
-                </p>
-              </div>
-
-              <div className="w-full flex justify-between">
-                <div className="w-5 h-5 border-b-2 border-l-2 border-[#ECC94B]"></div>
-                <div className="w-5 h-5 border-b-2 border-r-2 border-[#ECC94B]"></div>
-              </div>
-            </div>
-          </div>
-
-          {/* Bottom Shutter & Controls */}
-          <div className="px-6 py-8 bg-black/80 flex items-center justify-between z-10">
-            <button
-              type="button"
-              onClick={handleSkipToType}
-              className="text-xs text-slate-300 font-semibold py-2 px-3 hover:text-white"
-            >
-              Skip
-            </button>
-
-            {/* Shutter Button */}
-            <button
-              type="button"
-              onClick={handleCapturePhoto}
-              aria-label="Capture photo"
-              className="w-18 h-18 rounded-full border-4 border-white flex items-center justify-center active:scale-95 transition-transform bg-white/20 cursor-pointer"
-            >
-              <div className="w-13 h-13 rounded-full bg-[#ECC94B] shadow-md flex items-center justify-center">
-                <Camera className="w-6 h-6 text-[#1A202C]" />
-              </div>
-            </button>
-
-            <div className="w-12" />
-          </div>
+          <button
+            type="button"
+            onClick={onClose}
+            className="p-1 rounded-full text-[#718096] hover:bg-slate-100"
+          >
+            <X className="w-5 h-5" />
+          </button>
         </div>
-      ) : (
-        /* STEP 2: Visually Minimal Classification Sheet */
-        <div className="relative w-full max-h-[90vh] bg-white rounded-t-[20px] shadow-2xl flex flex-col overflow-hidden animate-in slide-in-from-bottom duration-200">
-          <div className="w-full flex justify-center pt-3 pb-1 cursor-grab" onClick={onClose}>
-            <div className="w-10 h-1 rounded-full bg-slate-300"></div>
-          </div>
 
-          {/* Header */}
-          <div className="px-5 py-3 border-b border-[#E2E8F0] flex items-center justify-between">
-            <div>
-              <h2 className="text-base font-extrabold text-[#1A202C]">Log Observation</h2>
-              <div className="flex items-center gap-1 text-[11px] text-[#718096] mt-0.5">
-                <MapPin className="w-3 h-3 text-[#E53E3E]" />
-                <span>{locationLabel}</span>
-              </div>
-            </div>
-            <button
-              type="button"
-              onClick={onClose}
-              className="p-1 rounded-full text-[#718096] hover:bg-slate-100"
-            >
-              <X className="w-5 h-5" />
-            </button>
-          </div>
-
-          {/* Form Content */}
-          <div className="flex-1 overflow-y-auto px-5 py-4 space-y-4">
-            {/* Photo preview or add photo */}
-            {photoUrl ? (
-              <div className="flex items-center gap-3 p-2.5 rounded-[10px] bg-slate-50 border border-[#E2E8F0]">
+        {/* Form Content */}
+        <div className="flex-1 overflow-y-auto px-5 py-4 space-y-4">
+          {/* Photo preview or add photo from demo gallery */}
+          {photoUrl ? (
+            <div className="p-2.5 rounded-[10px] bg-slate-50 border border-[#E2E8F0] space-y-2">
+              <div className="flex items-center gap-3">
                 <img
                   src={photoUrl}
-                  alt="Observation"
-                  className="w-14 h-14 object-cover rounded-[8px]"
+                  alt={photoLabel || 'Observation'}
+                  onError={(e) => {
+                    (e.target as HTMLImageElement).src = GALLERY_FALLBACK_SVG;
+                  }}
+                  className="w-14 h-14 object-cover rounded-[8px] bg-[#F0F2F5]"
                 />
-                <div className="flex-1 text-xs">
-                  <div className="font-bold text-[#1A202C]">Photo Attached</div>
+                <div className="flex-1 text-xs min-w-0">
+                  <div className="font-bold text-[#1A202C] truncate">{photoLabel || 'Photo Attached'}</div>
                   <div className="text-[11px] text-[#718096]">Tagged at {locationLabel}</div>
                 </div>
                 <button
                   type="button"
-                  onClick={() => setStep('camera')}
-                  className="text-xs font-semibold text-[#718096] hover:text-[#1A202C] px-2 py-1"
+                  onClick={() => setIsGalleryOpen(true)}
+                  className="text-xs font-semibold text-[#718096] hover:text-[#1A202C] px-2 py-1 flex items-center gap-1"
                 >
-                  Retake
+                  <RefreshCw className="w-3 h-3" />
+                  <span>Change</span>
                 </button>
               </div>
-            ) : (
-              <button
-                type="button"
-                onClick={() => setStep('camera')}
-                className="w-full p-3 rounded-[10px] border border-dashed border-[#E2E8F0] text-xs font-semibold text-[#718096] flex items-center justify-center gap-2 hover:bg-slate-50"
-              >
-                <Camera className="w-4 h-4" />
-                <span>Attach field photo (optional)</span>
-              </button>
-            )}
-
-            {/* Category */}
-            <div>
-              <label className="text-xs font-bold uppercase tracking-wider text-[#718096] block mb-2">
-                Category
-              </label>
-              <div className="grid grid-cols-2 gap-2">
-                {(
-                  [
-                    { name: 'Safety Observation', icon: Shield },
-                    { name: 'Environment Anomaly', icon: Trees },
-                    { name: 'Labour Grievance', icon: Users },
-                    { name: 'Contractor Violation', icon: HardHat },
-                  ] as const
-                ).map(({ name, icon: Icon }) => {
-                  const isSelected = category === name;
-                  return (
-                    <button
-                      key={name}
-                      type="button"
-                      onClick={() => setCategory(name)}
-                      className={`p-3 rounded-[10px] border text-left flex items-center gap-2.5 transition-all text-xs font-bold ${
-                        isSelected
-                          ? 'bg-[#ECC94B] text-[#1A202C] border-[#D69E2E] shadow-xs'
-                          : 'bg-white text-[#2D3748] border-[#E2E8F0] hover:bg-slate-50'
-                      }`}
-                    >
-                      <Icon className={`w-4 h-4 shrink-0 ${isSelected ? 'text-[#1A202C]' : 'text-[#718096]'}`} />
-                      <span className="leading-tight">{name}</span>
-                    </button>
-                  );
-                })}
-              </div>
             </div>
-
-            {/* Severity */}
-            <div>
-              <label className="text-xs font-bold uppercase tracking-wider text-[#718096] block mb-2">
-                Severity
-              </label>
-              <div className="grid grid-cols-3 gap-2">
-                {(['Low', 'Medium', 'High'] as SeverityType[]).map((level) => {
-                  const isSelected = severity === level;
-                  return (
-                    <button
-                      key={level}
-                      type="button"
-                      onClick={() => setSeverity(level)}
-                      className={`py-2 px-3 rounded-[8px] text-xs font-bold border text-center transition-all ${
-                        isSelected
-                          ? level === 'High'
-                            ? 'bg-[#E53E3E] text-white border-red-700'
-                            : level === 'Medium'
-                            ? 'bg-[#DD6B20] text-white border-orange-700'
-                            : 'bg-emerald-600 text-white border-emerald-700'
-                          : 'bg-white text-[#718096] border-[#E2E8F0] hover:bg-slate-50'
-                      }`}
-                    >
-                      {level}
-                    </button>
-                  );
-                })}
-              </div>
-            </div>
-
-            {/* Description */}
-            <div>
-              <label
-                htmlFor="obs-desc"
-                className="text-xs font-bold uppercase tracking-wider text-[#718096] block mb-1.5"
-              >
-                Description
-              </label>
-              <textarea
-                id="obs-desc"
-                rows={3}
-                value={description}
-                onChange={(e) => setDescription(e.target.value)}
-                placeholder="Briefly describe what you observed..."
-                className="w-full p-3 rounded-[10px] border border-[#E2E8F0] text-xs text-[#1A202C] focus:outline-hidden focus:border-[#ECC94B] min-h-[80px] resize-none leading-relaxed bg-[#F7FAFC]"
-              />
-            </div>
-          </div>
-
-          {/* Submit */}
-          <div className="p-4 border-t border-[#E2E8F0] bg-white">
+          ) : (
             <button
               type="button"
-              disabled={!isFormValid}
-              onClick={() => setIsSubmittingConfirmOpen(true)}
-              className={`w-full h-13 rounded-[10px] text-xs font-extrabold tracking-wider uppercase flex items-center justify-center gap-2 transition-all shadow-sm ${
-                isFormValid
-                  ? 'bg-[#ECC94B] text-[#1A202C] hover:bg-[#D69E2E] active:scale-98 cursor-pointer'
-                  : 'bg-slate-200 text-slate-400 cursor-not-allowed'
-              }`}
+              onClick={() => setIsGalleryOpen(true)}
+              className="w-full p-3 rounded-[10px] border border-dashed border-[#E2E8F0] text-xs font-semibold text-[#718096] flex items-center justify-center gap-2 hover:bg-slate-50"
             >
-              <Send className="w-4 h-4" />
-              <span>Submit Observation</span>
+              <Images className="w-4 h-4" />
+              <span>Choose field photo from gallery (optional)</span>
             </button>
+          )}
+
+          {/* Category */}
+          <div>
+            <label className="text-xs font-bold uppercase tracking-wider text-[#718096] block mb-2">
+              Category
+            </label>
+            <div className="grid grid-cols-2 gap-2">
+              {(
+                [
+                  { name: 'Safety Observation', icon: Shield },
+                  { name: 'Environment Anomaly', icon: Trees },
+                  { name: 'Labour Grievance', icon: Users },
+                  { name: 'Contractor Violation', icon: HardHat },
+                ] as const
+              ).map(({ name, icon: Icon }) => {
+                const isSelected = category === name;
+                return (
+                  <button
+                    key={name}
+                    type="button"
+                    onClick={() => setCategory(name)}
+                    className={`p-3 rounded-[10px] border text-left flex items-center gap-2.5 transition-all text-xs font-bold ${
+                      isSelected
+                        ? 'bg-[#ECC94B] text-[#1A202C] border-[#D69E2E] shadow-xs'
+                        : 'bg-white text-[#2D3748] border-[#E2E8F0] hover:bg-slate-50'
+                    }`}
+                  >
+                    <Icon className={`w-4 h-4 shrink-0 ${isSelected ? 'text-[#1A202C]' : 'text-[#718096]'}`} />
+                    <span className="leading-tight">{name}</span>
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+
+          {/* Severity */}
+          <div>
+            <label className="text-xs font-bold uppercase tracking-wider text-[#718096] block mb-2">
+              Severity
+            </label>
+            <div className="grid grid-cols-3 gap-2">
+              {(['Low', 'Medium', 'High'] as SeverityType[]).map((level) => {
+                const isSelected = severity === level;
+                return (
+                  <button
+                    key={level}
+                    type="button"
+                    onClick={() => setSeverity(level)}
+                    className={`py-2 px-3 rounded-[8px] text-xs font-bold border text-center transition-all ${
+                      isSelected
+                        ? level === 'High'
+                          ? 'bg-[#E53E3E] text-white border-red-700'
+                          : level === 'Medium'
+                          ? 'bg-[#DD6B20] text-white border-orange-700'
+                          : 'bg-emerald-600 text-white border-emerald-700'
+                        : 'bg-white text-[#718096] border-[#E2E8F0] hover:bg-slate-50'
+                    }`}
+                  >
+                    {level}
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+
+          {/* Description */}
+          <div>
+            <label
+              htmlFor="obs-desc"
+              className="text-xs font-bold uppercase tracking-wider text-[#718096] block mb-1.5"
+            >
+              Description
+            </label>
+            <textarea
+              id="obs-desc"
+              rows={3}
+              value={description}
+              onChange={(e) => setDescription(e.target.value)}
+              placeholder="Briefly describe what you observed..."
+              className="w-full p-3 rounded-[10px] border border-[#E2E8F0] text-xs text-[#1A202C] focus:outline-hidden focus:border-[#ECC94B] min-h-[80px] resize-none leading-relaxed bg-[#F7FAFC]"
+            />
           </div>
         </div>
-      )}
+
+        {/* Submit */}
+        <div className="p-4 border-t border-[#E2E8F0] bg-white">
+          <button
+            type="button"
+            disabled={!isFormValid}
+            onClick={() => setIsSubmittingConfirmOpen(true)}
+            className={`w-full h-13 rounded-[10px] text-xs font-extrabold tracking-wider uppercase flex items-center justify-center gap-2 transition-all shadow-sm ${
+              isFormValid
+                ? 'bg-[#ECC94B] text-[#1A202C] hover:bg-[#D69E2E] active:scale-98 cursor-pointer'
+                : 'bg-slate-200 text-slate-400 cursor-not-allowed'
+            }`}
+          >
+            <Send className="w-4 h-4" />
+            <span>Submit Observation</span>
+          </button>
+        </div>
+      </div>
+
+      {/* Demo gallery picker — opens first so a photo can be chosen, and again for "Change" */}
+      <GalleryPickerModal
+        isOpen={isGalleryOpen}
+        itemTitle="Field observation photo"
+        gpsHint="23.6911° N, 85.0667° E · Piparwar OCP"
+        onConfirm={handleGalleryConfirm}
+        onClose={() => {
+          if (photoUrl) {
+            setIsGalleryOpen(false);
+          } else {
+            onClose();
+          }
+        }}
+      />
 
       <ConfirmationModal
         isOpen={isSubmittingConfirmOpen}

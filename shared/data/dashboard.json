@@ -1,0 +1,18 @@
+{
+  "title": "SAMAADHAN — Area Compliance Monitor",
+  "subtitle": "Live compliance state across the North Karanpura operational area (five mines).",
+  "rollup": {
+    "subsidiary": "CCL",
+    "area": "North Karanpura Coalfield",
+    "state": "Jharkhand",
+    "totalMines": 5,
+    "opencastMines": 4,
+    "undergroundMines": 1
+  },
+  "summaryLabels": {
+    "compliant": "Compliant (verified)",
+    "inProgress": "In progress",
+    "awaiting": "Awaiting verification",
+    "overdue": "Overdue / attention"
+  }
+}

@@ -1,0 +1,182 @@
+{
+  "note": "Deterministic RULE REGISTRY — the authoritative applicability/owner/deadline/evidence policy. AI extraction is advisory; these rules decide. Labelled per rule: STATUTORY_BASIS present = statutory; otherwise CONFIGURED organizational rule. Recurring cadences implement the DEMO_FLOW §3 recurring-compliance requirement (OBL-SLOPE-WEEKLY).",
+  "rules": [
+    {
+      "id": "OBL-SLOPE-WEEKLY",
+      "title": "Weekly slope-displacement monitoring — high-wall benches",
+      "shortTitle": "Weekly slope monitoring",
+      "domain": "SAFETY",
+      "originRef": "DGMS/2026/TC-27",
+      "applicability": {
+        "mineType": "OC",
+        "minHighwallMeters": 30,
+        "description": "Opencast mines with high-wall benches above 30 m"
+      },
+      "ownerRole": "Mine Safety Officer",
+      "verifierRole": "Regulatory Official",
+      "cadence": { "kind": "WEEKLY", "anchor": "FRIDAY", "shift": "Shift I (06:00 - 14:00)" },
+      "deadlinePolicy": { "kind": "NEXT_WEEKDAY", "weekday": "FRIDAY", "shift": "Shift I" },
+      "escalationRule": "Auto-escalates at deadline to Area General Manager",
+      "evidenceChecklist": [
+        {
+          "id": "ev-slope-sheet",
+          "title": "Extensometer reading sheet (weekly log EX-07)",
+          "type": "photo",
+          "guidance": "Signed weekly reading sheet with displacement < 2.5 mm/day threshold noted",
+          "gps": "23.6952, 85.0598 (Bench 3B high-wall)"
+        },
+        {
+          "id": "ev-slope-crest",
+          "title": "Bench 3B crest photo",
+          "type": "photo",
+          "guidance": "Crest showing berm markers and crack gauge in frame",
+          "gps": "23.6952, 85.0598 (Bench 3B high-wall)"
+        }
+      ],
+      "heroRef": "TASK-SLOPE-WK-2026-W36",
+      "statutoryBasis": "DGMS (Tech) Circular No. 02 of 2020 — Guidelines for Systematic Monitoring of Slopes in Opencast Coal Mines (real PDF bundled in data/regulatory/)"
+    },
+    {
+      "id": "OBL-SLOPE-GEOTECH-MONTHLY",
+      "title": "Monthly geotechnical slope review — high-wall benches",
+      "shortTitle": "Monthly geotech slope review",
+      "domain": "SAFETY",
+      "originRef": "DGMS/2026/TC-27",
+      "applicability": {
+        "mineType": "OC",
+        "minHighwallMeters": 30,
+        "description": "Opencast mines with high-wall benches above 30 m"
+      },
+      "ownerRole": "Mine Engineer",
+      "verifierRole": "Regulatory Official",
+      "cadence": { "kind": "MONTHLY", "anchor": "MONTH_END", "shift": "General Shift" },
+      "deadlinePolicy": { "kind": "MONTH_END", "shift": "General Shift" },
+      "escalationRule": "Auto-escalates at deadline to Area General Manager",
+      "evidenceChecklist": [
+        {
+          "id": "ev-geotech-report",
+          "title": "Monthly geotechnical review report",
+          "type": "document",
+          "guidance": "Signed rock-mechanics cell report covering all active high-wall benches"
+        }
+      ],
+      "statutoryBasis": "DGMS (Tech) Circular No. 02 of 2020 (weekly displacement reports §5; monthly review per configured compliance protocol)"
+    },
+    {
+      "id": "OBL-DUST-WEEKLY",
+      "title": "Weekly haul-road dust-suppression verification — EC Condition 14",
+      "shortTitle": "Weekly dust suppression check",
+      "domain": "ENVIRONMENT",
+      "originRef": "EC/2023/882",
+      "applicability": {
+        "mineType": "OC",
+        "condition": "haulingOperations",
+        "description": "Opencast mines operating under EC Condition 14 with haul-road dust risk"
+      },
+      "ownerRole": "Mine Safety Officer",
+      "verifierRole": "Regulatory Official",
+      "cadence": { "kind": "WEEKLY", "anchor": "WEDNESDAY", "shift": "Shift I (06:00 - 14:00)" },
+      "deadlinePolicy": { "kind": "NEXT_WEEKDAY", "weekday": "WEDNESDAY", "shift": "Shift I" },
+      "escalationRule": "Auto-escalates at deadline to Area Environment Officer",
+      "evidenceChecklist": [
+        {
+          "id": "ev-dust-tanker",
+          "title": "Water tanker sprinkler logbook",
+          "type": "photo",
+          "guidance": "Tanker trip sheet with odometer and water-filling meter record"
+        },
+        {
+          "id": "ev-dust-pm10",
+          "title": "Haul road PM10 station reading photo",
+          "type": "photo",
+          "guidance": "Clear photo of the Continuous Ambient Air Monitoring Station readout"
+        }
+      ],
+      "statutoryBasis": "Environmental Clearance Condition 14 (SPCB) — configured into the rule registry"
+    },
+    {
+      "id": "OBL-PPE-AUDIT",
+      "title": "PPE compliance audit — Shovel Crew B",
+      "shortTitle": "PPE compliance audit",
+      "domain": "LABOUR",
+      "originRef": "CSIS/2026/IN-118",
+      "applicability": { "mineIds": ["MINE-002"], "description": "Mines with an open PPE deviation record" },
+      "ownerRole": "Mine Safety Officer",
+      "verifierRole": "Regulatory Official",
+      "cadence": null,
+      "deadlinePolicy": { "kind": "PLUS_DAYS", "days": 7, "shift": "Shift I" },
+      "escalationRule": "Auto-escalates at deadline to Area Personnel Manager",
+      "evidenceChecklist": [
+        {
+          "id": "ev-ppe-roster",
+          "title": "Distribution roster with biometric thumb logs",
+          "type": "register",
+          "guidance": "Store issuance counterfoil with worker tokens"
+        },
+        {
+          "id": "ev-ppe-checklist",
+          "title": "Re-audit checklist signed by welfare officer",
+          "type": "document",
+          "guidance": "Signed checklist confirming crew fully equipped"
+        }
+      ],
+      "statutoryBasis": "Mines Rules 1955 — safety apparel provisions"
+    },
+    {
+      "id": "OBL-CLRA-RENEWAL",
+      "title": "CLRA contractor licence renewal — before expiry",
+      "shortTitle": "CLRA licence renewal",
+      "domain": "CONTRACTOR",
+      "originRef": "CLRA/1952/S-12",
+      "applicability": { "mineIds": ["MINE-005"], "description": "Mines with a contractor licence expiring within 45 days" },
+      "ownerRole": "Mine Manager",
+      "verifierRole": "Regulatory Official",
+      "cadence": null,
+      "deadlinePolicy": { "kind": "BEFORE_EXPIRY", "leadDays": 14, "shift": "General Shift" },
+      "escalationRule": "Auto-escalates at deadline to Area General Manager",
+      "evidenceChecklist": [
+        {
+          "id": "ev-clra-form",
+          "title": "Form VII renewal certificate",
+          "type": "document",
+          "guidance": "High-resolution copy of Form VII with readable hologram and stamp"
+        },
+        {
+          "id": "ev-clra-challan",
+          "title": "Treasury challan copy",
+          "type": "document",
+          "guidance": "Verified bank e-challan counterfoil for statutory fee deposit"
+        }
+      ],
+      "statutoryBasis": "Contract Labour (Regulation & Abolition) Act 1970 §12"
+    },
+    {
+      "id": "OBL-STRATA-RESPONSE",
+      "title": "Strata monitoring response — extensometer threshold review",
+      "shortTitle": "Strata monitoring response",
+      "domain": "SAFETY",
+      "originRef": "SEN/2026/M004-EX07",
+      "applicability": { "mineIds": ["MINE-004"], "description": "Underground mine with instrumented strata telemetry" },
+      "ownerRole": "Mine Manager",
+      "verifierRole": "Regulatory Official",
+      "cadence": null,
+      "deadlinePolicy": { "kind": "PLUS_DAYS", "days": 2, "shift": "General Shift" },
+      "escalationRule": "Auto-escalates at deadline (T-0) to Area General Manager",
+      "evidenceChecklist": [
+        {
+          "id": "ev-strata-log",
+          "title": "Ground-truth inspection log",
+          "type": "register",
+          "guidance": "Crack-width measurements and instrument check entries"
+        },
+        {
+          "id": "ev-strata-photo",
+          "title": "Instrument station photo",
+          "type": "photo",
+          "guidance": "Geo-tagged photo of the extensometer station with reading visible"
+        }
+      ],
+      "statutoryBasis": "DGMS (Tech) Circular No. 02 of 2020 — alarm response clause (threshold breach response)"
+    }
+  ]
+}

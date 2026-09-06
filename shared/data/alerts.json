@@ -1,0 +1,134 @@
+[
+  {
+    "id": "al-circular",
+    "kind": "dgms-circular",
+    "source": "DGMS",
+    "domain": "SAFETY",
+    "ref": "DGMS/2026/TC-27",
+    "alertNo": "Tech. Circular 02/2020",
+    "title": "Systematic Monitoring of Slopes in Opencast Coal Mines",
+    "issued": "In force since 2020",
+    "severity": "High",
+    "type": "warning",
+    "status": "received",
+    "ackDeadline": "Review in 48h",
+    "ackDeadlineOffsetDays": 2,
+    "pdfUrl": "/pdf/DGMS_Tech_Circular_02_of_2020_Slope_Monitoring_OC.pdf",
+    "pdfSource": "dgms.gov.in · DGMS (Tech) Circular No. 02 of 2020 — real bundled source document (data/regulatory/)",
+    "realSourceClass": "REAL OFFICIAL",
+    "realSourceTitle": "DGMS (Tech) Circular No. 02 of 2020 — Guidelines for Systematic Monitoring of Slopes in Opencast Coal Mines",
+    "summary": "A routine, recurring DGMS technical instruction: opencast mines with high-wall slopes must run systematic slope-displacement monitoring (extensometers, prism surveys), alarm at ≥ 2.5 mm/day, and submit weekly displacement reports. This is everyday compliance — not an accident story. Internal demo ref DGMS/2026/TC-27 maps to this real circular.",
+    "paragraphs": [
+      "SCOPE: All opencast coal mines / washeries — systematic monitoring of slopes of pits, waste dumps and attached structures is required. Every mine must carry out a geotechnical/strata control study and maintain monitoring instruments (extensometers/MPBX, prism surveys; slope-stability radar where available).",
+      "REQUIREMENT: High-wall benches above 30 m shall be monitored continuously — in-situ extensometer/MPBX arrays, periodic prism surveys, and radar coverage on active benches where installed.",
+      "THRESHOLD: An alarm shall be raised when measured displacement exceeds 2.5 mm per day or crack width increases beyond the geotechnical assessment threshold.",
+      "REPORTING: Weekly displacement reports shall be submitted to the Regional Inspector and retained at the mine; a monthly geotechnical review shall be maintained under the mine's compliance protocol."
+    ]
+  },
+  {
+    "id": "al-ec",
+    "kind": "ec-condition",
+    "source": "EC",
+    "domain": "ENVIRONMENT",
+    "ref": "EC/2023/882",
+    "alertNo": "EC COND-14",
+    "title": "Dust-suppression condition — haul roads (EC Condition 14)",
+    "issued": "Standing EC condition",
+    "severity": "Medium",
+    "type": "warning",
+    "status": "received",
+    "ackDeadline": "Review in 48h",
+    "ackDeadlineOffsetDays": 2,
+    "summary": "Standing environmental-clearance condition: water sprinkling on haul roads and PM10 monitoring with records. Recurring weekly verification at OC mines with haulage operations.",
+    "paragraphs": [
+      "Condition 14: regular water sprinkling on haul roads and CHP; ambient air quality (PM10) monitoring stations with records maintained.",
+      "Verification of sprinkler coverage and station readings is a recurring weekly check under the area compliance protocol."
+    ]
+  },
+  {
+    "id": "al-csis",
+    "kind": "csis-feed",
+    "source": "CSIS",
+    "domain": "LABOUR",
+    "ref": "CSIS/2026/IN-118",
+    "alertNo": "IN-118",
+    "title": "Safety parameter deviation — PPE non-compliance, Shovel Crew B (Ashoka OCP)",
+    "issued": "01 Sep 2026",
+    "severity": "Medium",
+    "type": "warning",
+    "status": "received",
+    "ackDeadline": "Ack in 48h",
+    "ackDeadlineOffsetDays": 2,
+    "summary": "CIL Safety Information System flagged a PPE-compliance deviation during the routine safety-parameter audit of Shovel Crew B (MINE-002).",
+    "paragraphs": [
+      "The CIL Safety Information System (CSIS) recorded a deviation during the routine safety-parameter audit of Shovel Crew B (MINE-002).",
+      "18 workers were observed on the shovel bench without ISI 15298-marked safety footwear; two helmet chin-straps were found defective.",
+      "Corrective action: issue replacement PPE, update the PPE issuance register, and re-audit within 7 days under the Mines Rules, 1955 (safety apparel provisions)."
+    ]
+  },
+  {
+    "id": "al-sensor",
+    "kind": "sensor-anomaly",
+    "source": "SENSOR",
+    "domain": "SAFETY",
+    "ref": "SEN/2026/M004-EX07",
+    "alertNo": "EX07-TH",
+    "title": "Strata displacement above threshold — Ray-Bachra UG instrumented zone",
+    "issued": "04 Sep 2026",
+    "severity": "High",
+    "type": "critical",
+    "status": "received",
+    "ackDeadline": "Respond in 24h",
+    "ackDeadlineOffsetDays": 1,
+    "siteId": "MINE-004",
+    "summary": "Extensometer EX-07 (UG instrumented zone) recorded 2.9 mm/24 h against the 2.5 mm threshold — routine alarm-response obligation under the slope-monitoring protocol.",
+    "paragraphs": [
+      "Telemetry from extensometer EX-07 (Ray-Bachra UG instrumented zone) reported a 24-hour displacement of 2.9 mm against the 2.5 mm threshold.",
+      "Response per DGMS (Tech) Circular 02/2020 alarm clause: ground-truth the reading, review the geotechnical assessment, and log the instrument check."
+    ]
+  },
+  {
+    "id": "al-clra",
+    "kind": "licence-expiry",
+    "source": "AUDIT",
+    "domain": "CONTRACTOR",
+    "ref": "CLRA/1952/S-12",
+    "alertNo": "LIC-EXP-45D",
+    "title": "Contractor licence expiry window — Amrapali OCP (45-day rule)",
+    "issued": "Registry feed",
+    "severity": "Medium",
+    "type": "warning",
+    "status": "received",
+    "ackDeadline": "Review in 72h",
+    "ackDeadlineOffsetDays": 3,
+    "siteId": "MINE-005",
+    "summary": "Credential registry: a CLRA contractor licence at Amrapali OCP expires within 45 days — renewal filing required before expiry (configured 45-day expiry rule).",
+    "paragraphs": [
+      "The contractor-credential registry flags licences approaching expiry (configured 45-day window; organizational rule, not a statutory deadline).",
+      "CLRA §12 requires a valid licence for contract labour engagement — renewal (Form VII + challan) must be filed before expiry."
+    ]
+  },
+  {
+    "id": "al-1",
+    "kind": "operational",
+    "timestamp": "05 Sep 2026, 08:00 IST",
+    "message": "Weekly slope-monitoring instance W36 generated at 3 OC mines — awaiting manager review.",
+    "type": "info"
+  },
+  {
+    "id": "al-2",
+    "kind": "operational",
+    "timestamp": "05 Sep 2026, 09:00 IST",
+    "message": "Ray-Bachra UG strata-response item escalated to Area General Manager (overdue).",
+    "type": "warning",
+    "siteId": "MINE-004"
+  },
+  {
+    "id": "al-3",
+    "kind": "operational",
+    "timestamp": "01 Sep 2026, 07:00 IST",
+    "message": "PPE audit evidence submitted at Ashoka OCP — awaiting regulatory verification.",
+    "type": "info",
+    "siteId": "MINE-002"
+  }
+]

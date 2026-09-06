@@ -73,3 +73,67 @@
 .leaflet-tooltip-top.custom-leaflet-tooltip::before {
   display: none !important;
 }
+
+/* ------------------------------------------------------------------ */
+/* Piparwar GIS module (integrated from GIS_3D_Map — dark map UI)      */
+/* ------------------------------------------------------------------ */
+.leaflet-container {
+  background: #09090b !important;
+  outline: none;
+  font-family: inherit;
+}
+
+.leaflet-bar a {
+  background-color: rgba(24, 24, 27, 0.9) !important;
+  color: #f4f4f5 !important;
+  border-bottom: 1px solid #3f3f46 !important;
+  backdrop-filter: blur(8px);
+}
+
+.leaflet-bar a:hover {
+  background-color: #27272a !important;
+  color: #38bdf8 !important;
+}
+
+.leaflet-control-scale-line {
+  background: rgba(9, 9, 11, 0.85) !important;
+  border: 1px solid #3f3f46 !important;
+  color: #e4e4e7 !important;
+  font-family: monospace !important;
+  font-size: 10px !important;
+  padding: 2px 6px !important;
+  border-radius: 4px;
+}
+
+.leaflet-custom-tooltip {
+  background: rgba(9, 9, 11, 0.95) !important;
+  border: 1px solid #3f3f46 !important;
+  border-radius: 8px !important;
+  color: #f4f4f5 !important;
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.5) !important;
+  backdrop-filter: blur(8px) !important;
+  padding: 6px 10px !important;
+}
+
+.leaflet-custom-tooltip::before {
+  border-top-color: #27272a !important;
+}
+
+.leaflet-popup-content-wrapper {
+  background: rgba(15, 15, 18, 0.96) !important;
+  color: #f4f4f5 !important;
+  border: 1px solid #3f3f46 !important;
+  border-radius: 12px !important;
+  box-shadow: 0 20px 30px -10px rgba(0, 0, 0, 0.7) !important;
+  backdrop-filter: blur(12px) !important;
+  padding: 0 !important;
+}
+
+.leaflet-popup-content {
+  margin: 12px 14px !important;
+  line-height: 1.4 !important;
+}
+
+.leaflet-popup-tip {
+  background: #18181b !important;
+}

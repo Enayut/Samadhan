@@ -1,0 +1,13 @@
+# SYNTHETIC DEMO DATA — NOT REAL SENSOR RECORDS.
+# Mine-level air-quality logs are not published; these fabricated readings mirror EC-condition
+# monitoring practice (24-hr PM10 standard 100 ug/m3) for the SAMAADHAN demo.
+date,station_id,station_location,mine_id,pm10_24h_ugm3,standard_ugm3,status
+2026-09-01,AQ-01,Haul Road No.2 (West),MINE-002,94,100,within-limit
+2026-09-01,AQ-02,Haul Road No.4 (Piparwar),MINE-001,72,100,within-limit
+2026-09-01,AQ-03,Magadh Boundary Gate,MINE-003,118,100,exceeded
+2026-09-02,AQ-01,Haul Road No.2 (West),MINE-002,108,100,exceeded
+2026-09-02,AQ-02,Haul Road No.4 (Piparwar),MINE-001,69,100,within-limit
+2026-09-02,AQ-03,Magadh Boundary Gate,MINE-003,103,100,exceeded
+2026-09-03,AQ-01,Haul Road No.2 (West),MINE-002,97,100,within-limit
+2026-09-03,AQ-02,Haul Road No.4 (Piparwar),MINE-001,88,100,within-limit
+2026-09-03,AQ-03,Magadh Boundary Gate,MINE-003,92,100,within-limit

@@ -68,11 +68,11 @@ export const ProfileScreen: React.FC<ProfileScreenProps> = ({
         <div className="grid grid-cols-2 gap-2.5 pt-3 border-t border-[#E2E8F0] text-xs">
           <div className="p-3 rounded-[10px] bg-[#F7FAFC] border border-[#E2E8F0]">
             <span className="text-[10px] text-[#718096] uppercase font-bold block">Assigned Mine</span>
-            <span className="font-bold text-[#1A202C] mt-0.5 block">{MINE_INFO.name}</span>
+            <span className="font-bold text-[#1A202C] mt-0.5 block">{MINE_INFO.name} · {MINE_INFO.area}</span>
           </div>
           <div className="p-3 rounded-[10px] bg-[#F7FAFC] border border-[#E2E8F0]">
-            <span className="text-[10px] text-[#718096] uppercase font-bold block">Shift Roster</span>
-            <span className="font-bold text-[#1A202C] mt-0.5 block">Shift III (Night)</span>
+            <span className="text-[10px] text-[#718096] uppercase font-bold block">Area</span>
+            <span className="font-bold text-[#1A202C] mt-0.5 block">North Karanpura, CCL</span>
           </div>
         </div>
       </div>
@@ -88,7 +88,7 @@ export const ProfileScreen: React.FC<ProfileScreenProps> = ({
               <Radio className="w-4 h-4 text-[#ECC94B]" />
               <span>Pit Transceiver</span>
             </div>
-            <span className="font-mono text-xs font-bold text-[#38A169]">Kusmunda Repeater #04</span>
+            <span className="font-mono text-xs font-bold text-[#38A169]">NKCC Repeater #04</span>
           </div>
 
           <div className="pt-2 border-t border-[#E2E8F0]">

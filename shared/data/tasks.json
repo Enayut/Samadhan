@@ -1,0 +1,385 @@
+[
+  {
+    "id": "TASK-SLOPE-WK-2026-W36",
+    "title": "Weekly slope-displacement monitoring — Bench 3B high-wall (EX-07)",
+    "shortTitle": "Weekly slope monitoring · Bench 3B (EX-07)",
+    "domain": "SAFETY",
+    "obligationRef": "OBL-SLOPE-WEEKLY",
+    "sourceRef": "DGMS/2026/TC-27",
+    "status": "PROPOSED",
+    "urgencyGroup": "DUE_SOON",
+    "deadlineOffsetDays": 4,
+    "deadlineDisplay": "Due Fri · Shift I · B3B high-wall",
+    "shiftInfo": "Friday · Shift I (06:00 - 14:00)",
+    "hoursRemaining": 96,
+    "severity": "High",
+    "mineId": "MINE-001",
+    "ownerRole": "Mine Safety Officer",
+    "owner": { "id": "u-ram", "name": "Ram Singh", "role": "Mine Safety Officer" },
+    "verifier": { "id": "u-regulator", "name": "R. Sharma", "role": "Regulatory Official" },
+    "ownerLabel": "Ram Singh (Mine Safety Officer · MSO-402)",
+    "verifierLabel": "R. Sharma (Regulatory Official) — ≠ owner",
+    "escalationRule": "Auto-escalates at deadline to Area General Manager",
+    "isCriticalDoThisNext": true,
+    "generatedBy": "RULE_DERIVED",
+    "recurring": true,
+    "cadence": "WEEKLY",
+    "form": {
+      "formId": "SLP-WKLY",
+      "title": "Slope monitoring sheet — weekly",
+      "fields": [
+        { "id": "instrument", "label": "Instrument", "type": "text", "value": "EX-07 · MPBX/Extensometer", "readOnly": true },
+        { "id": "location", "label": "Location", "type": "text", "value": "Bench 3B High-wall · ZONE-PIT-ACTIVE", "readOnly": true },
+        { "id": "reading", "label": "Displacement reading (mm/24h)", "type": "number", "value": "", "placeholder": "e.g. 1.9", "hint": "Alarm threshold 2.5 mm/24h (Circular 02/2020 §4)" },
+        { "id": "withinLimit", "label": "Within limit?", "type": "select", "options": ["YES", "NO"], "value": "" },
+        { "id": "observations", "label": "Observations", "type": "textarea", "value": "", "placeholder": "Crest condition, tension cracks, berm markers…" }
+      ]
+    },
+    "evidenceItems": [
+      {
+        "id": "ev-slope-sheet",
+        "title": "Extensometer reading sheet (weekly log EX-07)",
+        "type": "photo",
+        "status": "pending",
+        "guidance": "Signed weekly reading sheet with displacement < 2.5 mm/day threshold noted",
+        "gpsHint": "Bench 3B (23.6952, 85.0598)"
+      },
+      {
+        "id": "ev-slope-crest",
+        "title": "Bench 3B crest photo",
+        "type": "photo",
+        "status": "pending",
+        "guidance": "Crest showing berm markers and crack gauge in frame",
+        "gpsHint": "Bench 3B (23.6952, 85.0598)"
+      },
+      {
+        "id": "ev-slope-attendance",
+        "title": "Shift attendance / muster page (optional attachment)",
+        "type": "document",
+        "status": "pending",
+        "optional": true,
+        "guidance": "Attach the shift attendance/muster page (format per Mines Act 1952 s.48 register; synthetic demo CSV in data/attendance/)"
+      }
+    ],
+    "remediationNotes": ""
+  },
+  {
+    "id": "TASK-SLOPE-WK-2026-W36-M002",
+    "title": "Weekly slope-displacement monitoring — Ashoka OCP high-wall",
+    "shortTitle": "Weekly slope monitoring · Ashoka",
+    "domain": "SAFETY",
+    "obligationRef": "OBL-SLOPE-WEEKLY",
+    "sourceRef": "DGMS/2026/TC-27",
+    "status": "PROPOSED",
+    "urgencyGroup": "DUE_SOON",
+    "deadlineOffsetDays": 4,
+    "deadlineDisplay": "Due Fri · Shift I",
+    "shiftInfo": "Friday · Shift I (06:00 - 14:00)",
+    "hoursRemaining": 96,
+    "severity": "Medium",
+    "mineId": "MINE-002",
+    "ownerRole": "Mine Safety Officer",
+    "owner": { "id": "u-ashoka-mso", "name": "M. Hembram", "role": "Mine Safety Officer" },
+    "verifier": { "id": "u-regulator", "name": "R. Sharma", "role": "Regulatory Official" },
+    "ownerLabel": "M. Hembram (Mine Safety Officer)",
+    "verifierLabel": "R. Sharma (Regulatory Official) — ≠ owner",
+    "escalationRule": "Auto-escalates at deadline to Area General Manager",
+    "isCriticalDoThisNext": false,
+    "generatedBy": "RULE_DERIVED",
+    "recurring": true,
+    "cadence": "WEEKLY",
+    "evidenceItems": [
+      {
+        "id": "ev-slope-sheet",
+        "title": "Extensometer reading sheet (weekly log)",
+        "type": "photo",
+        "status": "pending",
+        "guidance": "Signed weekly reading sheet with displacement < 2.5 mm/day threshold noted"
+      },
+      {
+        "id": "ev-slope-crest",
+        "title": "High-wall crest photo",
+        "type": "photo",
+        "status": "pending",
+        "guidance": "Crest showing berm markers and crack gauge in frame"
+      }
+    ],
+    "remediationNotes": ""
+  },
+  {
+    "id": "TASK-SLOPE-WK-2026-W36-M003",
+    "title": "Weekly slope-displacement monitoring — Magadh OCP high-wall",
+    "shortTitle": "Weekly slope monitoring · Magadh",
+    "domain": "SAFETY",
+    "obligationRef": "OBL-SLOPE-WEEKLY",
+    "sourceRef": "DGMS/2026/TC-27",
+    "status": "PROPOSED",
+    "urgencyGroup": "DUE_SOON",
+    "deadlineOffsetDays": 4,
+    "deadlineDisplay": "Due Fri · Shift I",
+    "shiftInfo": "Friday · Shift I (06:00 - 14:00)",
+    "hoursRemaining": 96,
+    "severity": "Medium",
+    "mineId": "MINE-003",
+    "ownerRole": "Mine Safety Officer",
+    "owner": { "id": "u-magadh-mso", "name": "D. Prasad", "role": "Mine Safety Officer" },
+    "verifier": { "id": "u-regulator", "name": "R. Sharma", "role": "Regulatory Official" },
+    "ownerLabel": "D. Prasad (Mine Safety Officer)",
+    "verifierLabel": "R. Sharma (Regulatory Official) — ≠ owner",
+    "escalationRule": "Auto-escalates at deadline to Area General Manager",
+    "isCriticalDoThisNext": false,
+    "generatedBy": "RULE_DERIVED",
+    "recurring": true,
+    "cadence": "WEEKLY",
+    "evidenceItems": [
+      {
+        "id": "ev-slope-sheet",
+        "title": "Extensometer reading sheet (weekly log)",
+        "type": "photo",
+        "status": "pending",
+        "guidance": "Signed weekly reading sheet with displacement < 2.5 mm/day threshold noted"
+      },
+      {
+        "id": "ev-slope-crest",
+        "title": "High-wall crest photo",
+        "type": "photo",
+        "status": "pending",
+        "guidance": "Crest showing berm markers and crack gauge in frame"
+      }
+    ],
+    "remediationNotes": ""
+  },
+  {
+    "id": "TASK-DUST-W36-M002",
+    "title": "Weekly haul-road dust-suppression verification — EC Condition 14",
+    "shortTitle": "Weekly dust suppression check",
+    "domain": "ENVIRONMENT",
+    "obligationRef": "OBL-DUST-WEEKLY",
+    "sourceRef": "EC/2023/882",
+    "status": "PROPOSED",
+    "urgencyGroup": "DUE_SOON",
+    "deadlineOffsetDays": 4,
+    "deadlineDisplay": "Due Wed · Shift I",
+    "shiftInfo": "Wednesday · Shift I (06:00 - 14:00)",
+    "hoursRemaining": 96,
+    "severity": "Medium",
+    "mineId": "MINE-002",
+    "ownerRole": "Mine Safety Officer",
+    "owner": { "id": "u-ashoka-mso", "name": "M. Hembram", "role": "Mine Safety Officer" },
+    "verifier": { "id": "u-regulator", "name": "R. Sharma", "role": "Regulatory Official" },
+    "ownerLabel": "M. Hembram (Mine Safety Officer)",
+    "verifierLabel": "R. Sharma (Regulatory Official) — ≠ owner",
+    "escalationRule": "Auto-escalates at deadline to Area Environment Officer",
+    "isCriticalDoThisNext": false,
+    "generatedBy": "RULE_DERIVED",
+    "recurring": true,
+    "cadence": "WEEKLY",
+    "evidenceItems": [
+      {
+        "id": "ev-dust-tanker",
+        "title": "Water tanker sprinkler logbook",
+        "type": "photo",
+        "status": "pending",
+        "guidance": "Tanker trip sheet with odometer and water-filling meter record"
+      },
+      {
+        "id": "ev-dust-pm10",
+        "title": "Haul road PM10 station reading photo",
+        "type": "photo",
+        "status": "pending",
+        "guidance": "Clear photo of the Continuous Ambient Air Monitoring Station readout"
+      }
+    ],
+    "remediationNotes": ""
+  },
+  {
+    "id": "TASK-PPE-2026-M002",
+    "title": "PPE compliance audit — Shovel Crew B",
+    "shortTitle": "PPE compliance audit",
+    "domain": "LABOUR",
+    "obligationRef": "OBL-PPE-AUDIT",
+    "sourceRef": "CSIS/2026/IN-118",
+    "status": "AWAITING_VERIFICATION",
+    "urgencyGroup": "AWAITING_VERIFICATION",
+    "deadlineOffsetDays": 2,
+    "deadlineDisplay": "Submitted · Review in 2d",
+    "shiftInfo": "Submitted · Shift I · welfare cell",
+    "hoursRemaining": 48,
+    "severity": "High",
+    "mineId": "MINE-002",
+    "ownerRole": "Mine Safety Officer",
+    "owner": { "id": "u-ashoka-mso", "name": "M. Hembram", "role": "Mine Safety Officer" },
+    "verifier": { "id": "u-regulator", "name": "R. Sharma", "role": "Regulatory Official" },
+    "ownerLabel": "M. Hembram (Mine Safety Officer)",
+    "verifierLabel": "R. Sharma (Regulatory Official) — ≠ owner",
+    "escalationRule": "Auto-escalates at deadline to Area Personnel Manager",
+    "isCriticalDoThisNext": false,
+    "generatedBy": "RULE_DERIVED",
+    "submittedTimestamp": "Yesterday · Shift I",
+    "submittedOffsetDays": -1,
+    "remediationNotes": "18 replacement boots (ISI 15298) and 2 helmet chin-straps issued; issuance register updated.",
+    "evidenceItems": [
+      {
+        "id": "ev-ppe-roster",
+        "title": "Distribution roster with biometric thumb logs",
+        "type": "register",
+        "status": "uploaded",
+        "guidance": "Store issuance counterfoil with worker tokens",
+        "artifactId": "art-attendance",
+        "metadata": {
+          "timestamp": "2026-09-01 06:30 IST",
+          "gps": "23.7306° N, 85.0403° E (Ashoka stores)",
+          "user": "M. Hembram (MSO-517)",
+          "sha256": "91a27e8d6451c09938bfe412089cfa123"
+        }
+      },
+      {
+        "id": "ev-ppe-checklist",
+        "title": "Re-audit checklist signed by welfare officer",
+        "type": "document",
+        "status": "uploaded",
+        "guidance": "Signed checklist confirming crew fully equipped",
+        "fileName": "PPE_ReAudit_ShovelB_signed.pdf",
+        "metadata": {
+          "timestamp": "2026-09-01 06:45 IST",
+          "gps": "23.7306° N, 85.0403° E (Ashoka stores)",
+          "user": "M. Hembram (MSO-517)",
+          "sha256": "772c918341908ab1934efbc712903"
+        }
+      }
+    ]
+  },
+  {
+    "id": "TASK-CLRA-2026-M005",
+    "title": "CLRA contractor licence renewal — expiry 30 Sep 2026",
+    "shortTitle": "CLRA licence renewal",
+    "domain": "CONTRACTOR",
+    "obligationRef": "OBL-CLRA-RENEWAL",
+    "sourceRef": "CLRA/1952/S-12",
+    "status": "PROPOSED",
+    "urgencyGroup": "DUE_SOON",
+    "deadlineOffsetDays": 14,
+    "deadlineDisplay": "File by 16 Sep · before expiry",
+    "shiftInfo": "General Shift · expiry-driven obligation",
+    "hoursRemaining": 336,
+    "severity": "High",
+    "mineId": "MINE-005",
+    "ownerRole": "Mine Manager",
+    "owner": { "id": "u-amrapali-mm", "name": "K. Toppo", "role": "Mine Manager" },
+    "verifier": { "id": "u-regulator", "name": "R. Sharma", "role": "Regulatory Official" },
+    "ownerLabel": "K. Toppo (Mine Manager)",
+    "verifierLabel": "R. Sharma (Regulatory Official) — ≠ owner",
+    "escalationRule": "Auto-escalates at deadline to Area General Manager",
+    "isCriticalDoThisNext": false,
+    "generatedBy": "RULE_DERIVED",
+    "evidenceItems": [
+      {
+        "id": "ev-clra-form",
+        "title": "Form VII renewal certificate",
+        "type": "document",
+        "status": "pending",
+        "guidance": "High-resolution copy of Form VII with readable hologram and stamp"
+      },
+      {
+        "id": "ev-clra-challan",
+        "title": "Treasury challan copy",
+        "type": "document",
+        "status": "pending",
+        "guidance": "Verified bank e-challan counterfoil for statutory fee deposit"
+      }
+    ],
+    "remediationNotes": ""
+  },
+  {
+    "id": "TASK-STRATA-2026-M004",
+    "title": "Strata monitoring response — extensometer threshold review",
+    "shortTitle": "Strata monitoring response",
+    "domain": "SAFETY",
+    "obligationRef": "OBL-STRATA-RESPONSE",
+    "sourceRef": "SEN/2026/M004-EX07",
+    "status": "ESCALATED",
+    "urgencyGroup": "OVERDUE",
+    "deadlineOffsetDays": -1,
+    "deadlineDisplay": "Overdue 1d · escalated L1",
+    "shiftInfo": "General Shift · sensor threshold review",
+    "hoursRemaining": -24,
+    "severity": "High",
+    "mineId": "MINE-004",
+    "ownerRole": "Mine Manager",
+    "owner": { "id": "u-amrapali-mm", "name": "K. Toppo", "role": "Mine Manager" },
+    "ownerNote": "demo: Ray-Bachra UG mine official identity not separately seeded — Amrapali MM holds this response item",
+    "verifier": { "id": "u-regulator", "name": "R. Sharma", "role": "Regulatory Official" },
+    "ownerLabel": "K. Toppo (Mine Manager)",
+    "verifierLabel": "R. Sharma (Regulatory Official) — ≠ owner",
+    "escalationRule": "Auto-escalates at deadline (T-0) to Area General Manager",
+    "escalationLevel": "ESCALATED_L1",
+    "escalationTarget": "Escalated to Area General Manager",
+    "escalationEvents": [
+      { "level": "L1", "notified": "Area General Manager", "timestampOffsetDays": 0 }
+    ],
+    "isCriticalDoThisNext": false,
+    "generatedBy": "RULE_DERIVED",
+    "remediationNotes": "EX-07 (UG station) 24-h reading 2.9 mm vs 2.5 mm threshold — ground-truthing scheduled.",
+    "evidenceItems": [
+      {
+        "id": "ev-strata-log",
+        "title": "Ground-truth inspection log",
+        "type": "register",
+        "status": "pending",
+        "guidance": "Crack-width measurements and instrument check entries"
+      },
+      {
+        "id": "ev-strata-photo",
+        "title": "Instrument station photo",
+        "type": "photo",
+        "status": "pending",
+        "guidance": "Geo-tagged photo of the extensometer station with reading visible"
+      }
+    ]
+  },
+  {
+    "id": "TASK-GEOTECH-AUG-M001",
+    "title": "Monthly geotechnical slope review — Piparwar high-wall benches",
+    "shortTitle": "Monthly geotech slope review",
+    "domain": "SAFETY",
+    "obligationRef": "OBL-SLOPE-GEOTECH-MONTHLY",
+    "sourceRef": "DGMS/2026/TC-27",
+    "status": "VERIFIED",
+    "urgencyGroup": "RECENTLY_CLOSED",
+    "deadlineOffsetDays": -6,
+    "deadlineDisplay": "Closed · last month",
+    "shiftInfo": "Closed last month (verified record)",
+    "hoursRemaining": 0,
+    "severity": "Medium",
+    "mineId": "MINE-001",
+    "ownerRole": "Mine Engineer",
+    "owner": { "id": "u-verma", "name": "P. Verma", "role": "Mine Engineer" },
+    "verifier": { "id": "u-regulator", "name": "R. Sharma", "role": "Regulatory Official" },
+    "ownerLabel": "P. Verma (Mine Engineer)",
+    "verifierLabel": "R. Sharma (Regulatory Official) — ≠ owner",
+    "escalationRule": "Auto-escalates at deadline to Area General Manager",
+    "isCriticalDoThisNext": false,
+    "generatedBy": "RULE_DERIVED",
+    "recurring": true,
+    "cadence": "MONTHLY",
+    "closedDate": "Verified last month",
+    "submittedOffsetDays": -7,
+    "remediationNotes": "August geotech review closed on time: all active high-wall benches within displacement thresholds.",
+    "evidenceItems": [
+      {
+        "id": "ev-geotech-report",
+        "title": "Monthly geotechnical review report",
+        "type": "document",
+        "status": "verified",
+        "guidance": "Signed rock-mechanics cell report covering all active high-wall benches",
+        "fileName": "Geotech_Review_Piparwar_Aug2026.pdf",
+        "metadata": {
+          "timestamp": "2026-08-31 16:20 IST",
+          "gps": "23.6911° N, 85.0667° E (Piparwar geotech cell)",
+          "user": "P. Verma (ME-204)",
+          "sha256": "4b7a1c890ef29182374e5088c42b102"
+        }
+      }
+    ]
+  }
+]

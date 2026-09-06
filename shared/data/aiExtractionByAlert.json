@@ -1,0 +1,305 @@
+{
+  "note": "SIMULATED per-instrument AI extractions, keyed by document ref. In production each entry comes from OCR + LLM parsing with source citations and a deterministic 3-badge rule layer; the demo returns these pre-parsed results after a staged loading sequence. Extraction is ADVISORY — the rule registry (obligations.json) decides applicability, owners, deadlines and evidence.",
+  "DGMS/2026/TC-27": {
+    "pipelineStages": [
+      { "label": "Reading document…", "detail": "Extracting text layer from DGMS_Tech_Circular_02_of_2020_Slope_Monitoring_OC.pdf" },
+      { "label": "Extracting regulatory requirements…", "detail": "Mapping scope/monitoring/threshold/reporting clauses" },
+      { "label": "Identifying affected mine classes…", "detail": "Opencast mines with high-wall benches > 30 m" },
+      { "label": "Matching against rule registry…", "detail": "Deterministic applicability rules (not AI)" },
+      { "label": "Analysis complete", "detail": "Structured extraction ready for manager review" }
+    ],
+    "sourceRef": "DGMS/2026/TC-27",
+    "alertNo": "Tech. Circular 02/2020",
+    "fields": [
+      {
+        "key": "scope",
+        "label": "Scope",
+        "value": "All opencast coal mines — systematic monitoring of pit slopes, waste dumps and attached structures",
+        "badge": "CONFIRMED_FROM_SOURCE",
+        "citation": "§1 Scope",
+        "note": "Stated verbatim in the circular"
+      },
+      {
+        "key": "requirement",
+        "label": "Requirement",
+        "value": "Continuous monitoring of high-wall benches above 30 m — extensometer/MPBX arrays, periodic prism surveys, slope-stability radar where installed",
+        "badge": "CONFIRMED_FROM_SOURCE",
+        "citation": "§3 Monitoring",
+        "note": "Instrument classes enumerated in the circular"
+      },
+      {
+        "key": "threshold",
+        "label": "Alarm threshold",
+        "value": "Displacement > 2.5 mm/day or crack width beyond geotechnical assessment threshold",
+        "badge": "CONFIRMED_FROM_SOURCE",
+        "citation": "§4 Threshold",
+        "note": "Numerical threshold extracted"
+      },
+      {
+        "key": "reporting",
+        "label": "Reporting",
+        "value": "Weekly displacement reports to the Regional Inspector; retained at the mine",
+        "badge": "CONFIRMED_FROM_SOURCE",
+        "citation": "§5 Reporting",
+        "note": "Cadence stated in the circular"
+      },
+      {
+        "key": "affectedClasses",
+        "label": "Affected mine classes",
+        "value": "Opencast mines with high-wall benches above 30 m (AI suggestion — confirm)",
+        "badge": "AI_INFERENCE",
+        "citation": "§1–3",
+        "note": "Derived from bench-height criterion; human confirms"
+      },
+      {
+        "key": "severity",
+        "label": "Suggested severity",
+        "value": "HIGH",
+        "badge": "REQUIRES_CONFIRMATION",
+        "citation": "—",
+        "note": "Requires human sign-off by the manager"
+      }
+    ],
+    "recurrence": {
+      "searched": 5,
+      "matched": 3,
+      "badge": "ORGANIZATIONAL MEMORY",
+      "items": [
+        { "mineId": "MINE-002", "year": 2023, "title": "Weekly slope monitoring (highwall) — Ashoka OCP", "closure": "Closed D+12" },
+        { "mineId": "MINE-003", "year": 2024, "title": "Weekly slope monitoring (highwall) — Magadh OCP", "closure": "Closed D+9" },
+        { "mineId": "MINE-001", "year": 2024, "title": "Weekly slope monitoring — Piparwar Bench 3B", "closure": "Closed on time (41 weeks)" }
+      ],
+      "suggestion": "Ashoka and Magadh closed this pattern late before; Piparwar closed on time for 41 consecutive weeks. Advisory: keep weekly cadence, schedule early at Ashoka/Magadh.",
+      "searchStages": [
+        "Embedding circular clauses…",
+        "Searching 5 organizational-memory records…",
+        "Ranking similarity (cosine > 0.80)…"
+      ]
+    }
+  },
+  "EC/2023/882": {
+    "pipelineStages": [
+      { "label": "Reading condition…", "detail": "Parsing EC Condition 14 (dust suppression)" },
+      { "label": "Extracting regulatory requirements…", "detail": "Mapping sprinkling + PM10 monitoring clauses" },
+      { "label": "Matching against rule registry…", "detail": "Deterministic applicability rules (not AI)" },
+      { "label": "Analysis complete", "detail": "Structured extraction ready for manager review" }
+    ],
+    "sourceRef": "EC/2023/882",
+    "alertNo": "EC COND-14",
+    "fields": [
+      {
+        "key": "requirement",
+        "label": "Requirement",
+        "value": "Regular water sprinkling on haul roads; PM10 monitoring stations with maintained records",
+        "badge": "CONFIRMED_FROM_SOURCE",
+        "citation": "Condition 14",
+        "note": "Stated in the EC condition"
+      },
+      {
+        "key": "affectedClasses",
+        "label": "Affected mine classes",
+        "value": "Opencast mines with EC Condition 14 and haulage operations (AI suggestion — confirm)",
+        "badge": "AI_INFERENCE",
+        "citation": "—",
+        "note": "Inferred from condition scope; human confirms"
+      },
+      {
+        "key": "severity",
+        "label": "Suggested severity",
+        "value": "MEDIUM",
+        "badge": "REQUIRES_CONFIRMATION",
+        "citation": "—",
+        "note": "Requires human sign-off by the manager"
+      }
+    ],
+    "recurrence": {
+      "searched": 5,
+      "matched": 1,
+      "badge": "ORGANIZATIONAL MEMORY",
+      "items": [
+        { "mineId": "MINE-005", "year": 2024, "title": "Haul-road dust suppression verification — Amrapali", "closure": "Closed D+4" }
+      ],
+      "suggestion": "Amrapali closed this pattern late once. Advisory: schedule verification early in the week.",
+      "searchStages": [
+        "Embedding condition clauses…",
+        "Searching 5 organizational-memory records…",
+        "Ranking similarity (cosine > 0.80)…"
+      ]
+    }
+  },
+  "CSIS/2026/IN-118": {
+    "pipelineStages": [
+      { "label": "Reading CSIS deviation record…", "detail": "Parsing IN-118 safety-parameter audit payload" },
+      { "label": "Extracting regulatory requirements…", "detail": "Mapping to Mines Rules 1955 safety-apparel provisions" },
+      { "label": "Matching against rule registry…", "detail": "Deterministic applicability rules (not AI)" },
+      { "label": "Analysis complete", "detail": "Structured extraction ready for manager review" }
+    ],
+    "sourceRef": "CSIS/2026/IN-118",
+    "alertNo": "IN-118",
+    "fields": [
+      {
+        "key": "deviation",
+        "label": "Deviation",
+        "value": "18 workers on Shovel Crew B without ISI-marked safety footwear; 2 defective chin-straps",
+        "badge": "CONFIRMED_FROM_SOURCE",
+        "citation": "¶2",
+        "note": "Audit parameters extracted from CSIS feed"
+      },
+      {
+        "key": "standard",
+        "label": "Applicable standard",
+        "value": "Mines Rules 1955 · safety apparel provisions · ISI 15298",
+        "badge": "CONFIRMED_FROM_SOURCE",
+        "citation": "¶3",
+        "note": "Statute referenced in the deviation record"
+      },
+      {
+        "key": "corrective",
+        "label": "Corrective action",
+        "value": "Issue replacement PPE · update issuance register · re-audit in 7 days",
+        "badge": "CONFIRMED_FROM_SOURCE",
+        "citation": "¶3",
+        "note": "Prescribed remediation verbatim"
+      },
+      {
+        "key": "affectedClasses",
+        "label": "Affected mine classes",
+        "value": "Mines with the recorded PPE deviation (MINE-002)",
+        "badge": "AI_INFERENCE",
+        "citation": "¶2",
+        "note": "Inferred from deviation record; human confirms"
+      },
+      {
+        "key": "severity",
+        "label": "Suggested severity",
+        "value": "MEDIUM",
+        "badge": "REQUIRES_CONFIRMATION",
+        "citation": "—",
+        "note": "Requires human sign-off by the manager"
+      }
+    ],
+    "recurrence": {
+      "searched": 5,
+      "matched": 1,
+      "badge": "ORGANIZATIONAL MEMORY",
+      "items": [
+        { "mineId": "MINE-002", "year": 2023, "title": "Boot issuance register gap — Ashoka OCP", "closure": "Closed D+10" }
+      ],
+      "suggestion": "Same crew flagged before — recommend repeat-audit attention.",
+      "searchStages": [
+        "Embedding deviation parameters…",
+        "Searching 5 organizational-memory records…",
+        "Ranking similarity (cosine > 0.80)…"
+      ]
+    }
+  },
+  "SEN/2026/M004-EX07": {
+    "pipelineStages": [
+      { "label": "Reading sensor telemetry…", "detail": "Parsing EX-07 extensometer burst payload" },
+      { "label": "Validating reading against thresholds…", "detail": "2.9 mm/24h vs 2.5 mm geotech limit" },
+      { "label": "Matching against rule registry…", "detail": "Deterministic alarm-response rule (not AI)" },
+      { "label": "Analysis complete", "detail": "Structured extraction ready for manager review" }
+    ],
+    "sourceRef": "SEN/2026/M004-EX07",
+    "alertNo": "EX07-TH",
+    "fields": [
+      {
+        "key": "reading",
+        "label": "Sensor reading",
+        "value": "Extensometer EX-07 · 2.9 mm/24 h displacement (threshold 2.5 mm)",
+        "badge": "CONFIRMED_FROM_SOURCE",
+        "citation": "¶1",
+        "note": "Telemetry value vs threshold"
+      },
+      {
+        "key": "location",
+        "label": "Location",
+        "value": "MINE-004 · Ray-Bachra UG instrumented zone",
+        "badge": "CONFIRMED_FROM_SOURCE",
+        "citation": "¶1",
+        "note": "Instrument coordinates in payload"
+      },
+      {
+        "key": "risk",
+        "label": "Interpreted risk",
+        "value": "Threshold breach — alarm-response obligation applies (review geotech assessment)",
+        "badge": "AI_INFERENCE",
+        "citation": "¶2",
+        "note": "Inferred from displacement trend; human confirms"
+      },
+      {
+        "key": "severity",
+        "label": "Suggested severity",
+        "value": "HIGH",
+        "badge": "REQUIRES_CONFIRMATION",
+        "citation": "—",
+        "note": "Requires human sign-off by the manager"
+      }
+    ],
+    "recurrence": {
+      "searched": 5,
+      "matched": 2,
+      "badge": "ORGANIZATIONAL MEMORY",
+      "items": [
+        { "mineId": "MINE-004", "year": 2025, "title": "Strata displacement threshold review — Ray-Bachra UG", "closure": "Closed D+6" },
+        { "mineId": "MINE-001", "year": 2024, "title": "Weekly slope monitoring — Piparwar Bench 3B", "closure": "Closed on time (41 weeks)" }
+      ],
+      "suggestion": "Ray-Bachra reviewed a threshold breach last year; advisory: verify instrument calibration during ground-truthing.",
+      "searchStages": [
+        "Embedding sensor signature…",
+        "Searching 5 organizational-memory records…",
+        "Ranking similarity (cosine > 0.85)…"
+      ]
+    }
+  },
+  "CLRA/1952/S-12": {
+    "pipelineStages": [
+      { "label": "Reading registry feed…", "detail": "Parsing contractor-credential expiry record" },
+      { "label": "Extracting regulatory requirements…", "detail": "Mapping CLRA §12 licence conditions" },
+      { "label": "Matching against rule registry…", "detail": "Deterministic expiry-window rule (not AI)" },
+      { "label": "Analysis complete", "detail": "Structured extraction ready for manager review" }
+    ],
+    "sourceRef": "CLRA/1952/S-12",
+    "alertNo": "LIC-EXP-45D",
+    "fields": [
+      {
+        "key": "expiry",
+        "label": "Credential expiry",
+        "value": "CLRA contractor licence expires 30 Sep 2026 (within configured 45-day window)",
+        "badge": "CONFIRMED_FROM_SOURCE",
+        "citation": "Registry record",
+        "note": "Registry feed data"
+      },
+      {
+        "key": "requirement",
+        "label": "Requirement",
+        "value": "Renewal (Form VII + treasury challan) filed before expiry — CLRA §12",
+        "badge": "CONFIRMED_FROM_SOURCE",
+        "citation": "§12",
+        "note": "Statute referenced"
+      },
+      {
+        "key": "severity",
+        "label": "Suggested severity",
+        "value": "MEDIUM",
+        "badge": "REQUIRES_CONFIRMATION",
+        "citation": "—",
+        "note": "Requires human sign-off by the manager"
+      }
+    ],
+    "recurrence": {
+      "searched": 5,
+      "matched": 1,
+      "badge": "ORGANIZATIONAL MEMORY",
+      "items": [
+        { "mineId": "MINE-004", "year": 2025, "title": "CLRA licence renewal documentation — Ray-Bachra", "closure": "Closed on time" }
+      ],
+      "suggestion": "Last renewal at the area closed on time with full muster attached. Advisory: attach registers at first submission.",
+      "searchStages": [
+        "Embedding registry pattern…",
+        "Searching 5 organizational-memory records…",
+        "Ranking similarity (cosine > 0.78)…"
+      ]
+    }
+  }
+}

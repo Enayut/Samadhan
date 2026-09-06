@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { Task, ScreenId, SyncStatusType, QueueFilter, DomainType } from './types';
 import { INITIAL_TASKS } from './data/mockData';
 import { demoApi, mapTaskToMobile } from './services/demoApi';
@@ -14,22 +14,36 @@ import { Wifi, BatteryMedium, Signal } from 'lucide-react';
 export default function App() {
   const [tasks, setTasks] = useState<Task[]>(INITIAL_TASKS);
   const [currentScreen, setCurrentScreen] = useState<ScreenId>('M0');
-  const [selectedTaskId, setSelectedTaskId] = useState<string>('TASK-001');
+  const [selectedTaskId, setSelectedTaskId] = useState<string>('');
   const [queueFilter, setQueueFilter] = useState<QueueFilter>('ALL');
   const [queueDomainFilter, setQueueDomainFilter] = useState<DomainType | null>(null);
   const [syncStatus, setSyncStatus] = useState<SyncStatusType>('synced');
   const [isM3Open, setIsM3Open] = useState(false);
+
+  // Auto-select the first visible task (DO THIS NEXT hero) when tasks arrive.
+  useEffect(() => {
+    if (selectedTaskId && tasks.some((t) => t.id === selectedTaskId)) return;
+    const first =
+      tasks.find((t) => t.status === 'REJECTED') ??
+      tasks.find((t) => t.isCriticalDoThisNext && t.status !== 'VERIFIED') ??
+      tasks.find((t) => t.status !== 'VERIFIED');
+    if (first) setSelectedTaskId(first.id);
+  }, [tasks, selectedTaskId]);
 
   // Tasks that exist only on this device (e.g. field observations created in
   // M3) must survive server polls, so we keep them separately and merge.
   const [localOnlyTasks, setLocalOnlyTasks] = useState<Task[]>([]);
 
   // ---------------------------------------------------------------------------
-  // Shared demo state sync.
-  // The demo server (client/server.ts) is the single source of truth. Polling +
-  // focus refetch keep this app in lockstep with the desktop app, so e.g. a
-  // desktop rejection appears here within a few seconds, and vice versa.
+  // Shared demo state sync — the demo server is the SINGLE source of truth.
+  // Mobile-scoped endpoint: only Piparwar tasks owned by this officer; PROPOSED
+  // tasks never appear until the manager publishes. Polling + focus refetch keep
+  // this app in lockstep with the desktop (publish/reject/approve appear here
+  // automatically; start/submit appear on the desktop automatically).
   // ---------------------------------------------------------------------------
+  const tasksRef = useRef<Task[]>(tasks);
+  tasksRef.current = tasks;
+
   const loadFromServer = useCallback(async () => {
     try {
       const data = await demoApi.getState();
@@ -45,7 +59,7 @@ export default function App() {
 
   useEffect(() => {
     loadFromServer();
-    const timer = setInterval(loadFromServer, 3000);
+    const timer = setInterval(loadFromServer, 2500);
     const onFocus = () => loadFromServer();
     window.addEventListener('focus', onFocus);
     return () => {
@@ -54,7 +68,8 @@ export default function App() {
     };
   }, [loadFromServer]);
 
-  // Selected task object for M2
+  // Selected task object for M2 — always derived from the freshest server sync,
+  // so reopening the task shows the persisted evidence and status.
   const selectedTask = tasks.find((t) => t.id === selectedTaskId) || tasks[0];
 
   // Handler for navigation
@@ -73,23 +88,30 @@ export default function App() {
     setCurrentScreen('M1');
   };
 
-  // Navigating directly to M2 Evidence Capture
+  // Opening a task: "start" the field action (ASSIGNED → IN_PROGRESS on the
+  // shared state) and enter evidence capture. Already-started tasks just open.
   const handleSelectTask = (taskId: string) => {
     setSelectedTaskId(taskId);
+    const task = tasksRef.current.find((t) => t.id === taskId);
+    if (task && task.status === 'ASSIGNED') {
+      demoApi
+        .startTask(taskId)
+        .then(() => loadFromServer())
+        .catch(() => undefined);
+    }
     setCurrentScreen('M2');
   };
 
-  // Update Task State (from M2 Evidence Capture or updates)
-  // Applies the change locally (optimistic) and pushes it to the shared demo
-  // state. A status change to AWAITING_VERIFICATION is a formal submit; any
-  // other update is a draft (evidence attachments / notes) and does not move
-  // the workflow forward.
+  // Update Task State (from M2 Evidence Capture)
+  // Applies the change optimistically, then pushes it to the shared demo state.
+  // The server decides the transition:
+  //   • IN_PROGRESS / REJECTED + full evidence + valid notes → submit
+  //     (AWAITING_VERIFICATION on desktop; REJECTED goes through resubmit)
+  //   • everything else (photo attached, notes typed) → draft only, which
+  //     persists evidence locally on the server so it survives navigation.
   const handleUpdateTask = (updatedTask: Task) => {
-    const previous = tasks.find((t) => t.id === updatedTask.id);
-    const isSubmit =
-      updatedTask.status === 'AWAITING_VERIFICATION' &&
-      previous &&
-      previous.status !== 'AWAITING_VERIFICATION';
+    const previous = tasksRef.current.find((t) => t.id === updatedTask.id);
+    const wasAwaiting = previous?.status === 'AWAITING_VERIFICATION';
 
     setTasks((prevTasks) =>
       prevTasks.map((t) => (t.id === updatedTask.id ? updatedTask : t)),
@@ -98,16 +120,27 @@ export default function App() {
     const payload = {
       evidenceItems: updatedTask.evidenceItems,
       remediationNotes: updatedTask.remediationNotes,
+      formValues: updatedTask.formValues,
     };
 
-    if (isSubmit) {
+    const wantsSubmit = updatedTask.status === 'AWAITING_VERIFICATION' && !wasAwaiting;
+    const isResubmit = previous?.status === 'REJECTED';
+
+    if (wantsSubmit && isResubmit) {
       demoApi
-        .submitEvidence(updatedTask.id, payload.evidenceItems, payload.remediationNotes)
+        .resubmitEvidence(updatedTask.id, payload.evidenceItems, payload.remediationNotes, payload.formValues)
         .then(() => loadFromServer())
         .catch(() => undefined);
-    } else {
+    } else if (wantsSubmit) {
       demoApi
-        .saveDraft(updatedTask.id, payload.evidenceItems, payload.remediationNotes)
+        .submitEvidence(updatedTask.id, payload.evidenceItems, payload.remediationNotes, payload.formValues)
+        .then(() => loadFromServer())
+        .catch(() => undefined);
+    } else if (previous && previous.status !== 'VERIFIED' && previous.status !== 'PROPOSED') {
+      // Draft: persist evidence/notes to the shared store without moving the
+      // workflow. VERIFIED/PROPOSED tasks are read-only on mobile.
+      demoApi
+        .saveDraft(updatedTask.id, payload.evidenceItems, payload.remediationNotes, payload.formValues)
         .then(() => loadFromServer())
         .catch(() => undefined);
     }
@@ -121,16 +154,16 @@ export default function App() {
     setCurrentScreen('M1');
   };
 
-  // Count active pending tasks for queue badge
+  // Count active pending tasks for queue badge (rejections first)
   const pendingCount = tasks.filter(
-    (t) => t.status !== 'VERIFIED' && (t.urgencyGroup === 'OVERDUE' || t.hoursRemaining <= 24)
+    (t) => t.status === 'REJECTED' || (t.status !== 'VERIFIED' && t.status !== 'AWAITING_VERIFICATION'),
   ).length;
 
   return (
     <div className="min-h-screen bg-[#1A202C] flex items-center justify-center p-0 sm:p-4">
       {/* Handheld Device / Phone-like Viewport Container */}
       <div className="w-full sm:max-w-[430px] min-h-screen sm:min-h-[880px] bg-[#F7FAFC] text-[#1A202C] sm:rounded-[28px] sm:border-[8px] sm:border-[#2D3748] shadow-2xl relative flex flex-col overflow-hidden sm:ring-1 sm:ring-white/10">
-        
+
         {/* Mobile Device Status Bar */}
         <div className="w-full bg-white px-5 pt-2 pb-1 flex items-center justify-between text-[11px] font-semibold text-[#1A202C] border-b border-[#E2E8F0]/60 select-none">
           <div className="font-bold tracking-tight">09:41</div>
