@@ -1,0 +1,50 @@
+[
+  {
+    "id": "SAFETY",
+    "label": "Safety",
+    "color": "#C1502E",
+    "icon": "Shield",
+    "description": "DGMS alerts, CSIS findings, audit observations, field hazard reports",
+    "example": "Brief HEMM & dumper operators on dump-edge & berm safety protocol"
+  },
+  {
+    "id": "ENVIRONMENT",
+    "label": "Environment",
+    "color": "#4C7A66",
+    "icon": "Trees",
+    "description": "EC condition violations, sensor exceedances, inspection observations",
+    "example": "Verify dust suppression at Haul Road #4"
+  },
+  {
+    "id": "PRODUCTION",
+    "label": "Production",
+    "color": "#D69E2E",
+    "icon": "Factory",
+    "description": "Missing shift reports, maintenance schedule drift, mining-plan milestones",
+    "example": "Inspect dragline bench stability & crack gauge"
+  },
+  {
+    "id": "LABOUR",
+    "label": "Labour",
+    "color": "#5A67D8",
+    "icon": "Users",
+    "description": "Medical fitness expiry, competency certificate lapse, CLRA documentation gaps",
+    "example": "PPE replacement audit for Shovel Crew B"
+  },
+  {
+    "id": "CONTRACTOR",
+    "label": "Contractor",
+    "color": "#3182CE",
+    "icon": "HardHat",
+    "description": "Licence expiry, insurance lapse, PME overdue, safety induction gaps",
+    "example": "Renew Mine-18 CLRA licence"
+  },
+  {
+    "id": "GRIEVANCE",
+    "label": "Grievance",
+    "color": "#718096",
+    "icon": "FileText",
+    "description": "Worker complaint intake and resolution",
+    "example": "Drinking water cooler maintenance at Substation 3"
+  }
+]

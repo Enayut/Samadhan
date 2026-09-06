@@ -1,0 +1,32 @@
+[
+  {
+    "id": "ntf-1",
+    "template": "task-assigned",
+    "message": "New governance task assigned to {owner} at {mine}: {title}. Deadline {deadline}.",
+    "targetRole": "Mine Safety Officer"
+  },
+  {
+    "id": "ntf-2",
+    "template": "evidence-submitted",
+    "message": "Evidence submitted by {owner} for {taskId}. Awaiting verification by {verifier}.",
+    "targetRole": "Area Safety Officer"
+  },
+  {
+    "id": "ntf-3",
+    "template": "evidence-rejected",
+    "message": "Evidence rejected by {verifier}: {reason}. Task returned to {owner} for correction.",
+    "targetRole": "Mine Safety Officer"
+  },
+  {
+    "id": "ntf-4",
+    "template": "task-verified",
+    "message": "{taskId} verified and closed by {verifier}. Closure certificate generated.",
+    "targetRole": "Mine Safety Officer"
+  },
+  {
+    "id": "ntf-5",
+    "template": "escalated",
+    "message": "{taskId} escalated to {level} — {target} notified. Owner: {owner}.",
+    "targetRole": "Corporate Management"
+  }
+]

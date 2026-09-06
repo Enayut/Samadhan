@@ -1,0 +1,32 @@
+{
+  "note": "SIMULATED similarity result. A real vector search (Pinecone or pg_trgm) would run against the historical corpus; the demo returns this deterministic precomputed match set.",
+  "searched": 120,
+  "matched": 3,
+  "badge": "RECURRENCE DETECTED",
+  "items": [
+    {
+      "mineId": "MINE-002",
+      "year": 2019,
+      "title": "Dumper crossed OB dump-edge berm",
+      "closure": "Closed D+21"
+    },
+    {
+      "mineId": "MINE-014",
+      "year": 2021,
+      "title": "Dump-edge berm breach — near miss",
+      "closure": "Closed D+28"
+    },
+    {
+      "mineId": "MINE-038",
+      "year": 2023,
+      "title": "Inadequate stop-blocks at tipping point",
+      "closure": "Closed D+14"
+    }
+  ],
+  "suggestion": "Same dump-edge berm pattern flagged in prior alerts — these closures ran 2–4 weeks; audit berm SOP compliance now.",
+  "searchStages": [
+    "Embedding alert cause codes…",
+    "Searching 120 historical findings…",
+    "Ranking similarity (cosine > 0.86)…"
+  ]
+}

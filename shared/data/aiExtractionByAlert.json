@@ -1,0 +1,778 @@
+{
+  "note": "SIMULATED per-alert AI extractions, keyed by alert ref. In production each entry comes from OCR (Tesseract) + LLM parsing (GPT-4o-mini) with source citations and a deterministic 3-badge rule layer; the demo returns these pre-parsed results after a staged loading sequence. Each entry may carry its own `recurrence` (embedding-search result); when absent the store falls back to the shared corpus in recurrence.json.",
+  "DGMS/2026/SA-041": {
+    "pipelineStages": [
+      { "label": "Reading document…", "detail": "Extracting text layer from DGMS_Safety_Alert_23-2026_Kusmunda.pdf" },
+      { "label": "Extracting regulatory requirements…", "detail": "Mapping Best Practices 1–5 to mine-operations clauses" },
+      { "label": "Identifying affected mine classes…", "detail": "Opencast mines with HEMM fleet + OB dumping" },
+      { "label": "Checking historical findings…", "detail": "Similarity search across 120 closed governance objects" },
+      { "label": "Analysis complete", "detail": "Structured extraction ready for confirmation" }
+    ],
+    "sourceRef": "DGMS/2026/SA-041",
+    "alertNo": "23/2026",
+    "fields": [
+      {
+        "key": "incident",
+        "label": "Incident",
+        "value": "60-ton dumper crossed the berm at the OB dump edge and overturned (operator fatality)",
+        "badge": "CONFIRMED_FROM_SOURCE",
+        "citation": "Subject",
+        "note": "Document subject line, verbatim"
+      },
+      {
+        "key": "equipment",
+        "label": "Equipment",
+        "value": "60-ton rear-dump truck (HEMM) · OB dumping operation",
+        "badge": "CONFIRMED_FROM_SOURCE",
+        "citation": "§1–8",
+        "note": "Named in the accident particulars"
+      },
+      {
+        "key": "causes",
+        "label": "Cause",
+        "value": "Dumper crossed the dump-edge berm · no demarcated safe operating limit",
+        "badge": "CONFIRMED_FROM_SOURCE",
+        "citation": "§8 (Brief Cause)",
+        "note": "Cause codes extracted from the brief cause"
+      },
+      {
+        "key": "precautions",
+        "label": "Recommended precautions",
+        "value": "Safe distance from dump edge · Demarcated safe operating limit (SOP) · Construct & inspect safety berms · Operator training · Seat-belt usage",
+        "badge": "CONFIRMED_FROM_SOURCE",
+        "citation": "§10 (Best Practices)",
+        "note": "Best Practices 1–5, verbatim"
+      },
+      {
+        "key": "affectedClasses",
+        "label": "Affected mine classes",
+        "value": "Opencast mines with HEMM fleet + OB dumping operations",
+        "badge": "AI_INFERENCE",
+        "citation": "§1–3",
+        "note": "Derived from mine particulars + best practices; human confirms"
+      },
+      {
+        "key": "severity",
+        "label": "Suggested severity",
+        "value": "HIGH",
+        "badge": "REQUIRES_CONFIRMATION",
+        "citation": "—",
+        "note": "Fatal outcome; requires human sign-off"
+      }
+    ],
+    "taskTemplates": [
+      {
+        "id": "TASK-101",
+        "title": "Acknowledge DGMS Safety Alert 23/2026",
+        "domain": "SAFETY",
+        "severity": "Medium",
+        "status": "IN_PROGRESS",
+        "ownerId": "u-singh",
+        "verifierId": "u-sharma",
+        "hoursRemaining": 46,
+        "deadlineLabel": "48 hours",
+        "deadlineOffsetDays": 2,
+        "deadlineDisplay": "Due in 48h · Alert Acknowledgment",
+        "shiftInfo": "Alert acknowledgment window",
+        "sourceCitation": "DGMS/2026/SA-041 · Alert acknowledgment clause",
+        "escalationRule": "Auto-escalates at T-0 to Area General Manager",
+        "guidance": "Mine Manager acknowledges receipt and applicability of the alert",
+        "remediationNotes": "Alert acknowledged at mine level; applicability confirmed for OC + HEMM fleet.",
+        "evidenceItems": [
+          {
+            "id": "ev-101-1",
+            "title": "Acknowledgment record",
+            "type": "register",
+            "status": "pending",
+            "guidance": "Signed acknowledgment entry in the alert register"
+          }
+        ]
+      },
+      {
+        "id": "TASK-001",
+        "title": "Brief all HEMM & dumper ops on dump-edge & berm safety protocol",
+        "shortTitle": "Brief all HEMM ops on dump-edge safety",
+        "domain": "SAFETY",
+        "severity": "High",
+        "status": "IN_PROGRESS",
+        "ownerId": "u-ram",
+        "verifierId": "u-sharma",
+        "hoursRemaining": 46,
+        "deadlineOffsetDays": 2,
+        "deadlineDisplay": "Due 29 Aug · Sh III · 2d",
+        "shiftInfo": "29 Aug · Shift III (22:00 - 06:00)",
+        "sourceCitation": "DGMS Safety Alert 23/2026 · §10 Best Practices · Kusmunda OC (SECL)",
+        "escalationRule": "Auto-escalates at deadline (T-0) to Area General Manager",
+        "isCriticalDoThisNext": true,
+        "remediationNotes": "Shift III briefing conducted near the OB dump muster station. Dump-edge safe-distance SOP, berm rules and seat-belt protocol covered for 14 operators.",
+        "evidenceItems": [
+          {
+            "id": "ev-01",
+            "title": "Signed attendance sheet",
+            "type": "photo",
+            "status": "pending",
+            "guidance": "Fit whole sheet · no glare · names legible",
+            "aiWarning": "Geotag must be within pit boundary polygon"
+          },
+          {
+            "id": "ev-02",
+            "title": "Session photo",
+            "type": "photo",
+            "status": "pending",
+            "guidance": "Wide angle showing trainer and operator muster with PPE in frame"
+          },
+          {
+            "id": "ev-03",
+            "title": "Register entry page",
+            "type": "register",
+            "status": "pending",
+            "guidance": "DGMS Form IV page showing Shift Incharge counter-signature & seal"
+          }
+        ]
+      },
+      {
+        "id": "TASK-102",
+        "title": "Inspect & restore safety berms at OB dump edges",
+        "domain": "SAFETY",
+        "severity": "High",
+        "status": "IN_PROGRESS",
+        "ownerId": "u-verma",
+        "verifierId": "u-sharma",
+        "hoursRemaining": 150,
+        "deadlineOffsetDays": 7,
+        "deadlineDisplay": "Due in 7d · Berm inspection",
+        "shiftInfo": "7-day compliance window",
+        "sourceCitation": "DGMS Safety Alert 23/2026 · §10 Best Practices 1–3",
+        "escalationRule": "Auto-escalates at deadline to Area General Manager",
+        "remediationNotes": "Stop-blocks and safety berms re-verified along all active OB dump edges.",
+        "evidenceItems": [
+          {
+            "id": "ev-102-1",
+            "title": "Dump-edge berm inspection log",
+            "type": "register",
+            "status": "pending",
+            "guidance": "Log showing berm height/strength checks against the safe-operating-limit SOP"
+          },
+          {
+            "id": "ev-102-2",
+            "title": "Restored berm photo at tipping point",
+            "type": "photo",
+            "status": "pending",
+            "guidance": "Geo-tagged photo of the stop-block/berm at the active dump edge"
+          }
+        ]
+      }
+    ]
+  },
+  "DGMS/2026/TC-27": {
+    "pipelineStages": [
+      { "label": "Reading document…", "detail": "Extracting text layer from TC-27_2026_slope_monitoring.pdf" },
+      { "label": "Extracting regulatory requirements…", "detail": "Mapping clauses to standing orders on slope control" },
+      { "label": "Identifying affected mine classes…", "detail": "Opencast mines with high-wall benches > 30 m" },
+      { "label": "Checking historical findings…", "detail": "Similarity search across strata-control records" },
+      { "label": "Analysis complete", "detail": "Structured extraction ready for confirmation" }
+    ],
+    "sourceRef": "DGMS/2026/TC-27",
+    "alertNo": "Tech. Circular 27/2026",
+    "fields": [
+      {
+        "key": "directive",
+        "label": "Directive",
+        "value": "Continuous slope stability monitoring on high-wall benches above 30 m",
+        "badge": "CONFIRMED_FROM_SOURCE",
+        "citation": "¶1",
+        "note": "Scope stated verbatim"
+      },
+      {
+        "key": "instruments",
+        "label": "Required instruments",
+        "value": "Extensometer/MPBX arrays · prism surveys · slope-stability radar",
+        "badge": "CONFIRMED_FROM_SOURCE",
+        "citation": "¶2",
+        "note": "Instrument classes enumerated"
+      },
+      {
+        "key": "threshold",
+        "label": "Alarm threshold",
+        "value": "Displacement > 2.5 mm/day or crack widening beyond geotech assessment",
+        "badge": "CONFIRMED_FROM_SOURCE",
+        "citation": "¶3",
+        "note": "Numerical threshold extracted"
+      },
+      {
+        "key": "affectedClasses",
+        "label": "Affected mine classes",
+        "value": "Opencast mines with high-wall benches > 30 m",
+        "badge": "AI_INFERENCE",
+        "citation": "¶1",
+        "note": "Derived from bench-height criterion; human confirms"
+      },
+      {
+        "key": "severity",
+        "label": "Suggested severity",
+        "value": "HIGH",
+        "badge": "REQUIRES_CONFIRMATION",
+        "citation": "—",
+        "note": "Slope-failure precursor risk; requires human sign-off"
+      }
+    ],
+    "recurrence": {
+      "searched": 120,
+      "matched": 2,
+      "badge": "RECURRENCE DETECTED",
+      "items": [
+        {
+          "mineId": "MINE-004",
+          "year": 2025,
+          "title": "Bench-2 high-wall crack report",
+          "closure": "Closed D+18"
+        },
+        {
+          "mineId": "MINE-011",
+          "year": 2024,
+          "title": "Slope radar false-positive flood",
+          "closure": "Closed D+9"
+        }
+      ],
+      "suggestion": "MINE-004 already carries an active strata directive — dedupe before fan-out.",
+      "searchStages": [
+        "Embedding circular clauses…",
+        "Searching 120 historical findings…",
+        "Ranking similarity (cosine > 0.86)…"
+      ]
+    },
+    "taskTemplates": [
+      {
+        "id": "TASK-SLOPE-001",
+        "title": "Deploy slope stability monitoring on high-wall benches",
+        "shortTitle": "Deploy slope stability monitoring",
+        "domain": "SAFETY",
+        "severity": "High",
+        "status": "IN_PROGRESS",
+        "ownerId": "u-singh",
+        "verifierId": "u-sharma",
+        "hoursRemaining": 160,
+        "deadlineOffsetDays": 7,
+        "deadlineDisplay": "Due in 7d · Monitoring deployment",
+        "shiftInfo": "Geotech cell · 7-day window",
+        "sourceCitation": "DGMS Tech. Circular 27/2026 · Slope control standing order",
+        "escalationRule": "Auto-escalates at deadline to Area General Manager",
+        "remediationNotes": "Extensometer and prism arrays being commissioned on active benches.",
+        "evidenceItems": [
+          {
+            "id": "ev-slope-1",
+            "title": "Instrument deployment log",
+            "type": "register",
+            "status": "pending",
+            "guidance": "Serial numbers, bench locations and calibration certificates"
+          }
+        ]
+      },
+      {
+        "id": "TASK-SLOPE-002",
+        "title": "Submit weekly slope displacement report",
+        "shortTitle": "Weekly slope displacement report",
+        "domain": "SAFETY",
+        "severity": "Medium",
+        "status": "IN_PROGRESS",
+        "ownerId": "u-verma",
+        "verifierId": "u-sharma",
+        "hoursRemaining": 330,
+        "deadlineOffsetDays": 14,
+        "deadlineDisplay": "Due in 14d · Weekly report",
+        "shiftInfo": "Geotech cell · weekly cadence",
+        "sourceCitation": "DGMS Tech. Circular 27/2026 · ¶4",
+        "escalationRule": "Auto-escalates at deadline to Area General Manager",
+        "remediationNotes": "Displacement data consolidated for Regional Inspector submission.",
+        "evidenceItems": [
+          {
+            "id": "ev-slope-2",
+            "title": "Weekly displacement report PDF",
+            "type": "document",
+            "status": "pending",
+            "guidance": "Signed geotech report with displacement trend table"
+          }
+        ]
+      }
+    ]
+  },
+  "CSIS/2026/IN-118": {
+    "pipelineStages": [
+      { "label": "Reading CSIS deviation record…", "detail": "Parsing IN-118 safety-parameter audit payload" },
+      { "label": "Extracting regulatory requirements…", "detail": "Mapping to Mines Rules 1955 safety-apparel provisions" },
+      { "label": "Identifying affected mine classes…", "detail": "Opencast mines with PPE deviation history" },
+      { "label": "Checking historical findings…", "detail": "Similarity search across labour-compliance records" },
+      { "label": "Analysis complete", "detail": "Structured extraction ready for confirmation" }
+    ],
+    "sourceRef": "CSIS/2026/IN-118",
+    "alertNo": "IN-118",
+    "fields": [
+      {
+        "key": "deviation",
+        "label": "Deviation",
+        "value": "18 workers on Shovel Crew B without ISI-marked safety footwear; 2 defective chin-straps",
+        "badge": "CONFIRMED_FROM_SOURCE",
+        "citation": "¶2",
+        "note": "Audit parameters extracted from CSIS feed"
+      },
+      {
+        "key": "standard",
+        "label": "Applicable standard",
+        "value": "Mines Rules 1955 · safety apparel provisions · ISI 15298",
+        "badge": "CONFIRMED_FROM_SOURCE",
+        "citation": "¶3",
+        "note": "Statute referenced in the deviation record"
+      },
+      {
+        "key": "corrective",
+        "label": "Corrective action",
+        "value": "Issue replacement PPE · update issuance register · re-audit in 7 days",
+        "badge": "CONFIRMED_FROM_SOURCE",
+        "citation": "¶3",
+        "note": "Prescribed remediation verbatim"
+      },
+      {
+        "key": "affectedClasses",
+        "label": "Affected mine classes",
+        "value": "Opencast mines with reported PPE deviations",
+        "badge": "AI_INFERENCE",
+        "citation": "¶2",
+        "note": "Inferred from deviation history; human confirms"
+      },
+      {
+        "key": "severity",
+        "label": "Suggested severity",
+        "value": "MEDIUM",
+        "badge": "REQUIRES_CONFIRMATION",
+        "citation": "—",
+        "note": "Recurring labour-safety parameter; requires human sign-off"
+      }
+    ],
+    "recurrence": {
+      "searched": 120,
+      "matched": 2,
+      "badge": "RECURRENCE DETECTED",
+      "items": [
+        {
+          "mineId": "MINE-005",
+          "year": 2024,
+          "title": "PPE compliance audit deviation",
+          "closure": "Closed D+12"
+        },
+        {
+          "mineId": "MINE-002",
+          "year": 2023,
+          "title": "Boot issuance register gap",
+          "closure": "Closed D+10"
+        }
+      ],
+      "suggestion": "Same crew flagged twice in 3 years — recommend repeat-audit deterrent.",
+      "searchStages": [
+        "Embedding deviation parameters…",
+        "Searching 120 historical findings…",
+        "Ranking similarity (cosine > 0.80)…"
+      ]
+    },
+    "taskTemplates": [
+      {
+        "id": "TASK-PPE-001",
+        "title": "PPE replacement audit for Shovel Crew B",
+        "shortTitle": "PPE replacement audit Shovel Crew B",
+        "domain": "LABOUR",
+        "severity": "High",
+        "status": "IN_PROGRESS",
+        "ownerId": "u-ram",
+        "verifierId": "u-iyer",
+        "hoursRemaining": 160,
+        "deadlineOffsetDays": 7,
+        "deadlineDisplay": "Due in 7d · PPE re-audit",
+        "shiftInfo": "Stores + welfare cell · 7-day window",
+        "sourceCitation": "CSIS/2026/IN-118 · Mines Rules 1955 safety apparel provisions",
+        "escalationRule": "Auto-escalates at deadline to Area Personnel Manager",
+        "remediationNotes": "Replacement boots (ISI 15298) and chin-straps issued to Shovel Crew B.",
+        "evidenceItems": [
+          {
+            "id": "ev-ppe-1",
+            "title": "Distribution roster with biometric thumb logs",
+            "type": "register",
+            "status": "pending",
+            "guidance": "Store issuance counterfoil with worker tokens"
+          },
+          {
+            "id": "ev-ppe-2",
+            "title": "Re-audit checklist signed by welfare officer",
+            "type": "document",
+            "status": "pending",
+            "guidance": "Signed checklist confirming crew fully equipped"
+          }
+        ]
+      }
+    ]
+  },
+  "SEN/2026/M004-ST-22": {
+    "pipelineStages": [
+      { "label": "Reading sensor telemetry…", "detail": "Parsing EX-07 extensometer burst payload" },
+      { "label": "Validating reading against thresholds…", "detail": "3.1 mm/24h vs 2.5 mm geotech limit" },
+      { "label": "Correlating instrument cluster…", "detail": "Prism PR-12 vector shift 1.9 mm toward pit" },
+      { "label": "Checking historical findings…", "detail": "Similarity search across strata-control records" },
+      { "label": "Analysis complete", "detail": "Structured extraction ready for confirmation" }
+    ],
+    "sourceRef": "SEN/2026/M004-ST-22",
+    "alertNo": "ST-22",
+    "fields": [
+      {
+        "key": "reading",
+        "label": "Sensor reading",
+        "value": "Extensometer EX-07 · 3.1 mm/24 h displacement (threshold 2.5 mm)",
+        "badge": "CONFIRMED_FROM_SOURCE",
+        "citation": "¶1",
+        "note": "Telemetry value vs threshold"
+      },
+      {
+        "key": "location",
+        "label": "Location",
+        "value": "MINE-004 · Bench-1 subsidence zone",
+        "badge": "CONFIRMED_FROM_SOURCE",
+        "citation": "¶1",
+        "note": "Instrument coordinates in payload"
+      },
+      {
+        "key": "correlation",
+        "label": "Cluster correlation",
+        "value": "Prism PR-12 shift 1.9 mm toward pit — progressive creep pattern",
+        "badge": "CONFIRMED_FROM_SOURCE",
+        "citation": "¶2",
+        "note": "Cross-instrument check"
+      },
+      {
+        "key": "risk",
+        "label": "Interpreted risk",
+        "value": "Slope-failure precursor — review geotechnical assessment",
+        "badge": "AI_INFERENCE",
+        "citation": "¶2",
+        "note": "Inferred from displacement trend; human confirms"
+      },
+      {
+        "key": "severity",
+        "label": "Suggested severity",
+        "value": "CRITICAL",
+        "badge": "REQUIRES_CONFIRMATION",
+        "citation": "—",
+        "note": "Threshold breach on active bench; requires human sign-off"
+      }
+    ],
+    "recurrence": {
+      "searched": 120,
+      "matched": 3,
+      "badge": "RECURRENCE DETECTED",
+      "items": [
+        {
+          "mineId": "MINE-004",
+          "year": 2025,
+          "title": "Strata displacement threshold breach",
+          "closure": "Closed D+16"
+        },
+        {
+          "mineId": "MINE-004",
+          "year": 2024,
+          "title": "Extensometer telemetry dropout",
+          "closure": "Closed D+6"
+        },
+        {
+          "mineId": "MINE-009",
+          "year": 2023,
+          "title": "Prism creep before bench failure",
+          "closure": "Closed D+22"
+        }
+      ],
+      "suggestion": "MINE-004 has breached strata thresholds twice before — escalate response window.",
+      "searchStages": [
+        "Embedding sensor signature…",
+        "Searching 120 historical findings…",
+        "Ranking similarity (cosine > 0.88)…"
+      ]
+    },
+    "taskTemplates": [
+      {
+        "id": "TASK-STRATA-001",
+        "title": "Activate L1 response — ground-truth Bench-1 displacement",
+        "shortTitle": "Ground-truth Bench-1 displacement",
+        "domain": "SAFETY",
+        "severity": "Critical",
+        "status": "IN_PROGRESS",
+        "ownerId": "u-singh",
+        "verifierId": "u-sharma",
+        "hoursRemaining": 40,
+        "deadlineOffsetDays": 2,
+        "deadlineDisplay": "Due in 48h · L1 response",
+        "shiftInfo": "Geotech cell · immediate response window",
+        "sourceCitation": "SEN/2026/M004-ST-22 · DGMS Tech. Circular 27/2026 slope-stability protocol",
+        "escalationRule": "Auto-escalates at T-0 to Area General Manager",
+        "isCriticalDoThisNext": true,
+        "remediationNotes": "Field team verifying EX-07 reading and crack gauges on Bench-1.",
+        "evidenceItems": [
+          {
+            "id": "ev-strata-1",
+            "title": "Ground-truth inspection log",
+            "type": "register",
+            "status": "pending",
+            "guidance": "Crack-width measurements and instrument check entries"
+          },
+          {
+            "id": "ev-strata-2",
+            "title": "Bench-1 crack gauge photo",
+            "type": "photo",
+            "status": "pending",
+            "guidance": "Geo-tagged close-up of crack gauge with reading visible"
+          }
+        ]
+      },
+      {
+        "id": "TASK-STRATA-002",
+        "title": "Verify prism telemetry link after maintenance",
+        "shortTitle": "Verify prism telemetry link",
+        "domain": "SAFETY",
+        "severity": "High",
+        "status": "IN_PROGRESS",
+        "ownerId": "u-verma",
+        "verifierId": "u-sharma",
+        "hoursRemaining": 70,
+        "deadlineOffsetDays": 3,
+        "deadlineDisplay": "Due in 3d · Telemetry verification",
+        "shiftInfo": "E&M telemetry cell",
+        "sourceCitation": "SEN/2026/M004-ST-22 · Real-time telemetry directive",
+        "escalationRule": "Auto-escalates at deadline to Area General Manager",
+        "remediationNotes": "PR-12 link restored after modem replacement; continuous feed verified.",
+        "evidenceItems": [
+          {
+            "id": "ev-strata-3",
+            "title": "Telemetry dashboard screenshot",
+            "type": "document",
+            "status": "pending",
+            "guidance": "Live feed showing EX-07 and PR-12 streaming"
+          }
+        ]
+      }
+    ]
+  },
+  "EC/2023/882": {
+    "pipelineStages": [
+      { "label": "Reading monitoring station feed…", "detail": "Parsing HR-4 ambient air quality payload" },
+      { "label": "Validating reading against standards…", "detail": "168 µg/m³ vs 100 µg/m³ PM10 limit" },
+      { "label": "Extracting regulatory requirements…", "detail": "Mapping to EC Condition 14 clauses" },
+      { "label": "Checking historical findings…", "detail": "Similarity search across environmental records" },
+      { "label": "Analysis complete", "detail": "Structured extraction ready for confirmation" }
+    ],
+    "sourceRef": "EC/2023/882",
+    "alertNo": "EC COND-14",
+    "fields": [
+      {
+        "key": "reading",
+        "label": "Monitoring reading",
+        "value": "PM10 168 µg/m³ (24-h avg) at Haul Road #4 station — limit 100 µg/m³",
+        "badge": "CONFIRMED_FROM_SOURCE",
+        "citation": "¶1",
+        "note": "Station reading vs statutory limit"
+      },
+      {
+        "key": "source",
+        "label": "Attributed source",
+        "value": "Sprinkler coverage gaps during dry-shift haulage and stockpile handling",
+        "badge": "CONFIRMED_FROM_SOURCE",
+        "citation": "¶2",
+        "note": "Cause stated in the breach record"
+      },
+      {
+        "key": "directive",
+        "label": "Directive",
+        "value": "Intensify dust suppression · verify nozzle calibration · report to SPCB in 7 days",
+        "badge": "CONFIRMED_FROM_SOURCE",
+        "citation": "¶3",
+        "note": "Prescribed corrective action verbatim"
+      },
+      {
+        "key": "affectedClasses",
+        "label": "Affected mine classes",
+        "value": "Mines operating under EC Condition 14 with haul-road dust risk",
+        "badge": "AI_INFERENCE",
+        "citation": "¶3",
+        "note": "Inferred from EC registry; human confirms"
+      },
+      {
+        "key": "severity",
+        "label": "Suggested severity",
+        "value": "MEDIUM",
+        "badge": "REQUIRES_CONFIRMATION",
+        "citation": "—",
+        "note": "Statutory EC breach; requires human sign-off"
+      }
+    ],
+    "recurrence": {
+      "searched": 120,
+      "matched": 2,
+      "badge": "RECURRENCE DETECTED",
+      "items": [
+        {
+          "mineId": "MINE-003",
+          "year": 2025,
+          "title": "PM10 exceedance HR-4",
+          "closure": "Closed D+9"
+        },
+        {
+          "mineId": "MINE-006",
+          "year": 2024,
+          "title": "Dust suppression nozzle gap",
+          "closure": "Closed D+13"
+        }
+      ],
+      "suggestion": "HR-4 breached twice before — consider sprinkler-automation audit.",
+      "searchStages": [
+        "Embedding station reading…",
+        "Searching 120 historical findings…",
+        "Ranking similarity (cosine > 0.82)…"
+      ]
+    },
+    "taskTemplates": [
+      {
+        "id": "TASK-DUST-001",
+        "title": "Verify dust suppression at Haul Road #4",
+        "shortTitle": "Verify dust suppression",
+        "domain": "ENVIRONMENT",
+        "severity": "Medium",
+        "status": "IN_PROGRESS",
+        "ownerId": "u-ram",
+        "verifierId": "u-iyer",
+        "hoursRemaining": 160,
+        "deadlineOffsetDays": 7,
+        "deadlineDisplay": "Due in 7d · Dust suppression",
+        "shiftInfo": "EC Condition 14 · 7-day window",
+        "sourceCitation": "EC/2023/882 · COND-14 · State Pollution Control Board 2026",
+        "escalationRule": "Auto-escalates at deadline to Area Environment Officer",
+        "remediationNotes": "Water tanker schedule intensified during dry-shift haulage.",
+        "evidenceItems": [
+          {
+            "id": "ev-dust-1",
+            "title": "Water tanker sprinkler logbook",
+            "type": "photo",
+            "status": "pending",
+            "guidance": "Tanker trip sheet with odometer and water-filling meter record"
+          },
+          {
+            "id": "ev-dust-2",
+            "title": "Haul road PM10 sensor reading photo",
+            "type": "photo",
+            "status": "pending",
+            "guidance": "Clear photo of the station readout after suppression"
+          }
+        ]
+      }
+    ]
+  },
+  "CMSMS/2026/SAT-09": {
+    "pipelineStages": [
+      { "label": "Reading satellite change payload…", "detail": "Parsing CMSMS NDVI change detection result" },
+      { "label": "Classifying change type…", "detail": "Vegetation loss vs seasonal variation" },
+      { "label": "Extracting regulatory requirements…", "detail": "Mapping to no-mining buffer conditions" },
+      { "label": "Checking historical findings…", "detail": "Similarity search across encroachment records" },
+      { "label": "Analysis complete", "detail": "Structured extraction ready for confirmation" }
+    ],
+    "sourceRef": "CMSMS/2026/SAT-09",
+    "alertNo": "SAT-09",
+    "fields": [
+      {
+        "key": "reading",
+        "label": "Satellite change",
+        "value": "NDVI −18% in western no-mining buffer of MINE-002 (2 survey cycles)",
+        "badge": "CONFIRMED_FROM_SOURCE",
+        "citation": "¶1",
+        "note": "Change-detection output from CMSMS"
+      },
+      {
+        "key": "classification",
+        "label": "Change classification",
+        "value": "Vegetation loss (not seasonal) — possible encroachment or OB spill",
+        "badge": "CONFIRMED_FROM_SOURCE",
+        "citation": "¶2",
+        "note": "Classified by change-type model"
+      },
+      {
+        "key": "action",
+        "label": "Required action",
+        "value": "Ground-truth survey · re-verify boundary pegs · geo-tagged evidence",
+        "badge": "CONFIRMED_FROM_SOURCE",
+        "citation": "¶3",
+        "note": "Prescribed verification steps"
+      },
+      {
+        "key": "affectedClasses",
+        "label": "Affected mine classes",
+        "value": "Mines with buffer-zone change alerts",
+        "badge": "AI_INFERENCE",
+        "citation": "¶2",
+        "note": "Inferred from survey scope; human confirms"
+      },
+      {
+        "key": "severity",
+        "label": "Suggested severity",
+        "value": "MEDIUM",
+        "badge": "REQUIRES_CONFIRMATION",
+        "citation": "—",
+        "note": "Buffer-zone integrity concern; requires human sign-off"
+      }
+    ],
+    "recurrence": {
+      "searched": 120,
+      "matched": 1,
+      "badge": "RECURRENCE DETECTED",
+      "items": [
+        {
+          "mineId": "MINE-002",
+          "year": 2024,
+          "title": "Boundary encroachment satellite flag",
+          "closure": "Closed D+14"
+        }
+      ],
+      "suggestion": "Same buffer flagged before — verify peg survey against approved mine plan.",
+      "searchStages": [
+        "Embedding change signature…",
+        "Searching 120 historical findings…",
+        "Ranking similarity (cosine > 0.84)…"
+      ]
+    },
+    "taskTemplates": [
+      {
+        "id": "TASK-SAT-001",
+        "title": "Ground-truth vegetation loss & re-verify boundary pegs",
+        "shortTitle": "Ground-truth buffer vegetation loss",
+        "domain": "ENVIRONMENT",
+        "severity": "Medium",
+        "status": "IN_PROGRESS",
+        "ownerId": "u-ram",
+        "verifierId": "u-iyer",
+        "hoursRemaining": 330,
+        "deadlineOffsetDays": 14,
+        "deadlineDisplay": "Due in 14d · Ground-truth survey",
+        "shiftInfo": "Survey cell · 14-day window",
+        "sourceCitation": "CMSMS/2026/SAT-09 · No-mining buffer condition",
+        "escalationRule": "Auto-escalates at deadline to Area Environment Officer",
+        "remediationNotes": "Field survey scheduled against approved mine-plan boundary.",
+        "evidenceItems": [
+          {
+            "id": "ev-sat-1",
+            "title": "Boundary peg survey sheet",
+            "type": "document",
+            "status": "pending",
+            "guidance": "Surveyor-signed sheet with peg coordinates vs mine plan"
+          },
+          {
+            "id": "ev-sat-2",
+            "title": "Buffer zone ground photo",
+            "type": "photo",
+            "status": "pending",
+            "guidance": "Geo-tagged photo of affected buffer area"
+          }
+        ]
+      }
+    ]
+  }
+}

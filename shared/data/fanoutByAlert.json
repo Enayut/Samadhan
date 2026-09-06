@@ -1,0 +1,111 @@
+{
+  "note": "SIMULATED per-alert applicability routing, keyed by alert ref. In production a deterministic rule engine (mine type × hazard class × equipment fleet) computes these rolls-up; the demo returns precomputed results.",
+  "DGMS/2026/SA-041": {
+    "totalMines": 322,
+    "affected": 61,
+    "filteredOut": 261,
+    "governanceObjects": 183,
+    "deepMineIds": ["MINE-001", "MINE-002", "MINE-003", "MINE-004", "MINE-005", "MINE-006", "MINE-007", "MINE-008"],
+    "pins": { "green": 42, "amber": 18, "red": 1 },
+    "summary": "61 opencast mines with HEMM fleet match. 261 underground mines / non-HEMM correctly filtered out.",
+    "generationStages": [
+      "Evaluating mine applicability…",
+      "Assigning owner roles…",
+      "Computing statutory deadlines…",
+      "Creating governance objects…"
+    ],
+    "mineTasks": {
+      "MINE-001": ["TASK-101", "TASK-001", "TASK-102"]
+    }
+  },
+  "DGMS/2026/TC-27": {
+    "totalMines": 322,
+    "affected": 18,
+    "filteredOut": 304,
+    "governanceObjects": 36,
+    "deepMineIds": ["MINE-004"],
+    "pins": { "green": 10, "amber": 7, "red": 1 },
+    "summary": "18 opencast mines with high-wall benches above 30 m — 36 slope-monitoring obligations generated.",
+    "generationStages": [
+      "Evaluating bench-height applicability…",
+      "Assigning geotech owner roles…",
+      "Computing monitoring deadlines…",
+      "Creating governance objects…"
+    ],
+    "mineTasks": {
+      "MINE-004": ["TASK-SLOPE-001", "TASK-SLOPE-002"]
+    }
+  },
+  "CSIS/2026/IN-118": {
+    "totalMines": 322,
+    "affected": 24,
+    "filteredOut": 298,
+    "governanceObjects": 48,
+    "deepMineIds": ["MINE-002"],
+    "pins": { "green": 12, "amber": 11, "red": 1 },
+    "summary": "24 mines with PPE-deviation history — 48 labour-compliance obligations generated.",
+    "generationStages": [
+      "Evaluating deviation applicability…",
+      "Assigning welfare owner roles…",
+      "Computing re-audit deadlines…",
+      "Creating governance objects…"
+    ],
+    "mineTasks": {
+      "MINE-002": ["TASK-PPE-001"]
+    }
+  },
+  "SEN/2026/M004-ST-22": {
+    "totalMines": 322,
+    "affected": 4,
+    "filteredOut": 318,
+    "governanceObjects": 8,
+    "deepMineIds": ["MINE-004"],
+    "pins": { "green": 0, "amber": 3, "red": 1 },
+    "summary": "4 instrumented mines within sensor blast-radius — 8 strata-response obligations generated.",
+    "generationStages": [
+      "Mapping sensor blast radius…",
+      "Assigning geotech response roles…",
+      "Computing response deadlines…",
+      "Creating governance objects…"
+    ],
+    "mineTasks": {
+      "MINE-004": ["TASK-STRATA-001", "TASK-STRATA-002"]
+    }
+  },
+  "EC/2023/882": {
+    "totalMines": 322,
+    "affected": 12,
+    "filteredOut": 310,
+    "governanceObjects": 24,
+    "deepMineIds": ["MINE-003"],
+    "pins": { "green": 6, "amber": 5, "red": 1 },
+    "summary": "12 mines operating under EC Condition 14 with haul-road dust risk — 24 environmental obligations generated.",
+    "generationStages": [
+      "Evaluating EC condition applicability…",
+      "Assigning environment owner roles…",
+      "Computing SPCB reporting deadlines…",
+      "Creating governance objects…"
+    ],
+    "mineTasks": {
+      "MINE-003": ["TASK-DUST-001"]
+    }
+  },
+  "CMSMS/2026/SAT-09": {
+    "totalMines": 322,
+    "affected": 2,
+    "filteredOut": 320,
+    "governanceObjects": 4,
+    "deepMineIds": ["MINE-002"],
+    "pins": { "green": 1, "amber": 1, "red": 0 },
+    "summary": "2 mines with buffer-zone satellite alerts — 4 ground-truth obligations generated.",
+    "generationStages": [
+      "Evaluating buffer-zone applicability…",
+      "Assigning survey owner roles…",
+      "Computing survey deadlines…",
+      "Creating governance objects…"
+    ],
+    "mineTasks": {
+      "MINE-002": ["TASK-SAT-001"]
+    }
+  }
+}

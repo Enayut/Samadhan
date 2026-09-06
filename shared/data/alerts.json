@@ -1,0 +1,156 @@
+[
+  {
+    "id": "al-dgms",
+    "kind": "dgms-alert",
+    "source": "DGMS",
+    "domain": "SAFETY",
+    "ref": "DGMS/2026/SA-041",
+    "alertNo": "23/2026",
+    "title": "Fatal accident — 60-ton dumper crossed dump-edge berm and overturned, Kusmunda OC",
+    "issued": "04 Aug 2026",
+    "severity": "High",
+    "type": "critical",
+    "status": "received",
+    "ackDeadline": "Ack in 48h",
+    "ackDeadlineOffsetDays": 2,
+    "pdfUrl": "/pdf/DGMS_Safety_Alert_23-2026_Kusmunda.pdf",
+    "pdfSource": "dgms.gov.in · Safety Alert 23/2026 · Dhanbad, dated 04.08.2026",
+    "summary": "A 60-ton dumper at Kusmunda Opencast Mine (SECL, Korba) crossed the berm at the Rehandling OB dump edge during dumping and overturned; the operator died on the spot. This is the real DGMS Safety Alert 23/2026, ingested as the source PDF for the scenario.",
+    "paragraphs": [
+      "It has come to the notice of the Directorate General of Mines Safety that a fatal accident occurred at Kusmunda Opencast Mine (M/s SECL, Korba, Chhattisgarh) on 21.06.2026 at about 12:45 AM (C shift). A 60-ton dumper, while carrying out dumping at the Rehandling OB dump, crossed the berm at the dumping edge and fell down. The vehicle overturned; the dumper operator, Shri Satyanarayan, sustained fatal injuries and succumbed on the spot.",
+      "Preliminary inquiry indicates the dumper was operating at the dumping edge without a demarcated safe operating limit; the edge berm failed to arrest the vehicle before it crossed the edge.",
+      "All opencast mines with HEMM fleets and overburden-dumping operations are directed to: (a) maintain a safe distance from the dump edge and enforce a clearly demarcated safe operating limit; (b) construct and regularly inspect stop-blocks, berms or safety bunds of adequate height and strength along all dump edges; (c) permit only trained, competent and authorized operators for dump-edge operations, with special training on dump-edge operations, machine controls, blind spots and emergency response; (d) enforce seat-belt usage on all mobile equipment.",
+      "These precautions shall be implemented within 7 days of the issue of this alert and evidence of compliance shall be maintained at the mine for inspection."
+    ]
+  },
+  {
+    "id": "al-dgms2",
+    "kind": "dgms-circular",
+    "source": "DGMS",
+    "domain": "SAFETY",
+    "ref": "DGMS/2026/TC-27",
+    "alertNo": "Tech. Circular 27/2026",
+    "title": "Slope stability monitoring protocol for high-wall benches above 30 m",
+    "issued": "28 Aug 2026",
+    "severity": "High",
+    "type": "warning",
+    "status": "received",
+    "ackDeadline": "Ack in 72h",
+    "ackDeadlineOffsetDays": 3,
+    "summary": "Technical circular mandating continuous slope monitoring on high-wall benches above 30 m — extensometer, prism survey and slope-stability radar thresholds.",
+    "paragraphs": [
+      "DGMS Technical Circular 27/2026 directs all opencast mines with high-wall benches exceeding 30 m in height to maintain continuous slope stability monitoring.",
+      "Monitoring shall comprise in-situ extensometer/MPBX arrays, periodic prism surveys, and where available slope-stability radar coverage on active benches.",
+      "An alarm shall be raised when measured displacement exceeds 2.5 mm per day or crack width increases beyond the geotechnical assessment threshold.",
+      "Weekly displacement reports shall be submitted to the Regional Inspector and retained at the mine."
+    ]
+  },
+  {
+    "id": "al-csis",
+    "kind": "csis-feed",
+    "source": "CSIS",
+    "domain": "LABOUR",
+    "ref": "CSIS/2026/IN-118",
+    "alertNo": "IN-118",
+    "title": "Safety parameter deviation — PPE non-compliance flagged for Shovel Crew B",
+    "issued": "29 Aug 2026",
+    "severity": "Medium",
+    "type": "warning",
+    "status": "received",
+    "ackDeadline": "Ack in 48h",
+    "ackDeadlineOffsetDays": 2,
+    "summary": "CIL Safety Information System flagged a PPE-compliance deviation: workers on Shovel Crew B without ISI-marked footwear during the last safety-parameter audit.",
+    "paragraphs": [
+      "The CIL Safety Information System (CSIS) recorded a deviation during the routine safety-parameter audit of Shovel Crew B (MINE-002).",
+      "18 workers were observed on the shovel bench without ISI 15298-marked safety footwear; two helmet chin-straps were found defective.",
+      "Corrective action: issue replacement PPE, update the PPE issuance register, and re-audit within 7 days under the Mines Rules, 1955 (safety apparel provisions)."
+    ]
+  },
+  {
+    "id": "al-sensor",
+    "kind": "sensor-anomaly",
+    "source": "SENSOR",
+    "domain": "SAFETY",
+    "ref": "SEN/2026/M004-ST-22",
+    "alertNo": "ST-22",
+    "title": "Strata displacement anomaly — Bench-1 extensometer, MINE-004",
+    "issued": "29 Aug 2026",
+    "severity": "Critical",
+    "type": "critical",
+    "status": "received",
+    "ackDeadline": "Respond in 24h",
+    "ackDeadlineOffsetDays": 1,
+    "siteId": "MINE-004",
+    "summary": "Extensometer EX-07 on Bench-1 (subsidence zone) recorded 3.1 mm/24 h displacement — above the 2.5 mm geotechnical threshold.",
+    "paragraphs": [
+      "Telemetry from extensometer EX-07 (Bench-1, MINE-004 subsidence zone) reported a 24-hour displacement of 3.1 mm against a 2.5 mm geotechnical threshold.",
+      "Prism pair PR-12 shows a correlated vector shift of 1.9 mm toward the pit, consistent with progressive creep rather than blasting vibration.",
+      "Immediate action: ground-truth the reading, review the geotechnical assessment, and verify the telemetry link per the slope-stability monitoring protocol in DGMS Tech. Circular 27/2026."
+    ]
+  },
+  {
+    "id": "al-ec",
+    "kind": "ec-alert",
+    "source": "EC",
+    "domain": "ENVIRONMENT",
+    "ref": "EC/2023/882",
+    "alertNo": "EC COND-14",
+    "title": "PM10 exceedance at Haul Road #4 ambient monitoring station",
+    "issued": "30 Aug 2026",
+    "severity": "Medium",
+    "type": "warning",
+    "status": "received",
+    "ackDeadline": "Ack in 48h",
+    "ackDeadlineOffsetDays": 2,
+    "summary": "State Pollution Control Board monitoring station at Haul Road #4 recorded 168 µg/m³ PM10 (24-h avg) against the 100 µg/m³ standard — an EC Condition 14 breach.",
+    "paragraphs": [
+      "The ambient air quality station at Haul Road #4 (MINE-003) recorded a 24-hour average PM10 of 168 µg/m³ against the 100 µg/m³ standard under EC Condition 14.",
+      "High readings coincide with gaps in water-sprinkler coverage during dry-shift haulage and stockpile handling.",
+      "Intensify dust suppression, verify sprinkler nozzle calibration, and report corrective action to the State Pollution Control Board within 7 days."
+    ]
+  },
+  {
+    "id": "al-cmsms",
+    "kind": "cmsms-feed",
+    "source": "CMSMS",
+    "domain": "ENVIRONMENT",
+    "ref": "CMSMS/2026/SAT-09",
+    "alertNo": "SAT-09",
+    "title": "Satellite detection — vegetation loss in no-mining buffer, MINE-002",
+    "issued": "31 Aug 2026",
+    "severity": "Medium",
+    "type": "warning",
+    "status": "received",
+    "ackDeadline": "Ack in 72h",
+    "ackDeadlineOffsetDays": 3,
+    "summary": "Coal Mine Surveillance and Management System satellite imagery shows an 18% NDVI drop in the western no-mining buffer of MINE-002.",
+    "paragraphs": [
+      "CMSMS satellite monitoring flagged an 18% negative NDVI change in the western buffer zone of MINE-002 over the last two survey cycles.",
+      "Change classification indicates vegetation loss rather than seasonal variation; possible boundary encroachment or overburden spill needs ground verification.",
+      "Conduct a ground-truth survey, re-verify boundary pegs against the approved mine plan, and submit findings with geo-tagged evidence."
+    ]
+  },
+  {
+    "id": "al-1",
+    "kind": "operational",
+    "timestamp": "04 Aug 2026, 14:00 IST",
+    "message": "DGMS Safety Alert 23/2026 received — awaiting AI processing.",
+    "type": "critical",
+    "siteId": "MINE-001"
+  },
+  {
+    "id": "al-2",
+    "kind": "operational",
+    "timestamp": "30 Aug 2026, 09:00 IST",
+    "message": "MINE-004 escalation level increased to L2 due to non-compliance.",
+    "type": "warning",
+    "siteId": "MINE-004"
+  },
+  {
+    "id": "al-3",
+    "kind": "operational",
+    "timestamp": "31 Aug 2026, 08:00 IST",
+    "message": "60/61 mines acknowledged DGMS alert. 1 escalated.",
+    "type": "info"
+  }
+]

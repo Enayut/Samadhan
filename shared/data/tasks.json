@@ -1,0 +1,504 @@
+[
+  {
+    "id": "TASK-002",
+    "title": "Drinking water cooler maintenance at Substation 3",
+    "domain": "GRIEVANCE",
+    "status": "VERIFIED",
+    "urgencyGroup": "RECENTLY_CLOSED",
+    "deadlineDate": "27 Aug",
+    "deadlineDisplay": "Closed · 27 Aug",
+    "shiftInfo": "Closed on 27 Aug (2d ago)",
+    "hoursRemaining": 0,
+    "closedDate": "27 Aug (2d ago)",
+    "sourceCitation": "Joint Consultative Committee Grievance #G-891",
+    "source": "JCC/GRIEVANCE/G-891",
+    "severity": "Medium",
+    "mineId": "MINE-001",
+    "owner": { "id": "u-ram", "name": "Ram Singh", "role": "Mine Safety Officer" },
+    "verifier": { "id": "u-agm", "name": "Colliery Engineer (E&M)", "role": "Colliery Engineer (E&M)" },
+    "ownerLabel": "Ram Singh (Mine Safety Officer)",
+    "verifierLabel": "Colliery Engineer (E&M) — ≠ owner",
+    "remediationNotes": "Compressor serviced and UV filter cartridge replaced. RO unit water TDS tested at 82 PPM.",
+    "createdOffsetDays": -9,
+    "deadlineOffsetDays": -3,
+    "evidenceItems": [
+      {
+        "id": "ev-02-1",
+        "title": "Water testing certificate (TDS < 150)",
+        "type": "document",
+        "status": "verified",
+        "guidance": "Colliery chemical lab TDS and bacteriological test report",
+        "fileName": "Lab_Report_Substation3_Water.pdf",
+        "metadata": {
+          "timestamp": "2026-08-27 15:10 IST",
+          "gps": "23.7981° N, 86.4312° E (Substation-3)",
+          "user": "R. Singh (MSO-402)",
+          "sha256": "38a169b8219087c293418290fbbca1",
+          "fileSize": "0.9 MB (PDF)"
+        }
+      },
+      {
+        "id": "ev-02-2",
+        "title": "Maintenance logbook entry",
+        "type": "register",
+        "status": "verified",
+        "guidance": "E&M section log signed by Electrical Supervisor",
+        "fileName": "EM_Log_Sub3_signed.pdf",
+        "metadata": {
+          "timestamp": "2026-08-27 15:22 IST",
+          "gps": "23.7981° N, 86.4312° E (Substation-3)",
+          "user": "R. Singh (MSO-402)",
+          "sha256": "0d4c19e28a7f63b51092c8d3e4a1f6b7",
+          "fileSize": "1.1 MB (PDF)"
+        }
+      }
+    ]
+  },
+  {
+    "id": "TASK-003",
+    "title": "Install high-visibility reflective berm markers on Ramp 2",
+    "domain": "SAFETY",
+    "status": "VERIFIED",
+    "urgencyGroup": "RECENTLY_CLOSED",
+    "deadlineDate": "26 Aug",
+    "deadlineDisplay": "Closed · 26 Aug",
+    "shiftInfo": "Closed on 26 Aug (3d ago)",
+    "hoursRemaining": 0,
+    "closedDate": "26 Aug (3d ago)",
+    "sourceCitation": "DGMS Directive DG/S&T/2026/09",
+    "source": "DGMS/DIR/2026/09",
+    "severity": "High",
+    "mineId": "MINE-001",
+    "owner": { "id": "u-ram", "name": "Ram Singh", "role": "Mine Safety Officer" },
+    "verifier": { "id": "u-sharma", "name": "R. Sharma", "role": "Area Safety Officer" },
+    "ownerLabel": "Ram Singh (Mine Safety Officer)",
+    "verifierLabel": "Area Safety Officer — ≠ owner",
+    "remediationNotes": "50 nos. yellow/red retro-reflective markers affixed at 10-meter spacing on Ramp 2 embankment.",
+    "createdOffsetDays": -12,
+    "deadlineOffsetDays": -6,
+    "evidenceItems": [
+      {
+        "id": "ev-03-1",
+        "title": "Ramp 2 night visibility photo with headlight beam",
+        "type": "photo",
+        "status": "verified",
+        "guidance": "Wide night photo confirming retro-reflection from 50m distance",
+        "artifactId": "art-session",
+        "metadata": {
+          "timestamp": "2026-08-26 21:05 IST",
+          "gps": "23.7964° N, 86.4301° E (Ramp-2)",
+          "user": "R. Singh (MSO-402)",
+          "sha256": "b7e20f193a84c65107d9823f4c5a1e90",
+          "fileSize": "3.2 MB (Raw PNG + Exif)"
+        }
+      }
+    ]
+  },
+  {
+    "id": "TASK-004",
+    "title": "Provide PPE replacement audit for Shovel Crew B",
+    "shortTitle": "PPE replacement audit Shovel Crew B",
+    "domain": "LABOUR",
+    "status": "AWAITING_VERIFICATION",
+    "urgencyGroup": "AWAITING_VERIFICATION",
+    "deadlineDate": "Submitted",
+    "deadlineDisplay": "Submitted · Review by 30 Aug",
+    "shiftInfo": "28 Aug · Shift I · Verified by Welfare Officer",
+    "hoursRemaining": 36,
+    "submittedTimestamp": "28 Aug, 06:45 AM (Shift I)",
+    "sourceCitation": "Safety Committee Meeting 2026 Min. Item 3",
+    "source": "SAFETY_COMMITTEE/MIN-03",
+    "severity": "High",
+    "mineId": "MINE-002",
+    "owner": { "id": "u-ram", "name": "Ram Singh", "role": "Mine Safety Officer" },
+    "verifier": { "id": "u-iyer", "name": "K. Iyer", "role": "Area Welfare Officer" },
+    "ownerLabel": "Ram Singh (Mine Safety Officer)",
+    "verifierLabel": "Area Welfare Officer — ≠ owner",
+    "remediationNotes": "18 replacement safety boots (ISI 15298) and helmet chin-straps issued to Shovel Crew B operators.",
+    "createdOffsetDays": -4,
+    "deadlineOffsetDays": 1,
+    "evidenceItems": [
+      {
+        "id": "ev-04-1",
+        "title": "Distribution roster with biometric thumb logs",
+        "type": "register",
+        "status": "verified",
+        "guidance": "Store issuance counterfoil with worker tokens",
+        "fileName": "PPE_Roster_Shovel_B_signed.pdf",
+        "metadata": {
+          "timestamp": "2026-08-28 06:30 IST",
+          "gps": "23.7960° N, 86.4290° E (Stores)",
+          "user": "R. Singh (MSO-402)",
+          "sha256": "91a27e8d6451c09938bfe412089cfa123",
+          "fileSize": "2.2 MB (PDF)"
+        }
+      },
+      {
+        "id": "ev-04-2",
+        "title": "Defective boots turnover log",
+        "type": "photo",
+        "status": "verified",
+        "guidance": "Photo of scrap bin items tagged for disposal",
+        "artifactId": "art-session",
+        "metadata": {
+          "timestamp": "2026-08-28 06:40 IST",
+          "gps": "23.7960° N, 86.4290° E (Stores)",
+          "user": "R. Singh (MSO-402)",
+          "sha256": "772c918341908ab1934efbc712903",
+          "fileSize": "2.8 MB (Raw PNG + Exif)"
+        }
+      }
+    ]
+  },
+  {
+    "id": "TASK-005",
+    "title": "Verify dumper exhaust brake functionality (Fleet A)",
+    "domain": "SAFETY",
+    "status": "VERIFIED",
+    "urgencyGroup": "RECENTLY_CLOSED",
+    "deadlineDate": "25 Aug",
+    "deadlineDisplay": "Closed · 25 Aug",
+    "shiftInfo": "Closed on 25 Aug (4d ago)",
+    "hoursRemaining": 0,
+    "closedDate": "25 Aug (4d ago)",
+    "sourceCitation": "DGMS Circular 03/2024 · Reg. 182 CMR 2017",
+    "source": "DGMS/2026/CIR-03",
+    "severity": "High",
+    "mineId": "MINE-001",
+    "owner": { "id": "u-ram", "name": "Ram Singh", "role": "Mine Safety Officer" },
+    "verifier": { "id": "u-sharma", "name": "R. Sharma", "role": "Area Safety Officer" },
+    "ownerLabel": "Ram Singh (Mine Safety Officer)",
+    "verifierLabel": "Area Safety Officer — ≠ owner",
+    "remediationNotes": "Exhaust brake tested on all 14 dumpers of Fleet A. One valve replaced (DUMP-07).",
+    "createdOffsetDays": -15,
+    "deadlineOffsetDays": -8,
+    "evidenceItems": [
+      {
+        "id": "ev-05-1",
+        "title": "Fleet A brake test log",
+        "type": "register",
+        "status": "verified",
+        "guidance": "E&M test record signed by fleet supervisor",
+        "artifactId": "art-fleet-brake",
+        "metadata": {
+          "timestamp": "2026-08-25 11:20 IST",
+          "gps": "23.7950° N, 86.4298° E (Workshop)",
+          "user": "R. Singh (MSO-402)",
+          "sha256": "c51d0a84b1e92f30764a815c02d9e3f4",
+          "fileSize": "2.4 MB (Raw PNG + Exif)"
+        }
+      }
+    ]
+  },
+  {
+    "id": "TASK-007",
+    "title": "Verify dust suppression at Haul Road #4",
+    "shortTitle": "Verify dust suppression",
+    "domain": "ENVIRONMENT",
+    "status": "DUE_SOON",
+    "urgencyGroup": "DUE_SOON",
+    "deadlineDate": "30 Aug",
+    "deadlineDisplay": "Due 30 Aug · Sh I · 1d 4h",
+    "shiftInfo": "30 Aug · Shift I (06:00 - 14:00)",
+    "hoursRemaining": 28,
+    "sourceCitation": "EC Compliance Condition 14 · State Pollution Control Board 2026",
+    "source": "EC/2023/882 · COND-14",
+    "severity": "Medium",
+    "mineId": "MINE-003",
+    "owner": { "id": "u-ram", "name": "Ram Singh", "role": "Mine Safety Officer" },
+    "verifier": { "id": "u-iyer", "name": "K. Iyer", "role": "Area Environment Officer" },
+    "ownerLabel": "Ram Singh (Mine Safety Officer)",
+    "verifierLabel": "Area Environment Officer — ≠ owner",
+    "escalationRule": "Auto-escalates at deadline to DGMS Regional Inspector",
+    "remediationNotes": "",
+    "createdOffsetDays": -2,
+    "deadlineOffsetDays": 1,
+    "evidenceItems": [
+      {
+        "id": "ev-07-1",
+        "title": "Water tanker sprinkler logbook",
+        "type": "photo",
+        "status": "pending",
+        "guidance": "Capture tanker trip sheet with odometer & water filling meter record"
+      },
+      {
+        "id": "ev-07-2",
+        "title": "Haul road PM10 sensor reading photo",
+        "type": "photo",
+        "status": "pending",
+        "guidance": "Clear photo of Continuous Ambient Air Monitoring Station readout"
+      }
+    ]
+  },
+  {
+    "id": "TASK-008",
+    "title": "Calibrate water sprinkler nozzles at Haul Road #4",
+    "domain": "ENVIRONMENT",
+    "status": "VERIFIED",
+    "urgencyGroup": "RECENTLY_CLOSED",
+    "deadlineDate": "24 Aug",
+    "deadlineDisplay": "Closed · 24 Aug",
+    "shiftInfo": "Closed on 24 Aug (5d ago)",
+    "hoursRemaining": 0,
+    "closedDate": "24 Aug (5d ago)",
+    "sourceCitation": "EC Compliance Condition 14 · State Pollution Control Board 2026",
+    "source": "EC/2023/882 · COND-14",
+    "severity": "Medium",
+    "mineId": "MINE-002",
+    "owner": { "id": "u-ram", "name": "Ram Singh", "role": "Mine Safety Officer" },
+    "verifier": { "id": "u-iyer", "name": "K. Iyer", "role": "Area Environment Officer" },
+    "ownerLabel": "Ram Singh (Mine Safety Officer)",
+    "verifierLabel": "Area Environment Officer — ≠ owner",
+    "remediationNotes": "Nozzle pressure adjusted to 6.5 bar across 12 sprinkler heads on Haul Road #4.",
+    "createdOffsetDays": -14,
+    "deadlineOffsetDays": -10,
+    "evidenceItems": [
+      {
+        "id": "ev-08-1",
+        "title": "Calibration record + pressure gauge photo",
+        "type": "photo",
+        "status": "verified",
+        "guidance": "Gauge reading photo with calibration tag visible",
+        "artifactId": "art-doc",
+        "metadata": {
+          "timestamp": "2026-08-24 09:15 IST",
+          "gps": "22.3321° N, 82.5510° E (HR-4)",
+          "user": "R. Singh (MSO-402)",
+          "sha256": "e2d81f30a94b52716c0e83d94f5a2b6c",
+          "fileSize": "2.1 MB (Raw PNG + Exif)"
+        }
+      }
+    ]
+  },
+  {
+    "id": "TASK-009",
+    "title": "Submit shift-wise OBR progress report (Week 34)",
+    "domain": "PRODUCTION",
+    "status": "VERIFIED",
+    "urgencyGroup": "RECENTLY_CLOSED",
+    "deadlineDate": "23 Aug",
+    "deadlineDisplay": "Closed · 23 Aug",
+    "shiftInfo": "Closed on 23 Aug (6d ago)",
+    "hoursRemaining": 0,
+    "closedDate": "23 Aug (6d ago)",
+    "sourceCitation": "Production Compliance Rule PCR-07 · Monthly Plan Milestone",
+    "source": "PCR/2026/07",
+    "severity": "Medium",
+    "mineId": "MINE-001",
+    "owner": { "id": "u-ram", "name": "Ram Singh", "role": "Mine Safety Officer" },
+    "verifier": { "id": "u-singh", "name": "S. Singh", "role": "Mine Manager" },
+    "ownerLabel": "Ram Singh (Mine Safety Officer)",
+    "verifierLabel": "Mine Manager — ≠ owner",
+    "remediationNotes": "Week 34 OBR survey report reconciled with weighbridge tallies. 1.42 lac m3.",
+    "createdOffsetDays": -13,
+    "deadlineOffsetDays": -9,
+    "evidenceItems": [
+      {
+        "id": "ev-09-1",
+        "title": "OBR survey report (surveyor signed)",
+        "type": "document",
+        "status": "verified",
+        "guidance": "Signed survey sheet with weekly total",
+        "fileName": "OBR_Week34_Survey.pdf",
+        "metadata": {
+          "timestamp": "2026-08-23 13:40 IST",
+          "gps": "23.7952° N, 86.4295° E (Survey Office)",
+          "user": "R. Singh (MSO-402)",
+          "sha256": "f3a94c21b50d63827e1f94a0c6b3d8e5",
+          "fileSize": "1.6 MB (PDF)"
+        }
+      }
+    ]
+  },
+  {
+    "id": "TASK-011",
+    "title": "High-wall structural integrity check (Bench 2, Pit 4)",
+    "domain": "SAFETY",
+    "status": "IN_PROGRESS",
+    "urgencyGroup": "DUE_SOON",
+    "deadlineDate": "31 Aug",
+    "deadlineDisplay": "Due 31 Aug · Sh III · 2d 12h",
+    "shiftInfo": "31 Aug · Shift III (22:00 - 06:00)",
+    "hoursRemaining": 60,
+    "sourceCitation": "DGMS/2026/TC-27 · Standing Order 18-A",
+    "source": "DGMS/2026/TC-27",
+    "severity": "High",
+    "mineId": "MINE-004",
+    "owner": { "id": "u-ram", "name": "Ram Singh", "role": "Mine Safety Officer" },
+    "verifier": { "id": "u-sharma", "name": "R. Sharma", "role": "Area Safety Officer" },
+    "ownerLabel": "Ram Singh (Mine Safety Officer)",
+    "verifierLabel": "Area Safety Officer — ≠ owner",
+    "escalationRule": "Auto-escalates at deadline to Area General Manager",
+    "remediationNotes": "Prism monitoring on Bench-2 high-wall; drone survey scheduled before next blast.",
+    "createdOffsetDays": -2,
+    "deadlineOffsetDays": 3,
+    "evidenceItems": [
+      {
+        "id": "ev-11-1",
+        "title": "Drone Survey Report",
+        "type": "document",
+        "status": "missing",
+        "guidance": "Upload georeferenced drone orthomosaic with crest-line overlay"
+      },
+      {
+        "id": "ev-11-2",
+        "title": "Geotechnical Assessment",
+        "type": "document",
+        "status": "present",
+        "guidance": "Signed assessment by Rock Mechanics cell",
+        "fileName": "Geo_Assessment_Bench2_v2.pdf",
+        "metadata": {
+          "timestamp": "2026-08-27 10:12 IST",
+          "gps": "23.7957° N, 86.4304° E (Pit-4)",
+          "user": "R. Singh (MSO-402)",
+          "sha256": "8c17d40a93b65e28107fa2c5d9e4b3f0",
+          "fileSize": "4.8 MB (PDF)"
+        }
+      }
+    ]
+  },
+  {
+    "id": "TASK-012",
+    "title": "Inspect Dragline bench stability & crack gauge",
+    "shortTitle": "Dragline bench stability inspection",
+    "domain": "PRODUCTION",
+    "status": "DUE_SOON",
+    "urgencyGroup": "DUE_SOON",
+    "deadlineDate": "31 Aug",
+    "deadlineDisplay": "Due 31 Aug · Sh II · 2d 12h",
+    "shiftInfo": "31 Aug · Shift II (14:00 - 22:00)",
+    "hoursRemaining": 60,
+    "sourceCitation": "Standing Order 18-A · Pit Slope Monitoring Protocol",
+    "source": "SO/18-A · PSM",
+    "severity": "Medium",
+    "mineId": "MINE-006",
+    "owner": { "id": "u-ram", "name": "Ram Singh", "role": "Mine Safety Officer" },
+    "verifier": { "id": "u-singh", "name": "S. Singh", "role": "Colliery Geologist" },
+    "ownerLabel": "Ram Singh (Mine Safety Officer)",
+    "verifierLabel": "Colliery Geologist — ≠ owner",
+    "escalationRule": "Auto-escalates at deadline to Director Technical",
+    "remediationNotes": "",
+    "createdOffsetDays": -2,
+    "deadlineOffsetDays": 3,
+    "evidenceItems": [
+      {
+        "id": "ev-12-1",
+        "title": "Bench #3 Crest Photo",
+        "type": "photo",
+        "status": "pending",
+        "guidance": "Photograph bench crest showing berm markers and tension cracks if any"
+      },
+      {
+        "id": "ev-12-2",
+        "title": "Extensometer gauge reading sheet",
+        "type": "document",
+        "status": "pending",
+        "guidance": "Signed log sheet of prismatic sensor displacement (<2.5mm threshold)"
+      }
+    ]
+  },
+  {
+    "id": "TASK-018",
+    "title": "Renew Mine-18 CLRA licence",
+    "domain": "CONTRACTOR",
+    "status": "ESCALATED",
+    "urgencyGroup": "OVERDUE",
+    "deadlineDate": "25 Aug",
+    "deadlineDisplay": "Overdue 4d · 25 Aug",
+    "shiftInfo": "General Shift · Expired 25 Aug",
+    "hoursRemaining": -96,
+    "sourceCitation": "Contract Labour (Regulation & Abolition) Act §12 · Dy. CLC Audit 2026",
+    "source": "CLRA/2026/§12",
+    "severity": "High",
+    "mineId": "MINE-005",
+    "owner": { "id": "u-reddy", "name": "T. Reddy", "role": "Mine Engineer" },
+    "verifier": { "id": "u-agm", "name": "Dy. CLC", "role": "Dy. CLC / Area Personnel Manager" },
+    "ownerLabel": "T. Reddy (Mine Engineer)",
+    "verifierLabel": "Dy. CLC / Area Personnel Manager — ≠ owner",
+    "escalationRule": "Auto-escalated after 48h SLA breach",
+    "escalationLevel": "ESCALATED_L2",
+    "escalationTarget": "Escalated to Subsidiary HQ",
+    "rejectionReason": "Previous evidence rejected: stamp seal illegible",
+    "remediationNotes": "Fresh stamped Form VII certificate obtained from Dhanbad Labour Commissionerate.",
+    "createdOffsetDays": -8,
+    "deadlineOffsetDays": -4,
+    "escalationEvents": [
+      { "level": "L1", "notified": "Area General Manager", "timestampOffsetDays": -2 },
+      { "level": "L2", "notified": "Director Technical (Operations)", "timestampOffsetDays": 0 }
+    ],
+    "evidenceItems": [
+      {
+        "id": "ev-18-1",
+        "title": "Form VII Renewal Certificate",
+        "type": "document",
+        "status": "rejected",
+        "guidance": "High-res PDF/Photo of Form VII with readable hologram and stamp",
+        "fileName": "CLRA_Form_VII_Renewal_Rejected.pdf",
+        "aiWarning": "Previous upload flagged: Low contrast & blurred stamp seal",
+        "rejectionReason": "Stamp seal illegible — resubmit high-resolution copy"
+      },
+      {
+        "id": "ev-18-2",
+        "title": "Treasury Challan Copy",
+        "type": "document",
+        "status": "uploaded",
+        "guidance": "Verified bank e-challan counterfoil for statutory fee deposit",
+        "fileName": "SBI_Treasury_Challan_CLRA_Paid.pdf",
+        "metadata": {
+          "timestamp": "2026-08-24 11:30 IST",
+          "gps": "23.8012° N, 86.4250° E (Admin Block)",
+          "user": "T. Reddy (ME-311)",
+          "sha256": "4b7a1c890ef29182374e5088c42b1029da6c1387612f",
+          "fileSize": "1.2 MB (PDF)"
+        }
+      }
+    ]
+  },
+  {
+    "id": "TASK-019",
+    "title": "Deploy active strata monitoring (MINE-004)",
+    "domain": "SAFETY",
+    "status": "ESCALATED",
+    "urgencyGroup": "OVERDUE",
+    "deadlineDate": "24 Aug",
+    "deadlineDisplay": "Overdue · Escalated L2",
+    "shiftInfo": "General Shift · Overdue 6d",
+    "hoursRemaining": -144,
+    "sourceCitation": "DGMS/2026/TC-27 · Strata control directive",
+    "source": "DGMS/2026/TC-27",
+    "severity": "Critical",
+    "mineId": "MINE-004",
+    "owner": { "id": "u-singh", "name": "S. Singh", "role": "Mine Manager" },
+    "verifier": { "id": "u-sharma", "name": "R. Sharma", "role": "Area Safety Officer" },
+    "ownerLabel": "S. Singh (Mine Manager)",
+    "verifierLabel": "Area Safety Officer — ≠ owner",
+    "escalationRule": "Auto-escalated: OVERDUE +3d → L1, +3d → L2",
+    "escalationLevel": "ESCALATED_L2",
+    "escalationTarget": "Escalated to Director Technical (Operations)",
+    "remediationNotes": "Sensor deployment in progress on Bench-1 subsidence zone.",
+    "createdOffsetDays": -9,
+    "deadlineOffsetDays": -6,
+    "escalationEvents": [
+      { "level": "L1", "notified": "Area General Manager", "timestampOffsetDays": -3 },
+      { "level": "L2", "notified": "Director Technical (Operations)", "timestampOffsetDays": 0 }
+    ],
+    "evidenceItems": [
+      {
+        "id": "ev-19-1",
+        "title": "Sensor Deployment Log",
+        "type": "register",
+        "status": "missing",
+        "guidance": "Deployment log with instrument serial numbers and borehole depths"
+      },
+      {
+        "id": "ev-19-2",
+        "title": "Real-time telemetry link",
+        "type": "document",
+        "status": "rejected",
+        "guidance": "Screenshot of telemetry dashboard showing live feed",
+        "fileName": "Telemetry_Link_Test.pdf",
+        "rejectionReason": "Link unresponsive during test"
+      }
+    ]
+  }
+]

@@ -1,0 +1,51 @@
+{
+  "note": "SIMULATED historical similarity corpus. In production this is populated from closed governance objects via vector embeddings (Pinecone / pg_trgm). Here it is hardcoded JSON so the recurrence scene is deterministic.",
+  "total": 120,
+  "items": [
+    {
+      "id": "HIST-2019-014",
+      "mineId": "MINE-002",
+      "year": 2019,
+      "title": "Dumper crossed OB dump-edge berm during dumping",
+      "causeCodes": ["dump-edge", "berm-inadequate", "no-safe-limit"],
+      "closureDays": 21,
+      "closureStatus": "Closed late"
+    },
+    {
+      "id": "HIST-2021-036",
+      "mineId": "MINE-014",
+      "year": 2021,
+      "title": "Dump-edge berm breach — dumper toppled at tipping point",
+      "causeCodes": ["dump-edge", "berm-inadequate", "operator-not-briefed"],
+      "closureDays": 28,
+      "closureStatus": "Closed late"
+    },
+    {
+      "id": "HIST-2023-058",
+      "mineId": "MINE-038",
+      "year": 2023,
+      "title": "Inadequate stop-blocks at OB dump edge",
+      "causeCodes": ["berm-inadequate", "dump-edge"],
+      "closureDays": 14,
+      "closureStatus": "Closed on time"
+    },
+    {
+      "id": "HIST-2020-021",
+      "mineId": "MINE-009",
+      "year": 2020,
+      "title": "Berm height below statutory minimum at dump edge",
+      "causeCodes": ["berm-inadequate"],
+      "closureDays": 19,
+      "closureStatus": "Closed late"
+    },
+    {
+      "id": "HIST-2022-047",
+      "mineId": "MINE-027",
+      "year": 2022,
+      "title": "Operator briefing register not maintained",
+      "causeCodes": ["operator-not-briefed"],
+      "closureDays": 12,
+      "closureStatus": "Closed on time"
+    }
+  ]
+}

@@ -1,0 +1,35 @@
+{
+  "title": "SAMAADHAN Governance Dashboard",
+  "subtitle": "Real-time governance and compliance metrics across all six domains.",
+  "rollup": {
+    "subsidiaries": 8,
+    "totalMines": 322,
+    "opencastMines": 61,
+    "undergroundMines": 261,
+    "activeAlerts": 1,
+    "historyCorpus": 120
+  },
+  "summaryLabels": {
+    "open": "Open / In Progress",
+    "awaiting": "Awaiting Verification",
+    "overdue": "Overdue / Escalated",
+    "closed": "Verified Closed"
+  },
+  "alertBanner": {
+    "idle": {
+      "title": "DGMS Safety Alert 23/2026 is awaiting AI processing",
+      "action": "Process with AI",
+      "href": "/intake"
+    },
+    "processed": {
+      "title": "DGMS Safety Alert 23/2026 — AI extraction complete, awaiting confirmation",
+      "action": "Review Extraction",
+      "href": "/intake"
+    },
+    "confirmed": {
+      "title": "DGMS Safety Alert 23/2026 — 183 governance obligations created across 61 mines",
+      "action": "Open Alert Intelligence",
+      "href": "/intake"
+    }
+  }
+}
